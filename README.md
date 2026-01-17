@@ -1,2 +1,3 @@
 # SCHOOL_PROJECT_assistance_for_farmer
-内容主要是序列图和类图等plantuml绘制的图，展现的主要是plantuml代码
+内容主要是序列图和类图等plantuml绘制的图，展现的主要是plantuml代码和相关图例
+
