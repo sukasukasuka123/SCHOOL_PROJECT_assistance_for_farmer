@@ -1,0 +1,119 @@
+@startuml
+title <size:46><b>果园助农：全链路部署拓扑架构</b></size>
+
+skinparam dpi 220
+skinparam shadowing true
+skinparam RoundCorner 22
+skinparam defaultFontName "Microsoft YaHei"
+skinparam backgroundColor #F9FAFB
+
+skinparam nodesep 140
+skinparam ranksep 160
+
+' 主组件字体统一加大
+skinparam rectangle {
+    FontSize 32
+    FontStyle bold
+}
+
+skinparam cloud {
+    FontSize 36
+    FontStyle bold
+}
+
+skinparam note {
+    FontSize 21
+    BackgroundColor #FFFDE7
+    BorderColor #FBC02D
+    BorderThickness 2
+    RoundCorner 16
+}
+
+' 实体（物理设备）
+skinparam rectangle {
+    BackgroundColor #1E88E5
+    FontColor white
+    BorderColor #0D47A1
+    BorderThickness 4
+}
+
+' 虚拟服务
+skinparam rectangle {
+    BackgroundColor #F5F5F5
+    BorderColor #757575
+    BorderStyle dashed
+    BorderThickness 3
+    FontColor #212121
+}
+
+skinparam cloud {
+    BackgroundColor #E8F5E9
+    BorderColor #2E7D32
+    BorderThickness 4
+}
+
+' ====================== 三层布局 ======================
+
+package "<size:38><b>边缘感知与执行层</b></size>" #E8F5E9 {
+    rectangle "<size:34><b>智能侦察单元</b></size>\n<size:26>边缘AI + 伪高光谱</size>" as Scout
+    
+    rectangle "<size:34><b>精准投放单元</b></size>\n<size:26>变量喷洒 / 生物投放</size>" as Deploy
+}
+
+Scout -[#C62828,thickness=8]right-> Deploy : <size:30><b>LoRa P2P 调度指令</b></size>
+
+note right of Scout
+  • 680/730/800nm 多光谱识别
+  • YOLOv5-Nano 边缘决策
+end note
+
+note right of Deploy
+  • 50-100μm 雾滴精准施药
+  • 模块化：化学/生物防治
+end note
+
+' --------------------- 云中枢 ---------------------
+cloud "<size:38><b>云端数据中枢</b></size>" as Cloud {
+    rectangle "<size:32><b>异构通信网关</b></size>\n<size:26>LoRa / 5G / NB-IoT</size>" as Gateway
+    
+    together {
+        rectangle "<size:32><b>区块链账本</b></size>\n<size:26>操作日志 + 存证</size>" as BC
+        rectangle "<size:32><b>IPFS分布式存储</b></size>\n<size:26>叶片图像 & 生长档案</size>" as IPFS
+    }
+}
+
+Gateway -[#616161,thickness=6]-> BC   : <size:26>上链存证 + 哈希</size>
+Gateway -[#616161,thickness=6]-> IPFS  : <size:26>图像上传 / 哈希存储</size>
+
+note bottom of Cloud
+  <b>核心价值</b>：
+  • 多源数据聚合与验证
+  • 全流程不可篡改存证
+  • 分布式图像高效存取
+end note
+
+' --------------------- 用户服务层 ---------------------
+package "<size:38><b>用户服务终端</b></size>" #F3E5F5 {
+    rectangle "<size:34><b>果农管理后台</b></size>\n<size:26>实时监控 / 紧急报警</size>" as AppB
+    
+    rectangle "<size:34><b>消费溯源应用</b></size>\n<size:26>扫码查看完整档案</size>" as AppC
+}
+
+' ====================== 主要数据流 ======================
+
+Scout   -[#1976D2,thickness=10]down-> Gateway : <size:30><b>检测数据 + 图像哈希 上行</b></size>
+Deploy  -[#1976D2,thickness=10]down-> Gateway : <size:30><b>作业日志上行</b></size>
+
+BC    -[#388E3C,thickness=10]down-> AppB  : <size:30><b>实时链上查询</b></size>
+BC    -[#388E3C,thickness=10]down-> AppC  : <size:30><b>溯源记录读取</b></size>
+IPFS  -[#F57C00,thickness=8]down-> AppC  : <size:30><b>叶片图像 & 档案</b></size>
+
+' ====================== 图例 ======================
+legend right
+  <size:32><b>图例说明</b></size>
+  |<#1976D2>| 数据 + 图像哈希 上行     |
+  |<#388E3C>| 链上溯源数据 下行        |
+  |<#C62828>| 边缘 LoRa 实时协同       |
+  |<#F57C00>| IPFS 图像资源分发        |
+endlegend
+@enduml
