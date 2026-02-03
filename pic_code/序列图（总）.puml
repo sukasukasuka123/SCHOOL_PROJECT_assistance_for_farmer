@@ -1,0 +1,84 @@
+@startuml CitrusHLB_Traceability_MainFlow_Sequence
+
+hide footbox
+skinparam backgroundColor #F8FAF5
+skinparam shadowing false
+skinparam dpi 160
+skinparam sequence {
+    ArrowColor #1E88E5
+    LifeLineBorderColor #455A64
+    LifeLineBackgroundColor #FFFFFF
+    ParticipantBorderThickness 3
+    ParticipantFontSize 22
+    ParticipantFontStyle bold
+    MessageFontSize 20
+}
+
+participant "侦察无人机\nScout" as Scout
+participant "标记无人机\nDeploy" as Deploy
+participant "果农处置终端\nFarmer App" as Farmer
+participant "采摘 PDA" as Harvest
+participant "冷链传感标签" as ColdChain
+
+participant "通信网关\nGateway" as Gateway
+participant "生命周期引擎\nGridLifecycle" as Life
+participant "批次封装服务\nBatchService" as Batch
+participant "区块链\nBlockchain" as BC
+participant "IPFS" as IPFS
+participant "消费者小程序\nAppC" as AppC
+
+== 清晨巡检 · 风险识别 ==
+Scout -> Scout : 光谱扫描\nNDVI / 红边 / 木虱识别
+Scout -> Gateway : RiskZoneDetectionRecord
+Gateway -> IPFS : 上传航拍图像
+Gateway -> BC : 检测事件哈希
+BC -> Life : 记录风险事件
+
+== 精准标记 · 隔离干预 ==
+Life -> Deploy : 下发高风险网格坐标
+Deploy -> Gateway : MarkingOperationLog
+Gateway -> IPFS : 标记作业图像
+Gateway -> BC : 标记事件哈希
+BC -> Life : 更新网格状态
+
+== 人工确认 · 病株移除 ==
+Life -> Farmer : 推送高风险标记点
+Farmer -> Gateway : DiseaseTreeRemovalRecord
+Gateway -> IPFS : 病株移除证据
+Gateway -> BC : 移除事件哈希
+BC -> Life : 确认病株处理完成
+
+== 科学补种 · 新树入档 ==
+Farmer -> Gateway : ReplantingRecord
+Gateway -> IPFS : 补种现场照片
+Gateway -> BC : 补种事件哈希
+BC -> Life : 网格恢复中
+
+== 季节养护 · 多次作业 ==
+loop 多次养护
+    Farmer -> Gateway : GridMaintenanceLog
+    Gateway -> IPFS : 作业证据
+    Gateway -> BC : 养护事件哈希
+    BC -> Life : 累计生长档案
+end
+
+== 采摘入库 · 批次封装 ==
+Life -> Harvest : 允许采摘通知
+Harvest -> Gateway : HarvestBatchRecord
+Gateway -> IPFS : 采摘现场照片
+Gateway -> BC : 批次事件哈希
+BC -> Batch : 生成批次对象
+
+== 冷链物流 · 持续追踪 ==
+loop 物流节点
+    ColdChain -> Gateway : LogisticsTrackingRecord
+    Gateway -> IPFS : 节点照片
+    Gateway -> BC : 物流事件哈希
+end
+
+== 扫码溯源 · 信任交付 ==
+Batch -> AppC : ProductTraceabilityCard
+IPFS -> AppC : 图像 / 物流轨迹
+BC -> AppC : 可验证记录
+
+@enduml
