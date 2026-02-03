@@ -1,169 +1,140 @@
-@startuml
-!pragma maxwidth 6000
-title <size:22><b>区块链数据结构架构</b></size>\n<size:14>"从果园到餐桌"全链路数据模型</size>
+@startuml CitrusHLB_Traceability_DataModel_v1
 
-skinparam dpi 200
-skinparam backgroundColor #FAFAFA
-skinparam defaultFontSize 14
-skinparam defaultFontName Microsoft YaHei
-skinparam linetype ortho
-skinparam nodesep 40
-skinparam ranksep 80
-skinparam packageStyle rectangle
+hide methods
+hide stereotype
+skinparam linetype curved
+skinparam backgroundColor #F8FAF5
+skinparam shadowing false
+skinparam dpi 160
 
-' 类样式 - Origin风格配色
 skinparam class {
-  BackgroundColor #E8F4F8
-  BorderColor #2E86AB
-  BorderThickness 3
-  FontSize 14
-  FontStyle bold
-  AttributeFontSize 12
-  AttributeFontColor #1A1A1A
+    FontSize 26
+    FontStyle bold
+    BackgroundColor #FFFFFF
+    BorderColor #1E88E5
+    BorderThickness 3
+    RoundCorner 14
 }
 
-' 注释样式 - 高对比度
 skinparam note {
-  BackgroundColor #FFF4E6
-  BorderColor #FF8C42
-  BorderThickness 2
-  FontSize 12
-  FontColor #2C2C2C
+    FontSize 20
+    BackgroundColor #FFF8E1
+    BorderColor #FFB300
+    BorderThickness 3
+    RoundCorner 14
 }
 
-' 箭头样式
-skinparam arrow {
-  Color #D32F2F
-  Thickness 3
-  FontSize 13
-  FontStyle bold
-  FontColor #D32F2F
+' ================== 核心空间实体 ==================
+class Grid {
+    +gridCode : string
+    gpsCenter : bytes32
 }
 
-' ==========================================
-' 第一行：主流程 (维护 -> 检测 -> 作业 -> 生产 -> 消费 -> 决策)
-' ==========================================
-
-package "维护层" #F3E5F5 {
-  class DroneMaintenanceLog {
-    <size:13>+logId : uint32
-    +droneId : address
-    +maintainType : string
-  }
-  note top
-    <b>【硬件可靠性】</b>
-    <size:12>电池更换/GPS校准
-    防止传感器漂移</size>
-  end note
+class HarvestBatch {
+    +batchId : uint32
+    batchCode : string
+    harvestDate : uint32
+    totalWeight : uint32
 }
 
-package "检测层" #E8F5E9 {
-  class DiseaseDetectionRecord {
-    <size:13>+recordId : uint32
-    +diseaseType : uint8
-    +severityScore : uint8
-    +imageHashIPFS : string
-  }
-  note top
-    <b>【物理证据】</b>
-    <size:12>光谱680/730/800nm
-    严重度0-100</size>
-  end note
+class Product {
+    +productId : uint32
+    qrCodeUrl : string
 }
 
-package "作业层" #FFF3E0 {
-  class TreatmentOperationLog {
-    <size:13>+operationId : uint32
-    +linkedDetectionId : uint32
-    +substanceUsed : string
-    +dosage : uint16
-  }
-  note bottom
-    <b>【精准防治】</b>
-    <size:12>阿维·螺虫酯50ml
-    雾滴50μm</size>
-  end note
+' ================== 风险与作业事件 ==================
+class RiskZoneDetectionRecord {
+    +recordId : uint32
+    timestamp : uint32
+    riskLevel : uint8
+    ndviValue : uint16
+    psyllidDensity : uint8
+    evidenceImageIPFS : string
 }
 
-package "生产层" #E1F5FE {
-  class HarvestBatchRecord {
-    <size:13>+batchId : uint32
-    +zoneName : string
-    +harvestDate : uint32
-    +totalWeight : uint32
-  }
-  note top
-    <b>【批次封装】</b>
-    <size:12>绑定生长季数据
-    12月金秋采摘</size>
-  end note
+class MarkingOperationLog {
+    +operationId : uint32
+    timestamp : uint32
+    markingPointCount : uint8
+    markerType : string
 }
 
-package "消费层" #E8EAF6 {
-  class ProductTraceabilityCard {
-    <size:13>+productId : uint32
-    +linkedBatchId : uint32
-    +productionNote : string
-  }
-  note bottom
-    <b>【消费者可见】</b>
-    <size:12>二维码扫码查询
-    防治统计透明</size>
-  end note
+class DiseaseTreeRemovalRecord {
+    +removalId : uint32
+    timestamp : uint32
+    confirmedDiseaseCount : uint8
+    falsePositiveCount : uint8
 }
 
-package "决策层" #FCE4EC {
-  class SeasonalSummaryReport {
-    <size:13>+reportId : uint32
-    +totalDetections : uint32
-    +costSaved : uint32
-  }
-  note top
-    <b>【宏观决策】</b>
-    <size:12>农药降低30%
-    成本节约统计</size>
-  end note
+class ReplantingRecord {
+    +replantId : uint32
+    timestamp : uint32
+    seedlingCount : uint8
+    seedlingSource : string
 }
 
-' ==========================================
-' 第二行：独立分支 (警报)
-' ==========================================
-
-package "警报层" #FFEBEE {
-  class EmergencyAlertRecord {
-    <size:13>+alertId : uint32
-    +alertLevel : string
-    +humanHandled : bool
-  }
-  note bottom
-    <b>【危机响应】</b>
-    <size:12>高危/中危/低危
-    触发:严重度≥0.8</size>
-  end note
+class GridMaintenanceLog {
+    +logId : uint32
+    timestamp : uint32
+    operationType : string
+    operationDetail : string
 }
 
-' ==========================================
-' 关系连线
-' ==========================================
+' ================== 物流与追踪 ==================
+class LogisticsTrackingRecord {
+    +trackingId : uint32
+    timestamp : uint32
+    nodeType : string
+    temperature : int8
+    humidity : uint8
+}
 
-' 1. 主流程：水平向右 (Right)
-DroneMaintenanceLog -[#7B1FA2,thickness=3]right-> DiseaseDetectionRecord : <size:13><b>验证</b></size>
-DiseaseDetectionRecord -[#D32F2F,thickness=3]right-> TreatmentOperationLog : <size:13><b>1:N作业</b></size>
-TreatmentOperationLog -[#1976D2,thickness=3]right-> HarvestBatchRecord : <size:13><b>N:1批次</b></size>
-HarvestBatchRecord -[#388E3C,thickness=3]right-> ProductTraceabilityCard : <size:13><b>1:1溯源</b></size>
-ProductTraceabilityCard -[#C2185B,thickness=3]right-> SeasonalSummaryReport : <size:13><b>N:1汇总</b></size>
+' ================== 系统级事件 ==================
+class EmergencyAlertRecord {
+    +alertId : uint32
+    timestamp : uint32
+    alertLevel : uint8
+    affectedGrids : string
+}
 
-' 2. 分支流程：向下 (Down)
-DiseaseDetectionRecord -[#FF6F00,thickness=3]down-> EmergencyAlertRecord : <size:13><b>1:N警报</b></size>
+class DroneMaintenanceLog {
+    +logId : uint32
+    timestamp : uint32
+    droneType : string
+    maintenanceType : string
+}
 
-legend right
-  <size:14><b>数据流图例</b></size>
-  |<#D32F2F>  | <size:12>作业触发</size> |
-  |<#FF6F00>  | <size:12>警报生成</size> |
-  |<#7B1FA2>  | <size:12>数据验证</size> |
-  |<#1976D2>  | <size:12>批次封装</size> |
-  |<#388E3C>  | <size:12>溯源生成</size> |
-  |<#C2185B>  | <size:12>统计汇总</size> |
-endlegend
+' ================== 关系定义 ==================
+
+Grid "1" <-- "many" RiskZoneDetectionRecord : 发生于
+RiskZoneDetectionRecord "1" --> "many" MarkingOperationLog : 触发
+MarkingOperationLog "1" --> "many" DiseaseTreeRemovalRecord : 导致
+DiseaseTreeRemovalRecord "1" --> "many" ReplantingRecord : 补种
+
+Grid "1" <-- "many" GridMaintenanceLog : 养护记录
+Grid "1" --> "many" HarvestBatch : 采摘来源
+HarvestBatch "1" --> "many" LogisticsTrackingRecord : 冷链追踪
+HarvestBatch "1" --> "many" Product : 封装为
+
+RiskZoneDetectionRecord "many" --> "1" EmergencyAlertRecord : 聚合分析
+
+DroneMaintenanceLog ..> RiskZoneDetectionRecord : 数据可信性保障
+DroneMaintenanceLog ..> MarkingOperationLog
+
+note right of Grid
+<b>Grid 是所有溯源的空间锚点</b>
+所有事件最终都可以
+回溯到一个网格
+end note
+
+note right of HarvestBatch
+<b>HarvestBatch 是商品化边界</b>
+农业事件 → 商品事件
+end note
+
+note right of EmergencyAlertRecord
+<b>跨网格系统事件</b>
+不是单点操作
+end note
 
 @enduml
