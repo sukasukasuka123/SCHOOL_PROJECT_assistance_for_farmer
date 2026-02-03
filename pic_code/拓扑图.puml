@@ -1,119 +1,134 @@
-@startuml
-title <size:46><b>果园助农：全链路部署拓扑架构</b></size>
+@startuml CitrusHLB_Traceability_Architecture_Refined_v2
 
-skinparam dpi 220
-skinparam shadowing true
-skinparam RoundCorner 22
-skinparam defaultFontName "Microsoft YaHei"
-skinparam backgroundColor #F9FAFB
+hide stereotype
 
-skinparam nodesep 140
-skinparam ranksep 160
+top to bottom direction
+skinparam linetype curved
+skinparam backgroundColor #F8FAF5
+skinparam dpi 200
+skinparam shadowing false
+skinparam nodesep 80
+skinparam ranksep 120
 
-' 主组件字体统一加大
-skinparam rectangle {
-    FontSize 32
+' ================== 全局字体加大 ==================
+skinparam defaultFontSize 20
+skinparam dpi 160
+
+skinparam package {
+    FontSize 42
     FontStyle bold
+    FontColor #1A237E
 }
 
+skinparam rectangle {
+    FontSize 30
+    FontStyle plain
+    RoundCorner 14
+    BorderThickness 4
+}
+
+
 skinparam cloud {
-    FontSize 36
+    FontSize 46
     FontStyle bold
+    BackgroundColor #E8F0FE
+    BorderColor #1E88E5
+    BorderThickness 6
 }
 
 skinparam note {
-    FontSize 21
-    BackgroundColor #FFFDE7
-    BorderColor #FBC02D
-    BorderThickness 2
-    RoundCorner 16
-}
-
-' 实体（物理设备）
-skinparam rectangle {
-    BackgroundColor #1E88E5
-    FontColor white
-    BorderColor #0D47A1
+    FontSize 22
+    FontStyle italic
+    BackgroundColor #FFF8E1
+    BorderColor #FFB300
     BorderThickness 4
+    RoundCorner 18
 }
 
-' 虚拟服务
-skinparam rectangle {
-    BackgroundColor #F5F5F5
-    BorderColor #757575
+' ================== 设备层高辨识配色 ==================
+skinparam rectangle<<device>> {
+    BackgroundColor #0288D1
+    FontColor #FFFFFF
+    BorderColor #01579B
+    BorderThickness 5.5
+}
+
+skinparam rectangle<<cloudservice>> {
+    BackgroundColor #F5F7FA
+    FontColor #263238
+    BorderColor #455A64
     BorderStyle dashed
-    BorderThickness 3
-    FontColor #212121
+    BorderThickness 5
 }
 
-skinparam cloud {
-    BackgroundColor #E8F5E9
-    BorderColor #2E7D32
-    BorderThickness 4
+' ================== 边缘感知与执行层 ==================
+package "边缘感知与执行层" #E8F5E9 {
+
+    rectangle "侦察无人机\n多光谱 + 边缘AI" as Scout
+    rectangle "标记/隔离无人机\n荧光标记 + 精准施药" as Deploy
+    rectangle "人工处置终端\nPDA / 手机App" as FarmerTool
+
+    Scout   --> Deploy     : 风险坐标 + 优先级
+    Deploy  --> FarmerTool : 标记点 + 精准位置
+
+    note right of Scout
+        <b>感知与初筛</b>
+        • 红边多光谱 680/730/800 nm
+        • NDVI + 时序异常检测
+        • YOLOv5-Nano 木虱识别
+        • 粘虫板密度阈值
+    end note
+
+    note right of Deploy
+        <b>现场干预</b>
+        • 可降解荧光标记（UV激发）
+        • 单株20ml精准投放
+        • 吡虫啉隔离带
+        • 支持生物防治
+    end note
+
+    note right of FarmerTool
+        <b>人工确认</b>
+        • UV手电 + GPS
+        • 病株移除 / 误判纠正
+        • 现场拍照上链
+        • 脱毒苗补种 + 二维码
+    end note
 }
 
-' ====================== 三层布局 ======================
+' ================== 云端协同数据层 ==================
+cloud "<size:48><b>云端协同数据层</b></size>\n<sub>逻辑汇聚 + 可信存证</sub>" as CloudHub {
 
-package "<size:38><b>边缘感知与执行层</b></size>" #E8F5E9 {
-    rectangle "<size:34><b>智能侦察单元</b></size>\n<size:26>边缘AI + 伪高光谱</size>" as Scout
-    
-    rectangle "<size:34><b>精准投放单元</b></size>\n<size:26>变量喷洒 / 生物投放</size>" as Deploy
+    rectangle "异构通信接入网关\nLoRa / 5G / NB-IoT" as Gateway
+    rectangle "可信存证区块链\n事件级不可篡改记录" as BC
+    rectangle "分布式内容存储\n图像 / 档案（IPFS）" as IPFS
+
+    Gateway --> BC   : 事件哈希 + 时间戳
+    Gateway --> IPFS : 图像/档案 + CID
+
+    note left of BC
+        <b>链上存证原则</b>
+        • 只存事实声明
+        • 事件级粒度（单株/单次）
+        • 支持Merkle证明
+        • 人工否决同样上链
+    end note
 }
 
-Scout -[#C62828,thickness=8]right-> Deploy : <size:30><b>LoRa P2P 调度指令</b></size>
+' ================== 用户服务层 ==================
+package "用户服务层" #F3E5F5 {
 
-note right of Scout
-  • 680/730/800nm 多光谱识别
-  • YOLOv5-Nano 边缘决策
-end note
-
-note right of Deploy
-  • 50-100μm 雾滴精准施药
-  • 模块化：化学/生物防治
-end note
-
-' --------------------- 云中枢 ---------------------
-cloud "<size:38><b>云端数据中枢</b></size>" as Cloud {
-    rectangle "<size:32><b>异构通信网关</b></size>\n<size:26>LoRa / 5G / NB-IoT</size>" as Gateway
-    
-    together {
-        rectangle "<size:32><b>区块链账本</b></size>\n<size:26>操作日志 + 存证</size>" as BC
-        rectangle "<size:32><b>IPFS分布式存储</b></size>\n<size:26>叶片图像 & 生长档案</size>" as IPFS
-    }
+    rectangle "果农/合作社后台\n实时监控 · 预警 · 调度" as AppB
+    rectangle "消费者溯源小程序\n扫码查看全生命周期" as AppC
 }
 
-Gateway -[#616161,thickness=6]-> BC   : <size:26>上链存证 + 哈希</size>
-Gateway -[#616161,thickness=6]-> IPFS  : <size:26>图像上传 / 哈希存储</size>
+' ================== 主要数据流（更粗、更鲜艳） ==================
+Scout      -[#005F99,thickness=7]-> Gateway : 风险图像 + 检测结果
+Deploy     -[#005F99,thickness=7]-> Gateway : 作业日志 + 施药证据
+FarmerTool -[#005F99,thickness=7]-> Gateway : 处置结果 + 现场照片
 
-note bottom of Cloud
-  <b>核心价值</b>：
-  • 多源数据聚合与验证
-  • 全流程不可篡改存证
-  • 分布式图像高效存取
-end note
+BC   -[#2A7F62,thickness=7]-> AppB : 链上查询 + 预警推送
+BC   -[#2A7F62,thickness=7]-> AppC : 溯源二维码 + 可验证记录
+IPFS -[#2A7F62,thickness=7]-> AppC : 高清图像 + 生长档案
 
-' --------------------- 用户服务层 ---------------------
-package "<size:38><b>用户服务终端</b></size>" #F3E5F5 {
-    rectangle "<size:34><b>果农管理后台</b></size>\n<size:26>实时监控 / 紧急报警</size>" as AppB
-    
-    rectangle "<size:34><b>消费溯源应用</b></size>\n<size:26>扫码查看完整档案</size>" as AppC
-}
-
-' ====================== 主要数据流 ======================
-
-Scout   -[#1976D2,thickness=10]down-> Gateway : <size:30><b>检测数据 + 图像哈希 上行</b></size>
-Deploy  -[#1976D2,thickness=10]down-> Gateway : <size:30><b>作业日志上行</b></size>
-
-BC    -[#388E3C,thickness=10]down-> AppB  : <size:30><b>实时链上查询</b></size>
-BC    -[#388E3C,thickness=10]down-> AppC  : <size:30><b>溯源记录读取</b></size>
-IPFS  -[#F57C00,thickness=8]down-> AppC  : <size:30><b>叶片图像 & 档案</b></size>
-
-' ====================== 图例 ======================
-legend right
-  <size:32><b>图例说明</b></size>
-  |<#1976D2>| 数据 + 图像哈希 上行     |
-  |<#388E3C>| 链上溯源数据 下行        |
-  |<#C62828>| 边缘 LoRa 实时协同       |
-  |<#F57C00>| IPFS 图像资源分发        |
-endlegend
 @enduml
