@@ -1,0 +1,260 @@
+@startuml CitrusHLB_ClassDiagram_Optimized_v2
+
+!define PRIMARY   #1565C0
+!define SECONDARY #2E7D32
+!define ACCENT    #F57C00
+!define WARNING   #D32F2F
+!define GRAY      #616161
+
+hide stereotype
+hide empty members
+skinparam backgroundColor #FAFAFA
+skinparam dpi 180
+skinparam shadowing false
+skinparam linetype ortho
+skinparam class {
+    FontSize 16
+    FontStyle bold
+    BackgroundColor #FFFFFF
+    BorderThickness 2.5
+    RoundCorner 10
+    AttributeFontSize 14
+}
+skinparam note {
+    FontSize 14
+    BackgroundColor #FFFDE7
+    BorderColor #F9A825
+    BorderThickness 2
+    RoundCorner 8
+}
+
+' ========== 空间锚点 ==========
+class Grid {
+    +gridCode : string
+    +gpsCenter : bytes32
+    +areaSize : uint16
+    --
+    <i>10m×10m 网格划分</i>
+}
+
+' ========== 感知与作业链 ==========
+package "感知与干预链 (故事1-4)" {
+    class RiskZoneDetectionRecord {
+        +recordId : uint32
+        +timestamp : uint32
+        +gridCode : string
+        --
+        +riskLevel : uint8
+        +ndviValue : uint16
+        +spectralData : uint16[3]
+        +psyllidDensity : uint8
+        +evidenceImageIPFS : string
+        +needMarking : bool
+    }
+
+    class MarkingOperationLog {
+        +operationId : uint32
+        +linkedDetectionId : uint32
+        +timestamp : uint32
+        +gridCode : string
+        --
+        +markingPointCount : uint8
+        +markingGPS : bytes32[]
+        +markerType : string
+        +markerDosage : uint16
+        +isolationPesticide : string
+        +isolationDosage : uint16
+        +operatorAddress : address
+        +operationImageIPFS : string
+    }
+
+    class DiseaseTreeRemovalRecord {
+        +removalId : uint32
+        +linkedMarkingId : uint32
+        +timestamp : uint32
+        +gridCode : string
+        --
+        +confirmedDiseaseCount : uint8
+        +falsePositiveCount : uint8
+        +removalGPS : bytes32[]
+        +removalEvidenceIPFS : string
+        +farmerAddress : address
+        +replantScheduled : bool
+    }
+
+    class ReplantingRecord {
+        +replantId : uint32
+        +linkedRemovalId : uint32
+        +timestamp : uint32
+        +gridCode : string
+        --
+        +seedlingCount : uint8
+        +replantGPS : bytes32[]
+        +seedlingSource : string
+        +quarantineCertHash : string
+        +seedlingVariety : string
+        +replantImageIPFS : string
+        +farmerAddress : address
+    }
+}
+
+' ========== 长期养护 ==========
+class GridMaintenanceLog {
+    +logId : uint32
+    +gridCode : string
+    +timestamp : uint32
+    --
+    +operationType : string
+    +operationDetail : string
+    +evidenceIPFS : string
+    +operatorAddress : address
+    --
+    <i>生物防治、施肥、修剪等</i>
+}
+
+' ========== 商品化与流通 ==========
+package "商品化与流通 (故事6-8)" {
+    class HarvestBatchRecord {
+        +batchId : uint32
+        +batchCode : string
+        +gridCode : string
+        +harvestDate : uint32
+        --
+        +totalWeight : uint32
+        +linkedDetectionIds : uint32[]
+        +linkedOperationIds : uint32[]
+        +linkedMaintenanceIds : uint32[]
+        --
+        +diseaseRemovalCount : uint8
+        +bioControlCount : uint8
+        +chemicalControlCount : uint8
+        +harvestImageIPFS : string
+        --
+        <i>唯一批次码 B3-2025-1215</i>
+    }
+
+    class LogisticsTrackingRecord {
+        +trackingId : uint32
+        +linkedBatchId : uint32
+        +timestamp : uint32
+        --
+        +nodeType : string
+        +gpsLocation : bytes32
+        +temperature : int8
+        +humidity : uint8
+        +handlerAddress : address
+        +nodeImageIPFS : string
+    }
+
+    class ProductTraceabilityCard {
+        +productId : uint32
+        +linkedBatchId : uint32
+        +qrCodeUrl : string
+        --
+        +growthDays : uint32
+        +totalDetections : uint8
+        +diseaseRemoved : uint8
+        +bioControlCount : uint8
+        +chemicalControlCount : uint8
+        +logisticsHours : uint32
+        +certificationBadge : string
+        +blockchainRecordCount : uint32
+    }
+}
+
+' ========== 系统支撑 ==========
+package "系统级支撑 (故事9-10)" {
+    class EmergencyAlertRecord {
+        +alertId : uint32
+        +timestamp : uint32
+        +affectedGrids : string
+        +alertLevel : uint8
+        --
+        +linkedDetectionIds : uint32[]
+        +riskAnalysis : string
+        +suggestedAction : string
+        +humanConfirmed : bool
+        +responseLog : string
+    }
+
+    class DroneMaintenanceLog {
+        +logId : uint32
+        +droneId : address
+        +timestamp : uint32
+        --
+        +droneType : string
+        +maintenanceType : string
+        +sensorCalibrated : bool
+        +firmwareVersion : string
+        +technicianAddress : address
+    }
+}
+
+' ========== 关系（核心链路加粗） ==========
+Grid "1" *-- "many" RiskZoneDetectionRecord : 发生于
+Grid "1" *-- "many" GridMaintenanceLog : 养护记录
+Grid "1" *-- "many" HarvestBatchRecord : 采摘来源
+
+RiskZoneDetectionRecord "1" --> "0..n" MarkingOperationLog : 触发标记
+MarkingOperationLog "1" --> "0..n" DiseaseTreeRemovalRecord : 导致移除
+DiseaseTreeRemovalRecord "1" --> "0..1" ReplantingRecord : 安排补种
+
+HarvestBatchRecord "1" --> "many" LogisticsTrackingRecord : 冷链追踪
+HarvestBatchRecord "1" --> "many" ProductTraceabilityCard : 生成溯源卡
+
+RiskZoneDetectionRecord "many" --> "1" EmergencyAlertRecord : 聚合触发
+
+DroneMaintenanceLog ..> RiskZoneDetectionRecord : 保障可信
+DroneMaintenanceLog ..> MarkingOperationLog : 保障可信
+
+HarvestBatchRecord ..> GridMaintenanceLog : 引用养护记录
+
+' ========== 注释 ==========
+note top of Grid
+  <b>空间锚点</b>
+  • 所有事件回溯到网格
+  • 支持跨网格预警
+end note
+
+note right of RiskZoneDetectionRecord
+  <b>故事1</b> 清晨巡检
+  • NDVI异常 + 木虱密度
+end note
+
+note right of MarkingOperationLog
+  <b>故事2</b> 精准标记
+  • 20ml/点 + 隔离带
+end note
+
+note right of HarvestBatchRecord
+  <b>商品化边界</b>
+  • 聚合全年记录
+  • 唯一批次码
+end note
+
+note bottom of ProductTraceabilityCard
+  <b>故事8</b> 消费者扫码
+  • 防治统计 + 物流轨迹
+end note
+
+note top of EmergencyAlertRecord
+  <b>故事9</b> 区域爆发
+  • 红色预警 + 建议措施
+end note
+
+note top of DroneMaintenanceLog
+  <b>故事10</b> 设备保障
+  • GPS<1m + 固件升级
+end note
+
+' ========== 图例 ==========
+legend right
+  <b>颜色说明</b>
+  <back:#1565C0>   </back> 风险检测链
+  <back:#2E7D32>   </back> 处置与养护
+  <back:#F57C00>   </back> 商品化与流通
+  <back:#D32F2F>   </back> 应急响应
+  <back:#616161>   </back> 系统支撑
+endlegend
+
+@enduml

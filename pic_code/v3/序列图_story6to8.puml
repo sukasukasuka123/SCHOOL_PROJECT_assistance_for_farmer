@@ -1,0 +1,264 @@
+@startuml Sequence_Story6to8_HarvestToTraceability
+!define PRIMARY #1565C0
+!define ACCENT #F57C00
+!define INFO #6A1B9A
+
+hide footbox
+skinparam backgroundColor #FAFAFA
+skinparam dpi 180
+skinparam shadowing false
+
+skinparam sequence {
+    ArrowColor ACCENT
+    ArrowThickness 2
+    LifeLineBorderColor #455A64
+    LifeLineBackgroundColor #FFFFFF
+    ParticipantBorderThickness 3
+    ParticipantFontSize 18
+    ParticipantFontStyle bold
+    MessageFontSize 16
+}
+
+skinparam box {
+    BackgroundColor #FFF3E0
+    BorderColor ACCENT
+    BorderThickness 2
+}
+
+title <size:24><b>故事6-8: 采摘批次到消费者溯源</b></size>\n<size:16>批次封装 → 冷链追踪 → 扫码溯源</size>
+
+actor "采摘工人" as Worker #FF9800
+participant "PDA设备\n采摘终端" as PDA #F57C00
+box "云端协同层" #E8F5E9
+    participant "批次封装服务\nBatchService" as BatchService #F57C00
+    participant "网关\nGateway" as Gateway #2E7D32
+    participant "网格引擎\nGridLifecycle" as GridEngine #2E7D32
+end box
+participant "冷链传感器\nIoT标签" as ColdSensor #FF5722
+participant "物流节点\n冷库/车/批发/零售" as Logistics #FF7043
+participant "区块链\nBlockchain" as BC #6A1B9A
+participant "IPFS" as IPFS #6A1B9A
+participant "消费者\n小程序" as Consumer #9C27B0
+
+== 故事6: 采摘入库 (12月成熟期) ==
+note over Worker
+<b>B3网格砂糖桔成熟</b>
+果径达标,糖度适宜
+开始采摘作业
+end note
+
+Worker -> PDA : 扫码开始采摘\n目标网格: B3
+activate PDA
+PDA -> GridEngine : 查询 B3 网格全年档案
+activate GridEngine
+
+GridEngine -> GridEngine : <b>聚合网格数据</b>\n检索所有关联记录
+note right
+<b>数据聚合范围</b>
+• 4条 RiskZoneDetectionRecord
+• 4条 MarkingOperationLog
+• 2条 DiseaseTreeRemovalRecord
+• 1条 ReplantingRecord
+• 8条 GridMaintenanceLog (生物防治)
+• 若干条其他养护记录
+end note
+
+GridEngine --> PDA : 返回完整档案数据
+deactivate GridEngine
+
+Worker -> Worker : 采摘作业\n逐筐装箱\n称重记录
+
+Worker -> PDA : 确认采摘完成\n总重量: 500kg
+
+PDA -> BatchService : 请求生成批次
+activate BatchService
+BatchService -> BatchService : <b>生成唯一批次码</b>\n算法: 网格+日期+流水号\n结果: B3-2025-1215
+
+BatchService -> Gateway : 提交 HarvestBatchRecord
+activate Gateway
+note right
+<b>数据结构</b>
+batchId: 60001
+batchCode: "B3-2025-1215"
+gridCode: "B3"
+harvestDate: 2025-12-15
+totalWeight: 500
+linkedDetectionIds: [10001,10002,10003,10004]
+linkedOperationIds: [20001,20002,30001,40001,...]
+diseaseRemovalCount: 2
+bioControlCount: 8
+chemicalControlCount: 0
+end note
+
+Gateway -> IPFS : 存储采摘现场照片
+IPFS --> Gateway : 返回 IPFS Hash
+
+Gateway -> BC : 上链批次记录
+BC --> Gateway : 返回交易哈希
+
+Gateway -> BatchService : 批次创建成功
+deactivate Gateway
+
+BatchService --> PDA : 返回批次码 + 二维码\nB3-2025-1215
+deactivate BatchService
+deactivate PDA
+
+Worker -> Worker : 打印批次标签\n贴在包装箱上
+
+== 故事7: 物流追踪 (72小时冷链) ==
+Worker -> ColdSensor : 贴上智能标签\n绑定批次: B3-2025-1215
+activate ColdSensor
+
+ColdSensor -> ColdSensor : 初始化传感器\nGPS + 温湿度监控\n目标温度: 2-8℃
+
+' 节点1: 冷库
+ColdSensor -> Logistics : 进入冷库\n时间: 15日 18:00
+activate Logistics
+Logistics -> Logistics : 预冷处理\n温度降至 4℃
+ColdSensor -> Gateway : 上传 LogisticsTrackingRecord
+activate Gateway
+note right
+nodeType: "冷库"
+temperature: 4℃
+humidity: 85%
+gpsLocation: (114.234, 22.567)
+end note
+Gateway -> IPFS : 存储节点照片
+Gateway -> BC : 上链物流节点
+Gateway --> ColdSensor
+deactivate Gateway
+
+' 节点2: 冷链车
+Logistics -> Logistics : 装车出发\n时间: 16日 06:00
+ColdSensor -> Gateway : 上传记录 (运输中)
+activate Gateway
+note right
+nodeType: "运输"
+temperature: 6℃
+humidity: 80%
+end note
+Gateway -> IPFS : 存储装车照片
+Gateway -> BC : 上链节点
+deactivate Gateway
+
+ColdSensor -> ColdSensor : <b>实时监控</b>\n每15分钟上报\n温度波动 ±2℃
+
+' 节点3: 批发市场
+Logistics -> Logistics : 抵达批发市场\n时间: 16日 14:00
+ColdSensor -> Gateway : 上传记录 (批发)
+activate Gateway
+note right
+nodeType: "批发"
+temperature: 5℃
+humidity: 82%
+end note
+Gateway -> IPFS : 存储交接照片
+Gateway -> BC : 上链节点
+deactivate Gateway
+
+' 节点4: 超市
+Logistics -> Logistics : 配送至超市\n时间: 17日 10:00
+ColdSensor -> Gateway : 上传记录 (零售)
+activate Gateway
+note right
+nodeType: "零售"
+temperature: 7℃
+humidity: 78%
+end note
+Gateway -> IPFS : 存储上架照片
+Gateway -> BC : 上链节点
+Gateway -> BatchService : 物流完成通知
+deactivate Gateway
+deactivate Logistics
+deactivate ColdSensor
+
+note over BatchService
+<b>物流轨迹完整性验证</b>
+✓ 4个节点全部上链
+✓ 温度全程 2-8℃
+✓ 总时长: 64小时
+✓ GPS轨迹连续
+end note
+
+== 故事8: 扫码溯源 (超市购买) ==
+Consumer -> Consumer : 超市选购砂糖桔\n扫描包装二维码
+
+Consumer -> BatchService : 请求溯源信息\nbatchCode: B3-2025-1215
+activate BatchService
+
+BatchService -> BC : 查询链上记录\n验证数据完整性
+activate BC
+BC --> BatchService : 返回可验证记录\n区块链记录总数: 35条
+deactivate BC
+
+BatchService -> IPFS : 获取图像/档案
+activate IPFS
+IPFS --> BatchService : 返回内容\n航拍图/作业照片/物流轨迹
+deactivate IPFS
+
+BatchService -> BatchService : <b>生成溯源卡片</b>
+note right
+<b>ProductTraceabilityCard</b>
+productId: 80001
+linkedBatchId: 60001
+qrCodeUrl: "https://trace.cn/B3-2025-1215"
+--
+growthDays: 275 (3月-12月)
+totalDetections: 15
+diseaseRemoved: 2
+bioControlCount: 8
+chemicalControlCount: 0
+--
+logisticsHours: 64
+certificationBadge: "绿色食品"
+blockchainRecordCount: 35
+end note
+
+BatchService --> Consumer : 返回溯源报告
+deactivate BatchService
+
+Consumer -> Consumer : <b>查看溯源小程序</b>
+note over Consumer
+<b>溯源报告展示</b>
+━━━━━━━━━━━━━━━━━━━━━
+<b>基本信息</b>
+• 产地: 广东省XX市 B3网格
+• 品种: 砂糖桔-脱毒苗
+• 生长周期: 275天 (9个月)
+━━━━━━━━━━━━━━━━━━━━━
+<b>病害防控</b>
+• 检测次数: 15次 ✓
+• 移除病株: 2株 (精准率 66.7%)
+• 生物防治: 8次 (捕食螨)
+• 化学防治: 0次
+━━━━━━━━━━━━━━━━━━━━━
+<b>物流追踪</b>
+• 冷链时长: 64小时
+• 温度范围: 4-7℃ ✓
+• 物流节点: 4个 (全部可验证)
+━━━━━━━━━━━━━━━━━━━━━
+<b>可信认证</b>
+• 区块链记录: 35条
+• 绿色食品认证 ✓
+• 查看完整档案 >
+end note
+
+Consumer -> Consumer : <b>点击"查看完整档案"</b>
+
+Consumer -> IPFS : 请求高清图像
+activate IPFS
+IPFS --> Consumer : 返回\n• B3网格航拍图\n• 荧光标记作业照片\n• 补种现场照片\n• 冷链节点照片
+deactivate IPFS
+
+Consumer -> Consumer : 滑动浏览图像\n验证真实性
+
+note over Consumer
+<b>消费者反馈</b>
+"看到果园的真实照片
+和完整的防控记录,
+感觉很放心!"
+--
+信任即价值 ✓
+end note
+
+@enduml

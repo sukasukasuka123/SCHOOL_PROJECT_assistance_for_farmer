@@ -1,0 +1,260 @@
+@startuml Sequence_Story10_DroneMaintenanceAndCalibration
+!define INFO #6A1B9A
+!define PRIMARY #1565C0
+
+hide footbox
+skinparam backgroundColor #FAFAFA
+skinparam dpi 180
+skinparam shadowing false
+
+skinparam sequence {
+    ArrowColor INFO
+    ArrowThickness 2
+    LifeLineBorderColor #455A64
+    LifeLineBackgroundColor #FFFFFF
+    ParticipantBorderThickness 3
+    ParticipantFontSize 18
+    ParticipantFontStyle bold
+    MessageFontSize 16
+}
+
+skinparam box {
+    BackgroundColor #F3E5F5
+    BorderColor INFO
+    BorderThickness 2
+}
+
+title <size:24><b>故事10: 设备校准与数据可信根基</b></size>\n<size:16>每周维护 → 传感器校准 → 固件升级 → 上链存证</size>
+
+actor "技术员\nTechnician" as Tech #03A9F4
+participant "侦察无人机\nScout-001" as Scout #1565C0
+participant "标记无人机\nDeploy-002" as Deploy #1565C0
+box "校准设备" #E1F5FE
+    participant "GPS基准站\nRTK Base" as RTK #0288D1
+    participant "光谱校准板\nCalibration Panel" as CalPanel #0288D1
+    participant "固件服务器\nFirmware Server" as FirmwareServer #0288D1
+end box
+box "云端协同层" #F3E5F5
+    participant "设备管理系统\nDeviceManager" as DevMgr #6A1B9A
+    participant "网关\nGateway" as Gateway #6A1B9A
+end box
+participant "区块链\nBlockchain" as BC #6A1B9A
+participant "网格引擎\nGridLifecycle" as GridEngine #2E7D32
+
+== 每周维护计划 ==
+note over Tech
+<b>每周日 8:00</b>
+例行设备维护日
+维护清单:
+✓ GPS模块校准
+✓ 光学传感器清洁
+✓ 电池健康检查
+✓ 固件版本检查
+end note
+
+Tech -> DevMgr : 启动维护流程\n设备: Scout-001, Deploy-002
+activate DevMgr
+DevMgr -> DevMgr : 生成维护任务单\ntaskId: MT-20250210-001
+
+== Scout-001 侦察机维护 ==
+Tech -> Scout : 连接维护接口\n进入诊断模式
+activate Scout
+
+' GPS校准
+Tech -> Scout : 执行GPS校准程序
+Scout -> RTK : 请求基准坐标\n定位基准站
+activate RTK
+RTK --> Scout : 返回基准坐标\n(114.234567, 22.567890)\n精度: ±0.5cm
+deactivate RTK
+
+Scout -> Scout : <b>GPS模块校准</b>\n1. 静止定位 10分钟\n2. 计算偏移量\n3. 写入校准参数
+
+Scout --> Tech : 校准完成\n<color:green>定位误差: 0.8m → 0.3m ✓</color>
+
+' 光学传感器清洁
+Tech -> Scout : 打开传感器舱\n清洁镜头
+Tech -> Tech : 使用无尘布 + 清洁液\n清除灰尘和污渍
+
+Tech -> CalPanel : 放置光谱校准板\n标准反射率: 18%灰
+activate CalPanel
+Tech -> Scout : 执行光谱校准\n扫描校准板
+Scout -> Scout : <b>传感器校准</b>\n捕捉 680/730/800nm\n对比标准值\n计算偏差系数
+Scout --> Tech : 校准完成\n<color:green>光谱误差: ±5nm ✓</color>
+deactivate CalPanel
+
+' 电池检查
+Tech -> Scout : 检查电池健康度
+Scout -> Scout : 读取电池数据\n循环次数: 187次\n容量衰减: 8%\n预计剩余寿命: 300次
+Scout --> Tech : <color:green>电池状态: 健康 ✓</color>
+
+' 固件升级
+Tech -> FirmwareServer : 检查固件版本
+activate FirmwareServer
+FirmwareServer --> Tech : 当前: v2.3.1\n最新: v2.4.0\n<color:orange>建议升级</color>
+deactivate FirmwareServer
+
+Tech -> Scout : 下载并安装固件\nv2.3.1 → v2.4.0
+Scout -> Scout : <b>固件升级</b>\n1. 备份配置\n2. 安装新固件\n3. 重启系统\n4. 验证功能
+
+Scout --> Tech : 升级完成\n<color:green>版本: v2.4.0 ✓</color>\n<color:green>新增: YOLO v5-Nano木虱识别</color>
+
+' 上传维护记录
+Tech -> DevMgr : 提交 Scout-001 维护报告
+activate DevMgr
+DevMgr -> Gateway : 上传 DroneMaintenanceLog
+activate Gateway
+note right
+<b>数据结构</b>
+logId: 100001
+droneId: 0xScout001
+timestamp: 2025-02-10 08:45:00
+droneType: "侦察机"
+maintenanceType: "传感器校准 + 固件升级"
+sensorCalibrated: true
+firmwareVersion: "v2.4.0"
+technicianAddress: 0xTech789
+--
+<b>校准参数</b>
+gpsError: 0.3m
+spectralError: ±5nm
+batteryHealth: 92%
+end note
+
+Gateway -> BC : 上链维护事件
+BC --> Gateway : 返回交易哈希\n0xMaint001...
+deactivate Gateway
+deactivate DevMgr
+
+deactivate Scout
+
+== Deploy-002 标记机维护 ==
+Tech -> Deploy : 连接维护接口\n进入诊断模式
+activate Deploy
+
+' GPS校准 (同上)
+Tech -> Deploy : 执行GPS校准
+Deploy -> RTK : 请求基准坐标
+activate RTK
+RTK --> Deploy : 返回基准坐标
+deactivate RTK
+Deploy -> Deploy : GPS模块校准
+Deploy --> Tech : 校准完成\n<color:green>定位误差: 0.6m ✓</color>
+
+' 投放系统检查
+Tech -> Deploy : 检查微量投放模块
+Deploy -> Deploy : <b>投放系统自检</b>\n1. 泵压测试\n2. 喷嘴通畅性\n3. 流量传感器校准\n4. 电磁阀响应时间
+
+Deploy --> Tech : <color:green>投放精度: ±2ml ✓</color>\n<color:green>喷嘴状态: 正常 ✓</color>
+
+' LoRa通信测试
+Tech -> Deploy : 测试LoRa通信\n与网关通信
+Deploy -> Gateway : 发送测试信号\n信号强度测试
+activate Gateway
+Gateway --> Deploy : 返回信号强度\nRSSI: -68 dBm\n<color:green>信号良好 ✓</color>
+deactivate Gateway
+
+' 固件升级
+Tech -> Deploy : 安装固件 v1.8.2
+Deploy -> Deploy : 固件升级\nv1.8.1 → v1.8.2
+Deploy --> Tech : 升级完成\n<color:green>新增: 隔离带自动规划</color>
+
+' 上传维护记录
+Tech -> DevMgr : 提交 Deploy-002 维护报告
+activate DevMgr
+DevMgr -> Gateway : 上传 DroneMaintenanceLog
+activate Gateway
+note right
+<b>数据结构</b>
+logId: 100002
+droneId: 0xDeploy002
+timestamp: 2025-02-10 09:30:00
+droneType: "标记机"
+maintenanceType: "投放系统校准"
+sensorCalibrated: true
+firmwareVersion: "v1.8.2"
+technicianAddress: 0xTech789
+--
+<b>校准参数</b>
+gpsError: 0.6m
+sprayAccuracy: ±2ml
+loraRSSI: -68 dBm
+end note
+
+Gateway -> BC : 上链维护事件
+BC --> Gateway : 返回交易哈希\n0xMaint002...
+deactivate Gateway
+deactivate DevMgr
+
+deactivate Deploy
+
+== 数据可信性关联 ==
+note over BC
+<b>设备维护记录已上链</b>
+Scout-001: 0xMaint001...
+Deploy-002: 0xMaint002...
+--
+<b>可验证性保障</b>
+✓ GPS误差 <1m
+✓ 光谱误差 ±5nm
+✓ 投放精度 ±2ml
+✓ 固件版本可追溯
+end note
+
+BC -> GridEngine : 推送设备状态更新
+activate GridEngine
+GridEngine -> GridEngine : <b>关联设备与检测数据</b>\n为后续检测记录添加\n设备可信性标签
+
+note right
+<b>溯源增强</b>
+后续 RiskZoneDetectionRecord
+将包含设备校准证明:
+• droneId: 0xScout001
+• lastCalibration: 2025-02-10
+• calibrationTxHash: 0xMaint001...
+--
+这使得消费者可以验证:
+"检测数据来自经过校准的设备"
+end note
+deactivate GridEngine
+
+== 维护报告生成 ==
+Tech -> DevMgr : 请求生成维护报告
+activate DevMgr
+DevMgr -> DevMgr : 聚合维护数据\n生成周报
+DevMgr --> Tech : 返回维护周报
+deactivate DevMgr
+
+note over Tech
+<b>维护周报 (2025-W06)</b>
+━━━━━━━━━━━━━━━━━━━━━━━━
+<b>设备状态</b>
+✓ Scout-001: 健康 (GPS 0.3m, 光谱 ±5nm)
+✓ Deploy-002: 健康 (GPS 0.6m, 投放 ±2ml)
+
+<b>固件升级</b>
+✓ Scout-001: v2.3.1 → v2.4.0
+  新增: YOLO v5-Nano木虱识别
+✓ Deploy-002: v1.8.1 → v1.8.2
+  新增: 隔离带自动规划
+
+<b>区块链存证</b>
+✓ 维护记录已上链: 2条
+✓ 交易哈希可验证
+
+<b>下次维护</b>
+• 预定时间: 2025-02-17 (周日)
+• 维护内容: 例行检查 + 电池更换
+━━━━━━━━━━━━━━━━━━━━━━━━
+end note
+
+Tech -> Tech : 完成维护\n设备恢复作业状态
+
+note over Scout, Deploy
+<b>硬件真实性保障完成</b>
+所有检测数据都可追溯到
+经过校准的硬件设备
+--
+数据可信根基 ✓
+end note
+
+@enduml

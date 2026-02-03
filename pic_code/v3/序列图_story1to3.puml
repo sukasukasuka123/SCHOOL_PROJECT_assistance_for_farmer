@@ -1,0 +1,160 @@
+@startuml Sequence_Story1to3_RiskDetectionToRemoval
+!define PRIMARY #1565C0
+!define SECONDARY #2E7D32
+!define ACCENT #F57C00
+
+hide footbox
+skinparam backgroundColor #FAFAFA
+skinparam dpi 180
+skinparam shadowing false
+
+skinparam sequence {
+    ArrowColor PRIMARY
+    ArrowThickness 2
+    LifeLineBorderColor #455A64
+    LifeLineBackgroundColor #FFFFFF
+    ParticipantBorderThickness 3
+    ParticipantFontSize 18
+    ParticipantFontStyle bold
+    MessageFontSize 16
+}
+
+skinparam box {
+    BackgroundColor #E3F2FD
+    BorderColor PRIMARY
+    BorderThickness 2
+}
+
+title <size:24><b>故事1-3: 从风险检测到人工处置</b></size>\n<size:16>清晨巡检 → 精准标记 → 病株移除</size>
+
+actor "技术员" as Tech #LightBlue
+participant "侦察无人机\nScout" as Scout #1565C0
+participant "OV5640相机\n多光谱传感器" as Camera #0288D1
+participant "黄色粘虫板\nIoT传感器" as Trap #0288D1
+box "云端协同层" #E8F5E9
+    participant "LoRa网关\nGateway" as Gateway #2E7D32
+    participant "网格引擎\nGridLifecycle" as GridEngine #2E7D32
+end box
+participant "标记无人机\nDeploy" as Deploy #1565C0
+participant "果农老李\nFarmer App" as Farmer #F57C00
+participant "区块链\nBlockchain" as BC #6A1B9A
+participant "IPFS" as IPFS #6A1B9A
+
+== 故事1: 清晨巡检 (6:00) ==
+Tech -> Scout : 启动晨检任务\n扫描 B3 网格区域
+activate Scout
+Scout -> Camera : 开始光谱扫描
+activate Camera
+Camera -> Camera : 捕捉嫩梢区域\nNDVI / 红边 / 800nm
+Camera --> Scout : <b>NDVI = 0.42</b> (异常偏低)\n730nm 红边异常
+deactivate Camera
+
+Scout -> Trap : 查询粘虫板数据
+activate Trap
+Trap --> Scout : <b>木虱密度 8只/板</b>\n(阈值 5只/板)
+deactivate Trap
+
+Scout -> Scout : <b>风险评估算法</b>\nNDVI < 0.5 && 木虱 > 5\n=> riskLevel = 75
+
+Scout -> Gateway : 上传 RiskZoneDetectionRecord
+activate Gateway
+note right
+<b>数据结构</b>
+recordId: 10001
+gridCode: "B3"
+riskLevel: 75
+ndviValue: 42
+psyllidDensity: 8
+needMarking: true
+end note
+
+Gateway -> IPFS : 存储航拍图像
+IPFS --> Gateway : 返回 IPFS Hash\nQmXxxx...
+
+Gateway -> BC : 上链风险检测事件
+BC --> Gateway : 返回交易哈希\n0xABCD...
+
+Gateway -> GridEngine : 更新 B3 网格状态
+activate GridEngine
+GridEngine -> GridEngine : 状态: 正常 → 高风险\n触发标记任务
+deactivate Gateway
+deactivate Scout
+
+== 故事2: 精准标记 (6:15) ==
+GridEngine -> Deploy : <b>下发标记任务</b>\n目标: B3网格\n标记点: 3个
+activate Deploy
+Deploy -> Deploy : 飞抵目标区域\n上空2米悬停
+
+Deploy -> Deploy : <b>投放荧光标记剂</b>\n点1: GPS(114.2341, 22.5678)\n点2: GPS(114.2342, 22.5679)\n点3: GPS(114.2343, 22.5680)\n每点 20ml 黄绿色
+
+Deploy -> Deploy : <b>施放隔离带</b>\n周边5米\n吡虫啉 50ml
+
+Deploy -> Gateway : 上传 MarkingOperationLog
+activate Gateway
+note right
+<b>数据结构</b>
+operationId: 20001
+linkedDetectionId: 10001
+markingPointCount: 3
+markerType: "荧光标记剂-黄绿色"
+isolationPesticide: "吡虫啉"
+end note
+
+Gateway -> IPFS : 存储作业图像
+IPFS --> Gateway : 返回 IPFS Hash
+
+Gateway -> BC : 上链标记事件
+BC --> Gateway : 返回交易哈希
+
+Gateway -> GridEngine : 更新 B3 状态
+GridEngine -> GridEngine : 状态: 高风险 → 已标记
+deactivate Gateway
+deactivate Deploy
+
+GridEngine -> Farmer : <b>推送通知</b>\n"B3网格发现3处高风险标记点"
+deactivate GridEngine
+
+== 故事3: 人工处置 (当天下午) ==
+Farmer -> Farmer : 收到App推送\n准备UV手电 + 电锯
+
+Farmer -> Farmer : <b>现场定位</b>\n找到3个荧光标记点\nUV光下清晰可见
+
+Farmer -> Farmer : <b>人工确认</b>\n点1: 斑驳黄化 → 确认病株 ✓\n点2: 不对称叶脉 → 确认病株 ✓\n点3: 叶片正常 → 缺肥误判 ✗
+
+Farmer -> Farmer : 移除2棵病株\n拍照存证
+
+Farmer -> Gateway : 提交 DiseaseTreeRemovalRecord
+activate Gateway
+note right
+<b>数据结构</b>
+removalId: 30001
+linkedMarkingId: 20001
+confirmedDiseaseCount: 2
+falsePositiveCount: 1
+replantScheduled: true
+farmerAddress: 0xFarmer123
+end note
+
+Gateway -> IPFS : 存储病株照片 + 现场证据
+IPFS --> Gateway : 返回 IPFS Hash
+
+Gateway -> BC : 上链移除事件
+BC --> Gateway : 返回交易哈希
+
+Gateway -> GridEngine : 更新 B3 状态
+activate GridEngine
+GridEngine -> GridEngine : 状态: 已标记 → 待补种\n生成补种计划
+deactivate Gateway
+
+GridEngine -> Farmer : <b>推送补种建议</b>\n"建议15天后补种2株脱毒苗"
+deactivate GridEngine
+
+Farmer -> Farmer : 确认收到
+note over Farmer
+<b>本次处置完成</b>
+✓ 精准率: 66.7% (2/3)
+✓ 误判纠正: 1棵
+✓ 全程上链: 3条记录
+end note
+
+@enduml

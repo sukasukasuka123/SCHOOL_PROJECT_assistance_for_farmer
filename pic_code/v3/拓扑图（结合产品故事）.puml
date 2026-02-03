@@ -1,0 +1,91 @@
+@startuml CitrusHLB_Topology_Clean
+
+hide stereotype
+skinparam backgroundColor #FAFAFA
+skinparam dpi 200
+skinparam defaultFontSize 18
+skinparam shadowing false
+
+skinparam package {
+    FontSize 26
+    FontStyle bold
+    BorderThickness 3
+    RoundCorner 14
+}
+
+skinparam rectangle {
+    FontSize 20
+    BorderThickness 3
+    RoundCorner 12
+}
+
+skinparam cloud {
+    FontSize 28
+    FontStyle bold
+    BorderThickness 4
+}
+
+' ================== 设备感知层 ==================
+package "设备感知层" #E8F5E9 {
+
+    rectangle "侦察无人机\n输出: 风险检测记录" as Scout #0D47A1
+    rectangle "标记无人机\n输出: 标记作业记录" as Marker #0D47A1
+    rectangle "人工处置终端\n输出: 移除 / 补种记录" as Farmer #2E7D32
+    rectangle "物联网传感器\n输出: 环境与物流数据" as IoT #F57C00
+}
+
+' ================== 通信与边缘层 ==================
+cloud "通信与边缘处理层" as Gateway #E3F2FD {
+
+    rectangle "通信接入网关\nLoRa / 5G / NB-IoT" as CommGateway
+    rectangle "边缘计算节点\n校准 / 预警" as EdgeCompute
+}
+
+' ================== 业务逻辑层 ==================
+package "业务逻辑层" #FFF3E0 {
+
+    rectangle "网格生命周期引擎" as GridEngine
+    rectangle "批次封装服务" as BatchService
+    rectangle "应急响应系统" as Emergency
+}
+
+' ================== 可信存储层 ==================
+cloud "可信存储层" as Storage #F3E5F5 {
+
+    rectangle "区块链存证网络" as Blockchain
+    rectangle "IPFS 内容存储" as IPFS
+}
+
+' ================== 用户应用层 ==================
+package "用户应用层" #F3E5F5 {
+
+    rectangle "果农 / 合作社后台" as FarmerApp
+    rectangle "物流追踪系统" as LogisticsApp
+    rectangle "消费者溯源小程序" as ConsumerApp
+}
+
+' ================== 主数据流 ==================
+Scout  --> CommGateway : 风险检测数据（故事1）
+Marker --> CommGateway : 标记作业数据（故事2）
+Farmer --> CommGateway : 人工处置数据（故事3-4）
+IoT    --> CommGateway : 传感器 / 冷链数据
+
+CommGateway --> GridEngine : 实时事件流
+CommGateway --> Emergency  : 风险聚合数据
+
+EdgeCompute ..> Blockchain : 设备校准记录（故事10）
+
+GridEngine --> Blockchain : 事件哈希上链
+GridEngine --> IPFS       : 图像 / 证据存储
+
+GridEngine --> BatchService : 采摘条件满足（故事6）
+BatchService --> LogisticsApp : 批次生成
+
+LogisticsApp --> Blockchain : 物流节点上链（故事7）
+
+Emergency --> FarmerApp : 红色预警推送（故事9）
+
+Blockchain --> ConsumerApp : 可验证溯源数据（故事8）
+IPFS       --> ConsumerApp : 图像与档案
+
+@enduml

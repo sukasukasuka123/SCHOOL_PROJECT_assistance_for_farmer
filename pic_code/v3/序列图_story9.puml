@@ -1,0 +1,235 @@
+@startuml Sequence_Story9_EmergencyResponse
+!define WARNING #D32F2F
+!define PRIMARY #1565C0
+
+hide footbox
+skinparam backgroundColor #FAFAFA
+skinparam dpi 180
+skinparam shadowing false
+
+skinparam sequence {
+    ArrowColor WARNING
+    ArrowThickness 2.5
+    LifeLineBorderColor #455A64
+    LifeLineBackgroundColor #FFFFFF
+    ParticipantBorderThickness 3
+    ParticipantFontSize 18
+    ParticipantFontStyle bold
+    MessageFontSize 16
+}
+
+skinparam box {
+    BackgroundColor #FFEBEE
+    BorderColor WARNING
+    BorderThickness 3
+}
+
+title <size:24><b>故事9: 应急响应-片状爆发预警</b></size>\n<size:16>跨网格风险聚合 → 红色预警 → 自动生成应急方案</size>
+
+participant "侦察无人机\nScout" as Scout #1565C0
+participant "黄色粘虫板\n(C区9个网格)" as Trap #FF9800
+box "云端协同层" #FFEBEE
+    participant "网关\nGateway" as Gateway #D32F2F
+    participant "应急响应系统\nEmergency" as Emergency #D32F2F
+    participant "网格引擎\nGridLifecycle" as GridEngine #D32F2F
+end box
+participant "AI决策引擎\nDecisionEngine" as AI #D32F2F
+participant "合作社管理员\nManager" as Manager #F57C00
+participant "区块链\nBlockchain" as BC #6A1B9A
+participant "标记机群\n(3架)" as DeployFleet #1565C0
+
+== 异常检测阶段 ==
+note over Scout
+<b>C区巡检任务</b>
+覆盖网格: C1-C9
+预计耗时: 25分钟
+end note
+
+loop C1 → C9 (依次扫描)
+    Scout -> Scout : 扫描网格 Ci
+    Scout -> Trap : 查询粘虫板数据
+    activate Trap
+    Trap --> Scout : <b>木虱密度: 15-22 只/板</b>\n<color:red>(异常偏高!)</color>
+    deactivate Trap
+    
+    Scout -> Gateway : 上传 RiskZoneDetectionRecord
+    activate Gateway
+    note right
+    <b>高风险记录</b>
+    recordId: 900XX
+    gridCode: "C1" ~ "C9"
+    riskLevel: 85-95
+    psyllidDensity: 15-22
+    end note
+    Gateway -> GridEngine : 实时风险数据流
+    activate GridEngine
+    deactivate Gateway
+end
+
+== 风险聚合与预警触发 ==
+GridEngine -> Emergency : <b>触发聚合分析</b>\n时间窗口: 30分钟\n受影响网格: 9个
+activate Emergency
+
+Emergency -> Emergency : <b>风险聚合算法</b>
+note right
+<b>聚合条件判断</b>
+IF (连续网格数 >= 6) AND
+   (平均木虱密度 > 12) AND
+   (平均风险等级 > 80)
+THEN
+   alertLevel = 4 (红色预警)
+   触发应急响应
+end note
+
+Emergency -> Emergency : <b>检测结果</b>\n连续网格: 9个 ✓\n平均木虱: 18.5只/板 ✓\n平均风险: 88 ✓\n<color:red>=> 判定为"区域性爆发"</color>
+
+Emergency -> AI : 请求生成应急方案
+activate AI
+AI -> AI : <b>AI决策分析</b>
+note right
+<b>输入数据</b>
+• 历史防治效果
+• 当前气象条件
+• 天敌种群密度
+• 化学防治历史
+--
+<b>推荐策略</b>
+1. 大面积释放天敌
+   (捕食螨 5000只/网格)
+2. 设置诱捕带
+   (C区外围5米)
+3. 避免化学农药
+   (防止抗药性)
+4. 提高巡检频率
+   (每3天1次)
+end note
+AI --> Emergency : 返回应急方案
+deactivate AI
+
+Emergency -> Gateway : 上传 EmergencyAlertRecord
+activate Gateway
+note right
+<b>数据结构</b>
+alertId: 90001
+timestamp: 2025-XX-XX 14:23:00
+affectedGrids: "C1,C2,C3,C4,C5,C6,C7,C8,C9"
+alertLevel: 4 (红色预警)
+linkedDetectionIds: [90001-90012]
+riskAnalysis: "片状爆发,建议紧急干预"
+suggestedAction: "大面积天敌+诱捕带"
+humanConfirmed: false
+end note
+
+Gateway -> BC : 上链预警事件
+BC --> Gateway : 返回交易哈希
+deactivate Gateway
+deactivate GridEngine
+
+== 自动响应措施 ==
+Emergency -> Scout : <b>触发机载蜂鸣器</b>\n长鸣警报
+activate Scout
+Scout -> Scout : 蜂鸣器长鸣\n频率: 2秒/次\n持续: 5分钟
+note right : 现场警示\n提醒附近人员
+deactivate Scout
+
+Emergency -> Manager : <b>推送红色预警</b>\nApp + 短信 + 电话
+activate Manager
+Manager -> Manager : 收到预警通知
+note over Manager
+<b>预警推送内容</b>
+━━━━━━━━━━━━━━━━━━━━━
+<color:red><b>⚠️ 红色预警 - 区域性爆发</b></color>
+━━━━━━━━━━━━━━━━━━━━━
+<b>受影响区域</b>
+C1-C9 九个网格 (0.9公顷)
+
+<b>风险等级</b>
+4级 (最高5级)
+
+<b>检测数据</b>
+• 高风险点: 12个
+• 平均木虱密度: 18.5只/板
+• 平均风险等级: 88
+
+<b>AI建议措施</b>
+1. 大面积释放捕食螨 (紧急)
+2. 设置诱捕带 (优先)
+3. 提高巡检频率
+
+<b>操作建议</b>
+→ 查看详细方案
+→ 确认执行
+━━━━━━━━━━━━━━━━━━━━━
+end note
+
+== 人工确认与执行 ==
+Manager -> Manager : 查看详细方案\n评估可行性
+
+Manager -> Emergency : <b>确认执行应急方案</b>\n批准调度3架标记机
+activate Emergency
+Emergency -> Emergency : 更新预警状态\nhumanConfirmed = true
+
+Emergency -> Gateway : 更新 EmergencyAlertRecord
+activate Gateway
+note right
+humanConfirmed: true
+responseLog: "管理员已确认,
+             启动应急响应,
+             调度3架标记机"
+end note
+Gateway -> BC : 更新链上记录
+deactivate Gateway
+
+Emergency -> DeployFleet : <b>下发应急任务</b>\n目标: C1-C9 网格\n作业类型: 诱捕带设置
+activate DeployFleet
+deactivate Emergency
+
+DeployFleet -> DeployFleet : <b>自动编队飞行</b>\n3架同时作业\n分区: C1-C3 | C4-C6 | C7-C9
+
+DeployFleet -> DeployFleet : <b>设置诱捕带</b>\nC区外围5米\n黄色粘虫板 × 36块\n信息素诱饵 × 18个
+
+DeployFleet -> Gateway : 上传作业完成报告
+activate Gateway
+Gateway -> BC : 上链作业记录
+Gateway -> Emergency : 诱捕带设置完成
+deactivate Gateway
+deactivate DeployFleet
+
+== 生物防治执行 ==
+Manager -> Manager : 联系生物防治供应商\n申请紧急调拨捕食螨
+
+note over Manager
+<b>生物防治计划</b>
+• 目标: C1-C9 网格
+• 天敌: 捕食螨 45000只
+  (5000只/网格)
+• 投放方式: 人工 + 无人机
+• 预计耗时: 2小时
+• 预计成本: ¥4500
+end note
+
+Manager -> GridEngine : 提交生物防治任务
+activate GridEngine
+GridEngine -> GridEngine : 记录应急响应执行\n预计3天内见效
+
+GridEngine --> Manager : 任务已登记\n后续跟踪巡检
+deactivate GridEngine
+deactivate Manager
+
+== 持续监控 ==
+note over Emergency
+<b>应急响应进入监控期</b>
+• 巡检频率: 每3天1次 (提高)
+• 监控指标: 木虱密度变化
+• 预期效果: 7天内降至阈值以下
+• 效果评估: 14天后总结
+--
+<b>本次应急响应完成</b>
+✓ 预警触发: 自动化
+✓ 方案生成: AI辅助
+✓ 人工确认: 20分钟
+✓ 执行启动: 40分钟
+✓ 全程上链: 1条预警 + N条作业
+end note
+
+@enduml
