@@ -1,0 +1,83 @@
+@startuml Story1_MorningInspection
+!define PRIMARY #1565C0
+!define SECONDARY #2E7D32
+!define ACCENT #F57C00
+
+hide footbox
+skinparam backgroundColor #FAFAFA
+skinparam dpi 300
+skinparam shadowing false
+
+skinparam sequence {
+    ArrowColor PRIMARY
+    ArrowThickness 2
+    LifeLineBorderColor #455A64
+    LifeLineBackgroundColor #FFFFFF
+    ParticipantBorderThickness 3
+    ParticipantFontSize 20
+    ParticipantFontStyle bold
+    MessageFontSize 18
+}
+
+skinparam box {
+    BackgroundColor #E3F2FD
+    BorderColor PRIMARY
+    BorderThickness 2
+}
+
+skinparam noteFontSize 16
+
+title <size:28><b>故事1: 清晨巡检 (6:00)</b></size>\n<size:18>侦察无人机扫描检测病害风险</size>
+
+actor "技术员" as Tech #LightBlue
+participant "侦察无人机\nScout" as Scout #1565C0
+participant "OV5640相机\n多光谱传感器" as Camera #0288D1
+participant "黄色粘虫板\nIoT传感器" as Trap #0288D1
+box "云端协同层" #E8F5E9
+    participant "LoRa网关\nGateway" as Gateway #2E7D32
+    participant "网格引擎\nGridLifecycle" as GridEngine #2E7D32
+end box
+participant "区块链\nBlockchain" as BC #6A1B9A
+participant "IPFS" as IPFS #6A1B9A
+
+Tech -> Scout : 启动晨检任务\n扫描 B3 网格区域
+activate Scout
+Scout -> Camera : 开始光谱扫描
+activate Camera
+Camera -> Camera : 捕捉嫩梢区域\nNDVI / 红边 / 800nm
+Camera --> Scout : <b>NDVI = 0.42</b> (异常偏低)\n730nm 红边异常
+deactivate Camera
+
+Scout -> Trap : 查询粘虫板数据
+activate Trap
+Trap --> Scout : <b>木虱密度 8只/板</b>\n(阈值 5只/板)
+deactivate Trap
+
+Scout -> Scout : <b>风险评估算法</b>\nNDVI < 0.5 && 木虱 > 5\n=> riskLevel = 75
+
+Scout -> Gateway : 上传 RiskZoneDetectionRecord
+activate Gateway
+note right
+<b>数据结构</b>
+recordId: 10001
+gridCode: "B3"
+riskLevel: 75
+ndviValue: 42
+psyllidDensity: 8
+needMarking: true
+end note
+
+Gateway -> IPFS : 存储航拍图像
+IPFS --> Gateway : 返回 IPFS Hash\nQmXxxx...
+
+Gateway -> BC : 上链风险检测事件
+BC --> Gateway : 返回交易哈希\n0xABCD...
+
+Gateway -> GridEngine : 更新 B3 网格状态
+activate GridEngine
+GridEngine -> GridEngine : 状态: 正常 → 高风险\n触发标记任务
+deactivate Gateway
+deactivate Scout
+deactivate GridEngine
+
+@enduml

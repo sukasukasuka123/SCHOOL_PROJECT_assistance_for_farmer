@@ -1,0 +1,82 @@
+@startuml Story3_ManualRemoval
+!define PRIMARY #1565C0
+!define SECONDARY #2E7D32
+!define ACCENT #F57C00
+
+hide footbox
+skinparam backgroundColor #FAFAFA
+skinparam dpi 300
+skinparam shadowing false
+
+skinparam sequence {
+    ArrowColor PRIMARY
+    ArrowThickness 2
+    LifeLineBorderColor #455A64
+    LifeLineBackgroundColor #FFFFFF
+    ParticipantBorderThickness 3
+    ParticipantFontSize 20
+    ParticipantFontStyle bold
+    MessageFontSize 18
+}
+
+skinparam box {
+    BackgroundColor #E8F5E9
+    BorderColor SECONDARY
+    BorderThickness 2
+}
+
+skinparam noteFontSize 16
+
+title <size:28><b>故事3: 人工处置 (当天下午)</b></size>\n<size:18>果农现场确认并移除病株</size>
+
+participant "果农老李\nFarmer App" as Farmer #F57C00
+box "云端协同层" #E8F5E9
+    participant "LoRa网关\nGateway" as Gateway #2E7D32
+    participant "网格引擎\nGridLifecycle" as GridEngine #2E7D32
+end box
+participant "区块链\nBlockchain" as BC #6A1B9A
+participant "IPFS" as IPFS #6A1B9A
+
+Farmer -> Farmer : 收到App推送\n准备UV手电 + 电锯
+
+Farmer -> Farmer : <b>现场定位</b>\n找到3个荧光标记点\nUV光下清晰可见
+
+Farmer -> Farmer : <b>人工确认</b>\n点1: 斑驳黄化 → 确认病株 ✓\n点2: 不对称叶脉 → 确认病株 ✓\n点3: 叶片正常 → 缺肥误判 ✗
+
+Farmer -> Farmer : 移除2棵病株\n拍照存证
+
+Farmer -> Gateway : 提交 DiseaseTreeRemovalRecord
+activate Gateway
+note right
+<b>数据结构</b>
+removalId: 30001
+linkedMarkingId: 20001
+confirmedDiseaseCount: 2
+falsePositiveCount: 1
+replantScheduled: true
+farmerAddress: 0xFarmer123
+end note
+
+Gateway -> IPFS : 存储病株照片 + 现场证据
+IPFS --> Gateway : 返回 IPFS Hash
+
+Gateway -> BC : 上链移除事件
+BC --> Gateway : 返回交易哈希
+
+Gateway -> GridEngine : 更新 B3 状态
+activate GridEngine
+GridEngine -> GridEngine : 状态: 已标记 → 待补种\n生成补种计划
+deactivate Gateway
+
+GridEngine -> Farmer : <b>推送补种建议</b>\n"建议15天后补种2株脱毒苗"
+deactivate GridEngine
+
+Farmer -> Farmer : 确认收到
+note over Farmer
+<b>本次处置完成</b>
+✓ 精准率: 66.7% (2/3)
+✓ 误判纠正: 1棵
+✓ 全程上链: 3条记录
+end note
+
+@enduml

@@ -1,0 +1,119 @@
+@startuml Story8_ConsumerTraceability
+!define PRIMARY #1565C0
+!define ACCENT #F57C00
+!define INFO #6A1B9A
+
+hide footbox
+skinparam backgroundColor #FAFAFA
+skinparam dpi 300
+skinparam shadowing false
+
+skinparam sequence {
+    ArrowColor ACCENT
+    ArrowThickness 2
+    LifeLineBorderColor #455A64
+    LifeLineBackgroundColor #FFFFFF
+    ParticipantBorderThickness 3
+    ParticipantFontSize 20
+    ParticipantFontStyle bold
+    MessageFontSize 18
+}
+
+skinparam box {
+    BackgroundColor #FFF3E0
+    BorderColor ACCENT
+    BorderThickness 2
+}
+
+skinparam noteFontSize 16
+
+title <size:28><b>故事8: 扫码溯源 (超市购买)</b></size>\n<size:18>消费者查看完整生产档案</size>
+
+participant "消费者\n小程序" as Consumer #9C27B0
+box "云端协同层" #E8F5E9
+    participant "批次封装服务\nBatchService" as BatchService #F57C00
+end box
+participant "区块链\nBlockchain" as BC #6A1B9A
+participant "IPFS" as IPFS #6A1B9A
+
+Consumer -> Consumer : 超市选购砂糖桔\n扫描包装二维码
+
+Consumer -> BatchService : 请求溯源信息\nbatchCode: B3-2025-1215
+activate BatchService
+
+BatchService -> BC : 查询链上记录\n验证数据完整性
+activate BC
+BC --> BatchService : 返回可验证记录\n区块链记录总数: 35条
+deactivate BC
+
+BatchService -> IPFS : 获取图像/档案
+activate IPFS
+IPFS --> BatchService : 返回内容\n航拍图/作业照片/物流轨迹
+deactivate IPFS
+
+BatchService -> BatchService : <b>生成溯源卡片</b>
+note right
+<b>ProductTraceabilityCard</b>
+productId: 80001
+linkedBatchId: 60001
+qrCodeUrl: "https://trace.cn/B3-2025-1215"
+--
+growthDays: 275 (3月-12月)
+totalDetections: 15
+diseaseRemoved: 2
+bioControlCount: 8
+chemicalControlCount: 0
+--
+logisticsHours: 64
+certificationBadge: "绿色食品"
+blockchainRecordCount: 35
+end note
+
+BatchService --> Consumer : 返回溯源报告
+deactivate BatchService
+
+Consumer -> Consumer : <b>查看溯源小程序</b>
+note over Consumer
+<b>溯源报告展示</b>
+━━━━━━━━━━━━━━━━━━━━━
+<b>基本信息</b>
+• 产地: 广东省XX市 B3网格
+• 品种: 砂糖桔-脱毒苗
+• 生长周期: 275天 (9个月)
+━━━━━━━━━━━━━━━━━━━━━
+<b>病害防控</b>
+• 检测次数: 15次 ✓
+• 移除病株: 2株 (精准率 66.7%)
+• 生物防治: 8次 (捕食螨)
+• 化学防治: 0次
+━━━━━━━━━━━━━━━━━━━━━
+<b>物流追踪</b>
+• 冷链时长: 64小时
+• 温度范围: 4-7℃ ✓
+• 物流节点: 4个 (全部可验证)
+━━━━━━━━━━━━━━━━━━━━━
+<b>可信认证</b>
+• 区块链记录: 35条
+• 绿色食品认证 ✓
+• 查看完整档案 >
+end note
+
+Consumer -> Consumer : <b>点击"查看完整档案"</b>
+
+Consumer -> IPFS : 请求高清图像
+activate IPFS
+IPFS --> Consumer : 返回\n• B3网格航拍图\n• 荧光标记作业照片\n• 补种现场照片\n• 冷链节点照片
+deactivate IPFS
+
+Consumer -> Consumer : 滑动浏览图像\n验证真实性
+
+note over Consumer
+<b>消费者反馈</b>
+"看到果园的真实照片
+和完整的防控记录,
+感觉很放心!"
+--
+信任即价值 ✓
+end note
+
+@enduml

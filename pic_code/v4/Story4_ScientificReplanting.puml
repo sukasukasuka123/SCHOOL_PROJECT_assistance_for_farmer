@@ -1,0 +1,93 @@
+@startuml Story4_ScientificReplanting
+!define PRIMARY #1565C0
+!define SECONDARY #2E7D32
+!define ACCENT #F57C00
+
+hide footbox
+skinparam backgroundColor #FAFAFA
+skinparam dpi 300
+skinparam shadowing false
+
+skinparam sequence {
+    ArrowColor SECONDARY
+    ArrowThickness 2
+    LifeLineBorderColor #455A64
+    LifeLineBackgroundColor #FFFFFF
+    ParticipantBorderThickness 3
+    ParticipantFontSize 20
+    ParticipantFontStyle bold
+    MessageFontSize 18
+}
+
+skinparam box {
+    BackgroundColor #E8F5E9
+    BorderColor SECONDARY
+    BorderThickness 2
+}
+
+skinparam noteFontSize 16
+
+title <size:28><b>故事4: 科学补种 (病株移除后15天)</b></size>\n<size:18>采购脱毒苗并按推荐位置补种</size>
+
+actor "果农老李\nFarmer" as Farmer #F57C00
+participant "合作社\n苗圃系统" as Nursery #4CAF50
+box "云端协同层" #E3F2FD
+    participant "网格引擎\nGridLifecycle" as GridEngine #2E7D32
+    participant "网关\nGateway" as Gateway #2E7D32
+end box
+participant "区块链\nBlockchain" as BC #6A1B9A
+participant "IPFS" as IPFS #6A1B9A
+
+note over Farmer
+<b>收到推送</b>
+"B3网格适宜补种"
+原病株向北偏移1.5m
+end note
+
+Farmer -> Nursery : 申请购买脱毒苗\n品种: 砂糖桔\n数量: 2株
+
+activate Nursery
+Nursery -> Nursery : 验证检疫证明\n确认脱毒批次
+Nursery --> Farmer : 交付苗木\n附带二维码 + 检疫证明
+deactivate Nursery
+
+Farmer -> Farmer : 扫描苗木二维码\n读取来源信息
+note right
+<b>苗木二维码信息</b>
+来源: XX合作社脱毒苗圃
+批次: DT-2025-0312
+检疫证明: QC-GD-20250310
+品种: 砂糖桔-脱毒苗
+end note
+
+Farmer -> Farmer : <b>按推荐位置补种</b>\n点1: 原病株北偏1.5m\n点2: 原病株北偏1.5m\n避开残留病原
+
+Farmer -> Farmer : 拍照上传\n补种现场 + 苗木特写
+
+Farmer -> Gateway : 提交 ReplantingRecord
+activate Gateway
+note right
+<b>数据结构</b>
+replantId: 40001
+linkedRemovalId: 30001
+gridCode: "B3"
+seedlingCount: 2
+seedlingSource: "XX合作社"
+quarantineCertHash: "0xQC..."
+seedlingVariety: "砂糖桔-脱毒苗"
+end note
+
+Gateway -> IPFS : 存储补种现场照片
+IPFS --> Gateway : 返回 IPFS Hash
+
+Gateway -> BC : 上链补种事件
+BC --> Gateway : 返回交易哈希
+
+Gateway -> GridEngine : 更新 B3 状态
+activate GridEngine
+GridEngine -> GridEngine : 状态: 待补种 → 恢复中\n创建新树档案
+GridEngine --> Farmer : 推送成功\n"补种完成,已建立新树档案"
+deactivate Gateway
+deactivate GridEngine
+
+@enduml

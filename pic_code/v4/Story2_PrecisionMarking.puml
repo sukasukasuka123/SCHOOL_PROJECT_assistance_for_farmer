@@ -1,0 +1,75 @@
+@startuml Story2_PrecisionMarking
+!define PRIMARY #1565C0
+!define SECONDARY #2E7D32
+!define ACCENT #F57C00
+
+hide footbox
+skinparam backgroundColor #FAFAFA
+skinparam dpi 300
+skinparam shadowing false
+
+skinparam sequence {
+    ArrowColor PRIMARY
+    ArrowThickness 2
+    LifeLineBorderColor #455A64
+    LifeLineBackgroundColor #FFFFFF
+    ParticipantBorderThickness 3
+    ParticipantFontSize 20
+    ParticipantFontStyle bold
+    MessageFontSize 18
+}
+
+skinparam box {
+    BackgroundColor #E3F2FD
+    BorderColor PRIMARY
+    BorderThickness 2
+}
+
+skinparam noteFontSize 16
+
+title <size:28><b>故事2: 精准标记 (6:15)</b></size>\n<size:18>标记无人机投放荧光标记剂</size>
+
+box "云端协同层" #E8F5E9
+    participant "网格引擎\nGridLifecycle" as GridEngine #2E7D32
+    participant "LoRa网关\nGateway" as Gateway #2E7D32
+end box
+participant "标记无人机\nDeploy" as Deploy #1565C0
+participant "果农老李\nFarmer App" as Farmer #F57C00
+participant "区块链\nBlockchain" as BC #6A1B9A
+participant "IPFS" as IPFS #6A1B9A
+
+GridEngine -> Deploy : <b>下发标记任务</b>\n目标: B3网格\n标记点: 3个
+activate Deploy
+Deploy -> Deploy : 飞抵目标区域\n上空2米悬停
+
+Deploy -> Deploy : <b>投放荧光标记剂</b>\n点1: GPS(114.2341, 22.5678)\n点2: GPS(114.2342, 22.5679)\n点3: GPS(114.2343, 22.5680)\n每点 20ml 黄绿色
+
+Deploy -> Deploy : <b>施放隔离带</b>\n周边5米\n吡虫啉 50ml
+
+Deploy -> Gateway : 上传 MarkingOperationLog
+activate Gateway
+note right
+<b>数据结构</b>
+operationId: 20001
+linkedDetectionId: 10001
+markingPointCount: 3
+markerType: "荧光标记剂-黄绿色"
+isolationPesticide: "吡虫啉"
+end note
+
+Gateway -> IPFS : 存储作业图像
+IPFS --> Gateway : 返回 IPFS Hash
+
+Gateway -> BC : 上链标记事件
+BC --> Gateway : 返回交易哈希
+
+Gateway -> GridEngine : 更新 B3 状态
+activate GridEngine
+GridEngine -> GridEngine : 状态: 高风险 → 已标记
+deactivate Gateway
+deactivate Deploy
+
+GridEngine -> Farmer : <b>推送通知</b>\n"B3网格发现3处高风险标记点"
+deactivate GridEngine
+
+@enduml

@@ -1,0 +1,116 @@
+@startuml Story7_ColdChainTracking
+!define PRIMARY #1565C0
+!define ACCENT #F57C00
+!define INFO #6A1B9A
+
+hide footbox
+skinparam backgroundColor #FAFAFA
+skinparam dpi 300
+skinparam shadowing false
+
+skinparam sequence {
+    ArrowColor ACCENT
+    ArrowThickness 2
+    LifeLineBorderColor #455A64
+    LifeLineBackgroundColor #FFFFFF
+    ParticipantBorderThickness 3
+    ParticipantFontSize 20
+    ParticipantFontStyle bold
+    MessageFontSize 18
+}
+
+skinparam box {
+    BackgroundColor #FFF3E0
+    BorderColor ACCENT
+    BorderThickness 2
+}
+
+skinparam noteFontSize 16
+
+title <size:28><b>故事7: 物流追踪 (72小时冷链)</b></size>\n<size:18>从冷库到零售的全程监控</size>
+
+actor "采摘工人" as Worker #FF9800
+participant "冷链传感器\nIoT标签" as ColdSensor #FF5722
+participant "物流节点\n冷库/车/批发/零售" as Logistics #FF7043
+box "云端协同层" #E8F5E9
+    participant "网关\nGateway" as Gateway #2E7D32
+    participant "批次封装服务\nBatchService" as BatchService #F57C00
+end box
+participant "区块链\nBlockchain" as BC #6A1B9A
+participant "IPFS" as IPFS #6A1B9A
+
+Worker -> ColdSensor : 贴上智能标签\n绑定批次: B3-2025-1215
+activate ColdSensor
+
+ColdSensor -> ColdSensor : 初始化传感器\nGPS + 温湿度监控\n目标温度: 2-8℃
+
+' 节点1: 冷库
+ColdSensor -> Logistics : 进入冷库\n时间: 15日 18:00
+activate Logistics
+Logistics -> Logistics : 预冷处理\n温度降至 4℃
+ColdSensor -> Gateway : 上传 LogisticsTrackingRecord
+activate Gateway
+note right
+nodeType: "冷库"
+temperature: 4℃
+humidity: 85%
+gpsLocation: (114.234, 22.567)
+end note
+Gateway -> IPFS : 存储节点照片
+Gateway -> BC : 上链物流节点
+Gateway --> ColdSensor
+deactivate Gateway
+
+' 节点2: 冷链车
+Logistics -> Logistics : 装车出发\n时间: 16日 06:00
+ColdSensor -> Gateway : 上传记录 (运输中)
+activate Gateway
+note right
+nodeType: "运输"
+temperature: 6℃
+humidity: 80%
+end note
+Gateway -> IPFS : 存储装车照片
+Gateway -> BC : 上链节点
+deactivate Gateway
+
+ColdSensor -> ColdSensor : <b>实时监控</b>\n每15分钟上报\n温度波动 ±2℃
+
+' 节点3: 批发市场
+Logistics -> Logistics : 抵达批发市场\n时间: 16日 14:00
+ColdSensor -> Gateway : 上传记录 (批发)
+activate Gateway
+note right
+nodeType: "批发"
+temperature: 5℃
+humidity: 82%
+end note
+Gateway -> IPFS : 存储交接照片
+Gateway -> BC : 上链节点
+deactivate Gateway
+
+' 节点4: 超市
+Logistics -> Logistics : 配送至超市\n时间: 17日 10:00
+ColdSensor -> Gateway : 上传记录 (零售)
+activate Gateway
+note right
+nodeType: "零售"
+temperature: 7℃
+humidity: 78%
+end note
+Gateway -> IPFS : 存储上架照片
+Gateway -> BC : 上链节点
+Gateway -> BatchService : 物流完成通知
+deactivate Gateway
+deactivate Logistics
+deactivate ColdSensor
+
+note over BatchService
+<b>物流轨迹完整性验证</b>
+✓ 4个节点全部上链
+✓ 温度全程 2-8℃
+✓ 总时长: 64小时
+✓ GPS轨迹连续
+end note
+
+@enduml
