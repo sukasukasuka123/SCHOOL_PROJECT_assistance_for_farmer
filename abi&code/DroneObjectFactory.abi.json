@@ -1,0 +1,549 @@
+[
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "_droneId",
+        "type": "address"
+      },
+      {
+        "internalType": "uint32",
+        "name": "_logId",
+        "type": "uint32"
+      },
+      {
+        "internalType": "uint32",
+        "name": "_timestamp",
+        "type": "uint32"
+      },
+      {
+        "internalType": "string",
+        "name": "_droneType",
+        "type": "string"
+      },
+      {
+        "internalType": "string",
+        "name": "_maintenanceType",
+        "type": "string"
+      },
+      {
+        "internalType": "bool",
+        "name": "_sensorCalibrated",
+        "type": "bool"
+      },
+      {
+        "internalType": "string",
+        "name": "_firmwareVersion",
+        "type": "string"
+      },
+      {
+        "internalType": "address",
+        "name": "_technicianAddress",
+        "type": "address"
+      }
+    ],
+    "name": "addDroneMaintenanceLog",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+      },
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "name": "droneMaintenanceLogs",
+    "outputs": [
+      {
+        "internalType": "uint32",
+        "name": "logId",
+        "type": "uint32"
+      },
+      {
+        "internalType": "address",
+        "name": "droneId",
+        "type": "address"
+      },
+      {
+        "internalType": "uint32",
+        "name": "timestamp",
+        "type": "uint32"
+      },
+      {
+        "internalType": "string",
+        "name": "droneType",
+        "type": "string"
+      },
+      {
+        "internalType": "string",
+        "name": "maintenanceType",
+        "type": "string"
+      },
+      {
+        "internalType": "bool",
+        "name": "sensorCalibrated",
+        "type": "bool"
+      },
+      {
+        "internalType": "string",
+        "name": "firmwareVersion",
+        "type": "string"
+      },
+      {
+        "internalType": "address",
+        "name": "technicianAddress",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "name": "drones",
+    "outputs": [
+      {
+        "internalType": "address",
+        "name": "droneId",
+        "type": "address"
+      },
+      {
+        "internalType": "enum DroneObjectFactory.DroneType",
+        "name": "droneTypeValue",
+        "type": "uint8"
+      },
+      {
+        "internalType": "string",
+        "name": "firmwareVersion",
+        "type": "string"
+      },
+      {
+        "internalType": "enum DroneObjectFactory.state",
+        "name": "droneState",
+        "type": "uint8"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "_droneId",
+        "type": "address"
+      },
+      {
+        "internalType": "uint32",
+        "name": "_logId",
+        "type": "uint32"
+      }
+    ],
+    "name": "getDronMaintenanceLogById",
+    "outputs": [
+      {
+        "components": [
+          {
+            "internalType": "uint32",
+            "name": "logId",
+            "type": "uint32"
+          },
+          {
+            "internalType": "address",
+            "name": "droneId",
+            "type": "address"
+          },
+          {
+            "internalType": "uint32",
+            "name": "timestamp",
+            "type": "uint32"
+          },
+          {
+            "internalType": "string",
+            "name": "droneType",
+            "type": "string"
+          },
+          {
+            "internalType": "string",
+            "name": "maintenanceType",
+            "type": "string"
+          },
+          {
+            "internalType": "bool",
+            "name": "sensorCalibrated",
+            "type": "bool"
+          },
+          {
+            "internalType": "string",
+            "name": "firmwareVersion",
+            "type": "string"
+          },
+          {
+            "internalType": "address",
+            "name": "technicianAddress",
+            "type": "address"
+          }
+        ],
+        "internalType": "struct DroneObjectFactory.DroneMaintenanceLog",
+        "name": "",
+        "type": "tuple"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "_droneId",
+        "type": "address"
+      },
+      {
+        "internalType": "uint256",
+        "name": "page",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "pageSize",
+        "type": "uint256"
+      }
+    ],
+    "name": "getDronMaintenanceLogInPage",
+    "outputs": [
+      {
+        "components": [
+          {
+            "internalType": "uint32",
+            "name": "logId",
+            "type": "uint32"
+          },
+          {
+            "internalType": "address",
+            "name": "droneId",
+            "type": "address"
+          },
+          {
+            "internalType": "uint32",
+            "name": "timestamp",
+            "type": "uint32"
+          },
+          {
+            "internalType": "string",
+            "name": "droneType",
+            "type": "string"
+          },
+          {
+            "internalType": "string",
+            "name": "maintenanceType",
+            "type": "string"
+          },
+          {
+            "internalType": "bool",
+            "name": "sensorCalibrated",
+            "type": "bool"
+          },
+          {
+            "internalType": "string",
+            "name": "firmwareVersion",
+            "type": "string"
+          },
+          {
+            "internalType": "address",
+            "name": "technicianAddress",
+            "type": "address"
+          }
+        ],
+        "internalType": "struct DroneObjectFactory.DroneMaintenanceLog[]",
+        "name": "",
+        "type": "tuple[]"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "_droneId",
+        "type": "address"
+      }
+    ],
+    "name": "getDrone",
+    "outputs": [
+      {
+        "components": [
+          {
+            "internalType": "address",
+            "name": "droneId",
+            "type": "address"
+          },
+          {
+            "internalType": "enum DroneObjectFactory.DroneType",
+            "name": "droneTypeValue",
+            "type": "uint8"
+          },
+          {
+            "internalType": "string",
+            "name": "firmwareVersion",
+            "type": "string"
+          },
+          {
+            "internalType": "enum DroneObjectFactory.state",
+            "name": "droneState",
+            "type": "uint8"
+          }
+        ],
+        "internalType": "struct DroneObjectFactory.Drone",
+        "name": "",
+        "type": "tuple"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "_droneId",
+        "type": "address"
+      },
+      {
+        "internalType": "uint256",
+        "name": "index",
+        "type": "uint256"
+      }
+    ],
+    "name": "getDroneMaintenanceLogByIndex",
+    "outputs": [
+      {
+        "components": [
+          {
+            "internalType": "uint32",
+            "name": "logId",
+            "type": "uint32"
+          },
+          {
+            "internalType": "address",
+            "name": "droneId",
+            "type": "address"
+          },
+          {
+            "internalType": "uint32",
+            "name": "timestamp",
+            "type": "uint32"
+          },
+          {
+            "internalType": "string",
+            "name": "droneType",
+            "type": "string"
+          },
+          {
+            "internalType": "string",
+            "name": "maintenanceType",
+            "type": "string"
+          },
+          {
+            "internalType": "bool",
+            "name": "sensorCalibrated",
+            "type": "bool"
+          },
+          {
+            "internalType": "string",
+            "name": "firmwareVersion",
+            "type": "string"
+          },
+          {
+            "internalType": "address",
+            "name": "technicianAddress",
+            "type": "address"
+          }
+        ],
+        "internalType": "struct DroneObjectFactory.DroneMaintenanceLog",
+        "name": "",
+        "type": "tuple"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "_droneId",
+        "type": "address"
+      }
+    ],
+    "name": "getDroneMaintenanceLogCount",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "_droneId",
+        "type": "address"
+      }
+    ],
+    "name": "getDroneMaintenanceLogs",
+    "outputs": [
+      {
+        "components": [
+          {
+            "internalType": "uint32",
+            "name": "logId",
+            "type": "uint32"
+          },
+          {
+            "internalType": "address",
+            "name": "droneId",
+            "type": "address"
+          },
+          {
+            "internalType": "uint32",
+            "name": "timestamp",
+            "type": "uint32"
+          },
+          {
+            "internalType": "string",
+            "name": "droneType",
+            "type": "string"
+          },
+          {
+            "internalType": "string",
+            "name": "maintenanceType",
+            "type": "string"
+          },
+          {
+            "internalType": "bool",
+            "name": "sensorCalibrated",
+            "type": "bool"
+          },
+          {
+            "internalType": "string",
+            "name": "firmwareVersion",
+            "type": "string"
+          },
+          {
+            "internalType": "address",
+            "name": "technicianAddress",
+            "type": "address"
+          }
+        ],
+        "internalType": "struct DroneObjectFactory.DroneMaintenanceLog[]",
+        "name": "",
+        "type": "tuple[]"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "_droneId",
+        "type": "address"
+      },
+      {
+        "internalType": "enum DroneObjectFactory.DroneType",
+        "name": "_droneType",
+        "type": "uint8"
+      },
+      {
+        "internalType": "string",
+        "name": "_firmwareVersion",
+        "type": "string"
+      },
+      {
+        "internalType": "enum DroneObjectFactory.state",
+        "name": "_droneState",
+        "type": "uint8"
+      }
+    ],
+    "name": "registerDrone",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "_droneId",
+        "type": "address"
+      },
+      {
+        "internalType": "enum DroneObjectFactory.state",
+        "name": "_newState",
+        "type": "uint8"
+      }
+    ],
+    "name": "updateDroneState",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "_droneId",
+        "type": "address"
+      },
+      {
+        "internalType": "enum DroneObjectFactory.DroneType",
+        "name": "_newDroneType",
+        "type": "uint8"
+      }
+    ],
+    "name": "updateDroneType",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "_droneId",
+        "type": "address"
+      },
+      {
+        "internalType": "string",
+        "name": "_newFirmwareVersion",
+        "type": "string"
+      }
+    ],
+    "name": "updateFirmwareVersion",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  }
+]

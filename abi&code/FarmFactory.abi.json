@@ -1,0 +1,1398 @@
+[
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "_gridFactory",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "nonpayable",
+    "type": "constructor"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "farmId",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "internalType": "string",
+        "name": "name",
+        "type": "string"
+      },
+      {
+        "indexed": false,
+        "internalType": "address",
+        "name": "owner",
+        "type": "address"
+      }
+    ],
+    "name": "FarmCreated",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "farmId",
+        "type": "address"
+      },
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "gridId",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "internalType": "string",
+        "name": "gridCode",
+        "type": "string"
+      }
+    ],
+    "name": "GridAddedToFarm",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "farmId",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "internalType": "string",
+        "name": "gridCode",
+        "type": "string"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint32",
+        "name": "operationId",
+        "type": "uint32"
+      }
+    ],
+    "name": "GridMarked",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "farmId",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "internalType": "string",
+        "name": "gridCode",
+        "type": "string"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint32",
+        "name": "recordId",
+        "type": "uint32"
+      }
+    ],
+    "name": "RiskDetected",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "farmId",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "internalType": "string",
+        "name": "gridCode",
+        "type": "string"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint32",
+        "name": "removalId",
+        "type": "uint32"
+      }
+    ],
+    "name": "TreesRemoved",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "farmId",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "internalType": "string",
+        "name": "gridCode",
+        "type": "string"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint32",
+        "name": "replantId",
+        "type": "uint32"
+      }
+    ],
+    "name": "TreesReplanted",
+    "type": "event"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "farmId",
+        "type": "address"
+      },
+      {
+        "internalType": "string",
+        "name": "gridCode",
+        "type": "string"
+      },
+      {
+        "internalType": "uint32",
+        "name": "recordId",
+        "type": "uint32"
+      },
+      {
+        "internalType": "string",
+        "name": "operationType",
+        "type": "string"
+      },
+      {
+        "internalType": "string",
+        "name": "detail",
+        "type": "string"
+      },
+      {
+        "internalType": "string",
+        "name": "evidenceIPFS",
+        "type": "string"
+      }
+    ],
+    "name": "addGridMaintenance",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "farmId",
+        "type": "address"
+      },
+      {
+        "internalType": "address",
+        "name": "gridId",
+        "type": "address"
+      },
+      {
+        "internalType": "string",
+        "name": "gridCode",
+        "type": "string"
+      },
+      {
+        "internalType": "enum GridObjectFactory.GridTerrainType",
+        "name": "terrainType",
+        "type": "uint8"
+      }
+    ],
+    "name": "addGridToFarm",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "farmId",
+        "type": "address"
+      },
+      {
+        "components": [
+          {
+            "internalType": "uint32",
+            "name": "operationId",
+            "type": "uint32"
+          },
+          {
+            "internalType": "uint32",
+            "name": "linkedDetectionId",
+            "type": "uint32"
+          },
+          {
+            "internalType": "uint32",
+            "name": "timestamp",
+            "type": "uint32"
+          },
+          {
+            "internalType": "string",
+            "name": "gridCode",
+            "type": "string"
+          },
+          {
+            "internalType": "uint8",
+            "name": "markingPointCount",
+            "type": "uint8"
+          },
+          {
+            "internalType": "bytes32[]",
+            "name": "markingGPS",
+            "type": "bytes32[]"
+          },
+          {
+            "internalType": "string",
+            "name": "markerType",
+            "type": "string"
+          },
+          {
+            "internalType": "uint16",
+            "name": "markerDosagePerPoint",
+            "type": "uint16"
+          },
+          {
+            "internalType": "string",
+            "name": "isolationPesticide",
+            "type": "string"
+          },
+          {
+            "internalType": "uint16",
+            "name": "isolationDosage",
+            "type": "uint16"
+          },
+          {
+            "internalType": "address",
+            "name": "operatorDroneId",
+            "type": "address"
+          },
+          {
+            "internalType": "string",
+            "name": "operationImageIPFS",
+            "type": "string"
+          }
+        ],
+        "internalType": "struct FarmFactory.MarkingOperationLog",
+        "name": "record",
+        "type": "tuple"
+      }
+    ],
+    "name": "addMarkingOperation",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "farmId",
+        "type": "address"
+      },
+      {
+        "components": [
+          {
+            "internalType": "uint32",
+            "name": "replantId",
+            "type": "uint32"
+          },
+          {
+            "internalType": "uint32",
+            "name": "linkedRemovalId",
+            "type": "uint32"
+          },
+          {
+            "internalType": "uint32",
+            "name": "timestamp",
+            "type": "uint32"
+          },
+          {
+            "internalType": "string",
+            "name": "gridCode",
+            "type": "string"
+          },
+          {
+            "internalType": "uint8",
+            "name": "seedlingCount",
+            "type": "uint8"
+          },
+          {
+            "internalType": "bytes32[]",
+            "name": "replantGPS",
+            "type": "bytes32[]"
+          },
+          {
+            "internalType": "string",
+            "name": "seedlingSource",
+            "type": "string"
+          },
+          {
+            "internalType": "string",
+            "name": "quarantineCertHash",
+            "type": "string"
+          },
+          {
+            "internalType": "string",
+            "name": "seedlingVariety",
+            "type": "string"
+          },
+          {
+            "internalType": "string",
+            "name": "replantImageIPFS",
+            "type": "string"
+          },
+          {
+            "internalType": "address",
+            "name": "farmerAddress",
+            "type": "address"
+          }
+        ],
+        "internalType": "struct FarmFactory.ReplantingRecord",
+        "name": "record",
+        "type": "tuple"
+      }
+    ],
+    "name": "addReplanting",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "farmId",
+        "type": "address"
+      },
+      {
+        "components": [
+          {
+            "internalType": "uint32",
+            "name": "recordId",
+            "type": "uint32"
+          },
+          {
+            "internalType": "uint32",
+            "name": "timestamp",
+            "type": "uint32"
+          },
+          {
+            "internalType": "string",
+            "name": "gridCode",
+            "type": "string"
+          },
+          {
+            "internalType": "bytes32",
+            "name": "gpsCenter",
+            "type": "bytes32"
+          },
+          {
+            "internalType": "uint8",
+            "name": "riskLevel",
+            "type": "uint8"
+          },
+          {
+            "internalType": "uint16",
+            "name": "ndviValue",
+            "type": "uint16"
+          },
+          {
+            "internalType": "uint16[3]",
+            "name": "spectralData",
+            "type": "uint16[3]"
+          },
+          {
+            "internalType": "uint8",
+            "name": "psyllidDensity",
+            "type": "uint8"
+          },
+          {
+            "internalType": "string",
+            "name": "evidenceImageIPFS",
+            "type": "string"
+          },
+          {
+            "internalType": "address",
+            "name": "operatorDroneId",
+            "type": "address"
+          }
+        ],
+        "internalType": "struct FarmFactory.RiskDetectionRecord",
+        "name": "record",
+        "type": "tuple"
+      }
+    ],
+    "name": "addRiskDetection",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "farmId",
+        "type": "address"
+      },
+      {
+        "components": [
+          {
+            "internalType": "uint32",
+            "name": "removalId",
+            "type": "uint32"
+          },
+          {
+            "internalType": "uint32",
+            "name": "linkedMarkingId",
+            "type": "uint32"
+          },
+          {
+            "internalType": "uint32",
+            "name": "timestamp",
+            "type": "uint32"
+          },
+          {
+            "internalType": "string",
+            "name": "gridCode",
+            "type": "string"
+          },
+          {
+            "internalType": "uint8",
+            "name": "confirmedDiseaseCount",
+            "type": "uint8"
+          },
+          {
+            "internalType": "uint8",
+            "name": "falsePositiveCount",
+            "type": "uint8"
+          },
+          {
+            "internalType": "bytes32[]",
+            "name": "removalGPS",
+            "type": "bytes32[]"
+          },
+          {
+            "internalType": "string",
+            "name": "removalEvidenceIPFS",
+            "type": "string"
+          },
+          {
+            "internalType": "address",
+            "name": "farmerAddress",
+            "type": "address"
+          },
+          {
+            "internalType": "bool",
+            "name": "replantScheduled",
+            "type": "bool"
+          }
+        ],
+        "internalType": "struct FarmFactory.DiseaseTreeRemovalRecord",
+        "name": "record",
+        "type": "tuple"
+      }
+    ],
+    "name": "addTreeRemoval",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "farmId",
+        "type": "address"
+      },
+      {
+        "internalType": "string",
+        "name": "name",
+        "type": "string"
+      }
+    ],
+    "name": "createFarm",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+      },
+      {
+        "internalType": "string",
+        "name": "",
+        "type": "string"
+      }
+    ],
+    "name": "farmGridCodeToId",
+    "outputs": [
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+      },
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "name": "farmGridList",
+    "outputs": [
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "name": "farms",
+    "outputs": [
+      {
+        "internalType": "address",
+        "name": "farmId",
+        "type": "address"
+      },
+      {
+        "internalType": "string",
+        "name": "name",
+        "type": "string"
+      },
+      {
+        "internalType": "address",
+        "name": "owner",
+        "type": "address"
+      },
+      {
+        "internalType": "uint256",
+        "name": "gridCount",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "farmId",
+        "type": "address"
+      }
+    ],
+    "name": "getFarm",
+    "outputs": [
+      {
+        "components": [
+          {
+            "internalType": "address",
+            "name": "farmId",
+            "type": "address"
+          },
+          {
+            "internalType": "string",
+            "name": "name",
+            "type": "string"
+          },
+          {
+            "internalType": "address",
+            "name": "owner",
+            "type": "address"
+          },
+          {
+            "internalType": "uint256",
+            "name": "gridCount",
+            "type": "uint256"
+          }
+        ],
+        "internalType": "struct FarmFactory.Farm",
+        "name": "",
+        "type": "tuple"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "farmId",
+        "type": "address"
+      }
+    ],
+    "name": "getFarmGrids",
+    "outputs": [
+      {
+        "internalType": "address[]",
+        "name": "",
+        "type": "address[]"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "farmId",
+        "type": "address"
+      },
+      {
+        "internalType": "string",
+        "name": "gridCode",
+        "type": "string"
+      }
+    ],
+    "name": "getGridIdByCode",
+    "outputs": [
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "farmId",
+        "type": "address"
+      },
+      {
+        "internalType": "string",
+        "name": "gridCode",
+        "type": "string"
+      }
+    ],
+    "name": "getGridInfo",
+    "outputs": [
+      {
+        "components": [
+          {
+            "internalType": "address",
+            "name": "gridId",
+            "type": "address"
+          },
+          {
+            "internalType": "string",
+            "name": "gridCode",
+            "type": "string"
+          },
+          {
+            "internalType": "address",
+            "name": "farmId",
+            "type": "address"
+          },
+          {
+            "internalType": "enum GridObjectFactory.GridTerrainType",
+            "name": "terrainType",
+            "type": "uint8"
+          },
+          {
+            "internalType": "enum GridObjectFactory.GridStatus",
+            "name": "status",
+            "type": "uint8"
+          },
+          {
+            "internalType": "enum GridObjectFactory.CitrusDiseaseType",
+            "name": "diseaseType",
+            "type": "uint8"
+          },
+          {
+            "internalType": "uint32",
+            "name": "lastStatusUpdateTime",
+            "type": "uint32"
+          }
+        ],
+        "internalType": "struct GridObjectFactory.GridInfo",
+        "name": "",
+        "type": "tuple"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "farmId",
+        "type": "address"
+      }
+    ],
+    "name": "getMarkingOperations",
+    "outputs": [
+      {
+        "components": [
+          {
+            "internalType": "uint32",
+            "name": "operationId",
+            "type": "uint32"
+          },
+          {
+            "internalType": "uint32",
+            "name": "linkedDetectionId",
+            "type": "uint32"
+          },
+          {
+            "internalType": "uint32",
+            "name": "timestamp",
+            "type": "uint32"
+          },
+          {
+            "internalType": "string",
+            "name": "gridCode",
+            "type": "string"
+          },
+          {
+            "internalType": "uint8",
+            "name": "markingPointCount",
+            "type": "uint8"
+          },
+          {
+            "internalType": "bytes32[]",
+            "name": "markingGPS",
+            "type": "bytes32[]"
+          },
+          {
+            "internalType": "string",
+            "name": "markerType",
+            "type": "string"
+          },
+          {
+            "internalType": "uint16",
+            "name": "markerDosagePerPoint",
+            "type": "uint16"
+          },
+          {
+            "internalType": "string",
+            "name": "isolationPesticide",
+            "type": "string"
+          },
+          {
+            "internalType": "uint16",
+            "name": "isolationDosage",
+            "type": "uint16"
+          },
+          {
+            "internalType": "address",
+            "name": "operatorDroneId",
+            "type": "address"
+          },
+          {
+            "internalType": "string",
+            "name": "operationImageIPFS",
+            "type": "string"
+          }
+        ],
+        "internalType": "struct FarmFactory.MarkingOperationLog[]",
+        "name": "",
+        "type": "tuple[]"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "farmId",
+        "type": "address"
+      }
+    ],
+    "name": "getRemovals",
+    "outputs": [
+      {
+        "components": [
+          {
+            "internalType": "uint32",
+            "name": "removalId",
+            "type": "uint32"
+          },
+          {
+            "internalType": "uint32",
+            "name": "linkedMarkingId",
+            "type": "uint32"
+          },
+          {
+            "internalType": "uint32",
+            "name": "timestamp",
+            "type": "uint32"
+          },
+          {
+            "internalType": "string",
+            "name": "gridCode",
+            "type": "string"
+          },
+          {
+            "internalType": "uint8",
+            "name": "confirmedDiseaseCount",
+            "type": "uint8"
+          },
+          {
+            "internalType": "uint8",
+            "name": "falsePositiveCount",
+            "type": "uint8"
+          },
+          {
+            "internalType": "bytes32[]",
+            "name": "removalGPS",
+            "type": "bytes32[]"
+          },
+          {
+            "internalType": "string",
+            "name": "removalEvidenceIPFS",
+            "type": "string"
+          },
+          {
+            "internalType": "address",
+            "name": "farmerAddress",
+            "type": "address"
+          },
+          {
+            "internalType": "bool",
+            "name": "replantScheduled",
+            "type": "bool"
+          }
+        ],
+        "internalType": "struct FarmFactory.DiseaseTreeRemovalRecord[]",
+        "name": "",
+        "type": "tuple[]"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "farmId",
+        "type": "address"
+      }
+    ],
+    "name": "getReplantings",
+    "outputs": [
+      {
+        "components": [
+          {
+            "internalType": "uint32",
+            "name": "replantId",
+            "type": "uint32"
+          },
+          {
+            "internalType": "uint32",
+            "name": "linkedRemovalId",
+            "type": "uint32"
+          },
+          {
+            "internalType": "uint32",
+            "name": "timestamp",
+            "type": "uint32"
+          },
+          {
+            "internalType": "string",
+            "name": "gridCode",
+            "type": "string"
+          },
+          {
+            "internalType": "uint8",
+            "name": "seedlingCount",
+            "type": "uint8"
+          },
+          {
+            "internalType": "bytes32[]",
+            "name": "replantGPS",
+            "type": "bytes32[]"
+          },
+          {
+            "internalType": "string",
+            "name": "seedlingSource",
+            "type": "string"
+          },
+          {
+            "internalType": "string",
+            "name": "quarantineCertHash",
+            "type": "string"
+          },
+          {
+            "internalType": "string",
+            "name": "seedlingVariety",
+            "type": "string"
+          },
+          {
+            "internalType": "string",
+            "name": "replantImageIPFS",
+            "type": "string"
+          },
+          {
+            "internalType": "address",
+            "name": "farmerAddress",
+            "type": "address"
+          }
+        ],
+        "internalType": "struct FarmFactory.ReplantingRecord[]",
+        "name": "",
+        "type": "tuple[]"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "farmId",
+        "type": "address"
+      }
+    ],
+    "name": "getRiskDetections",
+    "outputs": [
+      {
+        "components": [
+          {
+            "internalType": "uint32",
+            "name": "recordId",
+            "type": "uint32"
+          },
+          {
+            "internalType": "uint32",
+            "name": "timestamp",
+            "type": "uint32"
+          },
+          {
+            "internalType": "string",
+            "name": "gridCode",
+            "type": "string"
+          },
+          {
+            "internalType": "bytes32",
+            "name": "gpsCenter",
+            "type": "bytes32"
+          },
+          {
+            "internalType": "uint8",
+            "name": "riskLevel",
+            "type": "uint8"
+          },
+          {
+            "internalType": "uint16",
+            "name": "ndviValue",
+            "type": "uint16"
+          },
+          {
+            "internalType": "uint16[3]",
+            "name": "spectralData",
+            "type": "uint16[3]"
+          },
+          {
+            "internalType": "uint8",
+            "name": "psyllidDensity",
+            "type": "uint8"
+          },
+          {
+            "internalType": "string",
+            "name": "evidenceImageIPFS",
+            "type": "string"
+          },
+          {
+            "internalType": "address",
+            "name": "operatorDroneId",
+            "type": "address"
+          }
+        ],
+        "internalType": "struct FarmFactory.RiskDetectionRecord[]",
+        "name": "",
+        "type": "tuple[]"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "gridFactory",
+    "outputs": [
+      {
+        "internalType": "contract IGridObjectFactory",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+      },
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "name": "markingOperations",
+    "outputs": [
+      {
+        "internalType": "uint32",
+        "name": "operationId",
+        "type": "uint32"
+      },
+      {
+        "internalType": "uint32",
+        "name": "linkedDetectionId",
+        "type": "uint32"
+      },
+      {
+        "internalType": "uint32",
+        "name": "timestamp",
+        "type": "uint32"
+      },
+      {
+        "internalType": "string",
+        "name": "gridCode",
+        "type": "string"
+      },
+      {
+        "internalType": "uint8",
+        "name": "markingPointCount",
+        "type": "uint8"
+      },
+      {
+        "internalType": "string",
+        "name": "markerType",
+        "type": "string"
+      },
+      {
+        "internalType": "uint16",
+        "name": "markerDosagePerPoint",
+        "type": "uint16"
+      },
+      {
+        "internalType": "string",
+        "name": "isolationPesticide",
+        "type": "string"
+      },
+      {
+        "internalType": "uint16",
+        "name": "isolationDosage",
+        "type": "uint16"
+      },
+      {
+        "internalType": "address",
+        "name": "operatorDroneId",
+        "type": "address"
+      },
+      {
+        "internalType": "string",
+        "name": "operationImageIPFS",
+        "type": "string"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+      },
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "name": "removals",
+    "outputs": [
+      {
+        "internalType": "uint32",
+        "name": "removalId",
+        "type": "uint32"
+      },
+      {
+        "internalType": "uint32",
+        "name": "linkedMarkingId",
+        "type": "uint32"
+      },
+      {
+        "internalType": "uint32",
+        "name": "timestamp",
+        "type": "uint32"
+      },
+      {
+        "internalType": "string",
+        "name": "gridCode",
+        "type": "string"
+      },
+      {
+        "internalType": "uint8",
+        "name": "confirmedDiseaseCount",
+        "type": "uint8"
+      },
+      {
+        "internalType": "uint8",
+        "name": "falsePositiveCount",
+        "type": "uint8"
+      },
+      {
+        "internalType": "string",
+        "name": "removalEvidenceIPFS",
+        "type": "string"
+      },
+      {
+        "internalType": "address",
+        "name": "farmerAddress",
+        "type": "address"
+      },
+      {
+        "internalType": "bool",
+        "name": "replantScheduled",
+        "type": "bool"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+      },
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "name": "replantings",
+    "outputs": [
+      {
+        "internalType": "uint32",
+        "name": "replantId",
+        "type": "uint32"
+      },
+      {
+        "internalType": "uint32",
+        "name": "linkedRemovalId",
+        "type": "uint32"
+      },
+      {
+        "internalType": "uint32",
+        "name": "timestamp",
+        "type": "uint32"
+      },
+      {
+        "internalType": "string",
+        "name": "gridCode",
+        "type": "string"
+      },
+      {
+        "internalType": "uint8",
+        "name": "seedlingCount",
+        "type": "uint8"
+      },
+      {
+        "internalType": "string",
+        "name": "seedlingSource",
+        "type": "string"
+      },
+      {
+        "internalType": "string",
+        "name": "quarantineCertHash",
+        "type": "string"
+      },
+      {
+        "internalType": "string",
+        "name": "seedlingVariety",
+        "type": "string"
+      },
+      {
+        "internalType": "string",
+        "name": "replantImageIPFS",
+        "type": "string"
+      },
+      {
+        "internalType": "address",
+        "name": "farmerAddress",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+      },
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "name": "riskDetections",
+    "outputs": [
+      {
+        "internalType": "uint32",
+        "name": "recordId",
+        "type": "uint32"
+      },
+      {
+        "internalType": "uint32",
+        "name": "timestamp",
+        "type": "uint32"
+      },
+      {
+        "internalType": "string",
+        "name": "gridCode",
+        "type": "string"
+      },
+      {
+        "internalType": "bytes32",
+        "name": "gpsCenter",
+        "type": "bytes32"
+      },
+      {
+        "internalType": "uint8",
+        "name": "riskLevel",
+        "type": "uint8"
+      },
+      {
+        "internalType": "uint16",
+        "name": "ndviValue",
+        "type": "uint16"
+      },
+      {
+        "internalType": "uint8",
+        "name": "psyllidDensity",
+        "type": "uint8"
+      },
+      {
+        "internalType": "string",
+        "name": "evidenceImageIPFS",
+        "type": "string"
+      },
+      {
+        "internalType": "address",
+        "name": "operatorDroneId",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "farmId",
+        "type": "address"
+      },
+      {
+        "internalType": "string",
+        "name": "gridCode",
+        "type": "string"
+      },
+      {
+        "internalType": "enum GridObjectFactory.CitrusDiseaseType",
+        "name": "newType",
+        "type": "uint8"
+      }
+    ],
+    "name": "updateGridDiseaseType",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "farmId",
+        "type": "address"
+      },
+      {
+        "internalType": "string",
+        "name": "gridCode",
+        "type": "string"
+      },
+      {
+        "internalType": "enum GridObjectFactory.GridStatus",
+        "name": "newStatus",
+        "type": "uint8"
+      }
+    ],
+    "name": "updateGridStatus",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  }
+]

@@ -1,0 +1,485 @@
+[
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "farmId",
+        "type": "address"
+      },
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "gridId",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "internalType": "string",
+        "name": "gridCode",
+        "type": "string"
+      }
+    ],
+    "name": "FarmGridRegistered",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "gridId",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "internalType": "enum GridObjectFactory.CitrusDiseaseType",
+        "name": "oldType",
+        "type": "uint8"
+      },
+      {
+        "indexed": false,
+        "internalType": "enum GridObjectFactory.CitrusDiseaseType",
+        "name": "newType",
+        "type": "uint8"
+      }
+    ],
+    "name": "GridDiseaseTypeUpdated",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "gridId",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint32",
+        "name": "recordId",
+        "type": "uint32"
+      },
+      {
+        "indexed": false,
+        "internalType": "string",
+        "name": "operationType",
+        "type": "string"
+      },
+      {
+        "indexed": false,
+        "internalType": "address",
+        "name": "operator",
+        "type": "address"
+      }
+    ],
+    "name": "GridMaintenanceRecorded",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "gridId",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "internalType": "enum GridObjectFactory.GridStatus",
+        "name": "oldStatus",
+        "type": "uint8"
+      },
+      {
+        "indexed": false,
+        "internalType": "enum GridObjectFactory.GridStatus",
+        "name": "newStatus",
+        "type": "uint8"
+      }
+    ],
+    "name": "GridStatusUpdated",
+    "type": "event"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "gridId",
+        "type": "address"
+      },
+      {
+        "internalType": "uint32",
+        "name": "recordId",
+        "type": "uint32"
+      },
+      {
+        "internalType": "string",
+        "name": "operationType",
+        "type": "string"
+      },
+      {
+        "internalType": "string",
+        "name": "detail",
+        "type": "string"
+      },
+      {
+        "internalType": "string",
+        "name": "evidenceIPFS",
+        "type": "string"
+      }
+    ],
+    "name": "addMaintenanceRecord",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "gridId",
+        "type": "address"
+      }
+    ],
+    "name": "getGrid",
+    "outputs": [
+      {
+        "components": [
+          {
+            "internalType": "address",
+            "name": "gridId",
+            "type": "address"
+          },
+          {
+            "internalType": "string",
+            "name": "gridCode",
+            "type": "string"
+          },
+          {
+            "internalType": "address",
+            "name": "farmId",
+            "type": "address"
+          },
+          {
+            "internalType": "enum GridObjectFactory.GridTerrainType",
+            "name": "terrainType",
+            "type": "uint8"
+          },
+          {
+            "internalType": "enum GridObjectFactory.GridStatus",
+            "name": "status",
+            "type": "uint8"
+          },
+          {
+            "internalType": "enum GridObjectFactory.CitrusDiseaseType",
+            "name": "diseaseType",
+            "type": "uint8"
+          },
+          {
+            "internalType": "uint32",
+            "name": "lastStatusUpdateTime",
+            "type": "uint32"
+          }
+        ],
+        "internalType": "struct GridObjectFactory.GridInfo",
+        "name": "",
+        "type": "tuple"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "gridId",
+        "type": "address"
+      },
+      {
+        "internalType": "uint256",
+        "name": "index",
+        "type": "uint256"
+      }
+    ],
+    "name": "getMaintenanceRecordByIndex",
+    "outputs": [
+      {
+        "components": [
+          {
+            "internalType": "uint32",
+            "name": "recordId",
+            "type": "uint32"
+          },
+          {
+            "internalType": "uint32",
+            "name": "timestamp",
+            "type": "uint32"
+          },
+          {
+            "internalType": "string",
+            "name": "operationType",
+            "type": "string"
+          },
+          {
+            "internalType": "string",
+            "name": "detail",
+            "type": "string"
+          },
+          {
+            "internalType": "string",
+            "name": "evidenceIPFS",
+            "type": "string"
+          },
+          {
+            "internalType": "address",
+            "name": "operator",
+            "type": "address"
+          }
+        ],
+        "internalType": "struct GridObjectFactory.GridMaintenanceRecord",
+        "name": "",
+        "type": "tuple"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "gridId",
+        "type": "address"
+      }
+    ],
+    "name": "getMaintenanceRecordCount",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "gridId",
+        "type": "address"
+      }
+    ],
+    "name": "getMaintenanceRecords",
+    "outputs": [
+      {
+        "components": [
+          {
+            "internalType": "uint32",
+            "name": "recordId",
+            "type": "uint32"
+          },
+          {
+            "internalType": "uint32",
+            "name": "timestamp",
+            "type": "uint32"
+          },
+          {
+            "internalType": "string",
+            "name": "operationType",
+            "type": "string"
+          },
+          {
+            "internalType": "string",
+            "name": "detail",
+            "type": "string"
+          },
+          {
+            "internalType": "string",
+            "name": "evidenceIPFS",
+            "type": "string"
+          },
+          {
+            "internalType": "address",
+            "name": "operator",
+            "type": "address"
+          }
+        ],
+        "internalType": "struct GridObjectFactory.GridMaintenanceRecord[]",
+        "name": "",
+        "type": "tuple[]"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "name": "grids",
+    "outputs": [
+      {
+        "internalType": "address",
+        "name": "gridId",
+        "type": "address"
+      },
+      {
+        "internalType": "string",
+        "name": "gridCode",
+        "type": "string"
+      },
+      {
+        "internalType": "address",
+        "name": "farmId",
+        "type": "address"
+      },
+      {
+        "internalType": "enum GridObjectFactory.GridTerrainType",
+        "name": "terrainType",
+        "type": "uint8"
+      },
+      {
+        "internalType": "enum GridObjectFactory.GridStatus",
+        "name": "status",
+        "type": "uint8"
+      },
+      {
+        "internalType": "enum GridObjectFactory.CitrusDiseaseType",
+        "name": "diseaseType",
+        "type": "uint8"
+      },
+      {
+        "internalType": "uint32",
+        "name": "lastStatusUpdateTime",
+        "type": "uint32"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+      },
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "name": "maintenanceRecords",
+    "outputs": [
+      {
+        "internalType": "uint32",
+        "name": "recordId",
+        "type": "uint32"
+      },
+      {
+        "internalType": "uint32",
+        "name": "timestamp",
+        "type": "uint32"
+      },
+      {
+        "internalType": "string",
+        "name": "operationType",
+        "type": "string"
+      },
+      {
+        "internalType": "string",
+        "name": "detail",
+        "type": "string"
+      },
+      {
+        "internalType": "string",
+        "name": "evidenceIPFS",
+        "type": "string"
+      },
+      {
+        "internalType": "address",
+        "name": "operator",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "gridId",
+        "type": "address"
+      },
+      {
+        "internalType": "string",
+        "name": "gridCode",
+        "type": "string"
+      },
+      {
+        "internalType": "address",
+        "name": "farmId",
+        "type": "address"
+      },
+      {
+        "internalType": "enum GridObjectFactory.GridTerrainType",
+        "name": "terrainType",
+        "type": "uint8"
+      }
+    ],
+    "name": "registerGrid",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "gridId",
+        "type": "address"
+      },
+      {
+        "internalType": "enum GridObjectFactory.CitrusDiseaseType",
+        "name": "newType",
+        "type": "uint8"
+      }
+    ],
+    "name": "updateDiseaseType",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "gridId",
+        "type": "address"
+      },
+      {
+        "internalType": "enum GridObjectFactory.GridStatus",
+        "name": "newStatus",
+        "type": "uint8"
+      }
+    ],
+    "name": "updateGridStatus",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  }
+]
