@@ -1,29 +1,31 @@
 // SPDX-License-Identifier: MIT
-pragma solidity ^0.8.0;
+pragma solidity ^0.8.20;
 
-/// @title GridObjectFactory - 网格对象工厂，管理果园 10m×10m 网格的基本信息与防控状态
+import "./User.sol";
+import "./DroneObjectFactory.sol";
+
+/// @title GridObjectFactory - 网格对象工厂
+/// @notice 管理 10m×10m 网格的防控状态和维护记录
 contract GridObjectFactory {
 
-    // 网格防控状态（根据产品故事全流程设计）
     enum GridStatus {
-        Normal,             // 正常，无风险
-        PsyllidRisk,        // 木虱风险（侦察发现高密度，但未确认病株）
-        MarkedSuspect,      // 已荧光标记，待人工确认
-        ConfirmedInfected,  // 人工确认黄龙病阳性（待移除）
-        Removed,            // 病株已移除（等待补种或已补种）
-        Replanted,          // 已补种健康苗
-        Quarantine,         // 区域隔离观察（片状爆发后）
-        Unknown             // 数据缺失或未巡检
+        Normal,             // 正常
+        PsyllidRisk,        // 木虱风险
+        MarkedSuspect,      // 已标记待确认
+        ConfirmedInfected,  // 确认感染
+        Removed,            // 已移除
+        Replanted,          // 已补种
+        Quarantine,         // 隔离观察
+        Unknown             // 未知
     }
 
     enum GridTerrainType {
         Valley,     // 山谷
         Flat,       // 平地
         Ridge,      // 山脊
-        Cliff       // 悬崖/陡坡
+        Cliff       // 悬崖
     }
 
-    // 黄龙病及其他主要病害类型（可扩展）
     enum CitrusDiseaseType {
         None,
         HuangLongBing,      // 黄龙病
@@ -33,134 +35,221 @@ contract GridObjectFactory {
     }
 
     struct GridInfo {
-        address gridId;             // 网格唯一标识（建议用 CREATE2 或专用地址）
-        string gridCode;            // 网格编码，如 "B3"、"C1"
-        address farmId;             // 所属农场
+        string gridCode;
+        address farmId;
         GridTerrainType terrainType;
-        GridStatus status;      // 当前防控状态
-        CitrusDiseaseType diseaseType; // 当前主要病害（通常为 HuangLongBing）
-        uint32 lastStatusUpdateTime;   // 状态最后变更时间戳
+        GridStatus status;
+        CitrusDiseaseType diseaseType;
+        uint32 lastStatusUpdateTime;
+        bool exists;
     }
 
-    // 网格信息表
-    mapping(address => GridInfo) public grids;
-
-    // 网格维护/养护日志（生物防治、施肥、修剪等常规操作）
-    struct GridMaintenanceRecord {
-        uint32 recordId;            // 日志唯一ID（可由调用者生成或自增）
+    // 维护记录优化：使用映射替代数组
+    struct MaintenanceRecord {
         uint32 timestamp;
-        string operationType;       // 如：生物防治、人工施肥、修剪、诱捕带设置
-        string detail;              // 详细描述，如 "释放捕食螨 500 只"
-        string evidenceIPFS;        // 现场照片/视频 IPFS CID
-        address operator;           // 操作人（果农或技术员）
+        uint8 operationTypeCode;  // 1=生物防治, 2=施肥, 3=修剪, 4=诱捕带
+        string detail;            // 简短描述
+        bytes32 evidenceIPFSHash; // IPFS hash (32字节)
+        address operator;
     }
 
-    mapping(address => GridMaintenanceRecord[]) public maintenanceRecords;
+    mapping(address => GridInfo) public grids;
+    mapping(address => mapping(uint32 => MaintenanceRecord)) public maintenanceRecords;
+    mapping(address => uint32) public maintenanceRecordCount;
+
+    User public immutable userContract;
+    DroneObjectFactory public immutable droneFactory;
+    
+    // 授权的调用者（FarmFactory）
+    mapping(address => bool) public authorizedCallers;
 
     // ─── 事件 ────────────────────────────────────────────────
+    event GridRegistered(
+        address indexed farmId, 
+        address indexed gridId, 
+        string gridCode
+    );
+    event GridStatusUpdated(
+        address indexed gridId, 
+        GridStatus indexed oldStatus, 
+        GridStatus indexed newStatus
+    );
+    event GridDiseaseTypeUpdated(
+        address indexed gridId, 
+        CitrusDiseaseType oldType, 
+        CitrusDiseaseType newType
+    );
+    event MaintenanceRecorded(
+        address indexed gridId, 
+        uint32 indexed recordId, 
+        uint8 operationType
+    );
+    event CallerAuthorized(address indexed caller);
+    event CallerRevoked(address indexed caller);
 
-    event FarmGridRegistered(address indexed farmId, address indexed gridId, string gridCode);
-    event GridStatusUpdated(address indexed gridId, GridStatus oldStatus, GridStatus newStatus);
-    event GridDiseaseTypeUpdated(address indexed gridId, CitrusDiseaseType oldType, CitrusDiseaseType newType);
-    event GridMaintenanceRecorded(address indexed gridId, uint32 recordId, string operationType, address operator);
+    // ─── 修饰符 ──────────────────────────────────────────────
+    modifier onlyAdmin() {
+        require(
+            userContract.getUserRole(msg.sender) == User.UserRole.Admin,
+            "Only admin allowed"
+        );
+        _;
+    }
 
-    // ─── 核心修改函数 ───────────────────────────────────────
+    modifier onlyAuthorizedCaller() {
+        require(
+            authorizedCallers[msg.sender] || 
+            userContract.getUserRole(msg.sender) == User.UserRole.Admin,
+            "Unauthorized caller"
+        );
+        _;
+    }
 
-    /// @notice 注册一个新的网格（通常由 FarmFactory 调用）
+    modifier onlyFarmerOrDrone() {
+        bool isValidUser = userContract.userExists(msg.sender) && 
+                          userContract.getUserRole(msg.sender) == User.UserRole.Farmer;
+        bool isValidDrone = droneFactory.droneExists(msg.sender);
+        
+        require(isValidUser || isValidDrone, "Unauthorized");
+        _;
+    }
+
+    // ─── 构造函数 ────────────────────────────────────────────
+    constructor(address _userContract, address _droneFactory) {
+        require(_userContract != address(0), "Invalid user contract");
+        require(_droneFactory != address(0), "Invalid drone factory");
+        
+        userContract = User(_userContract);
+        droneFactory = DroneObjectFactory(_droneFactory);
+    }
+
+    // ─── 授权管理 ────────────────────────────────────────────
+    
+    /// @notice 授权调用者（如 FarmFactory）
+    function authorizeCaller(address _caller) external onlyAdmin {
+        require(_caller != address(0), "Invalid caller");
+        authorizedCallers[_caller] = true;
+        emit CallerAuthorized(_caller);
+    }
+
+    function revokeCaller(address _caller) external onlyAdmin {
+        authorizedCallers[_caller] = false;
+        emit CallerRevoked(_caller);
+    }
+
+    // ─── 核心函数 ────────────────────────────────────────────
+    
+    /// @notice 注册网格（由授权调用者如 FarmFactory 调用）
     function registerGrid(
         address gridId,
         string calldata gridCode,
         address farmId,
         GridTerrainType terrainType
-    ) external {
+    ) external onlyAuthorizedCaller {
         require(gridId != address(0), "Invalid gridId");
         require(bytes(gridCode).length > 0, "Empty gridCode");
         require(farmId != address(0), "Invalid farmId");
-        require(grids[gridId].gridId == address(0), "Grid already registered");
+        require(!grids[gridId].exists, "Grid already registered");
 
         grids[gridId] = GridInfo({
-            gridId: gridId,
             gridCode: gridCode,
             farmId: farmId,
             terrainType: terrainType,
             status: GridStatus.Normal,
             diseaseType: CitrusDiseaseType.None,
-            lastStatusUpdateTime: uint32(block.timestamp)
+            lastStatusUpdateTime: uint32(block.timestamp),
+            exists: true
         });
 
-        emit FarmGridRegistered(farmId, gridId, gridCode);
+        emit GridRegistered(farmId, gridId, gridCode);
     }
 
-    /// @notice 更新网格防控状态（侦察、标记、移除、补种等关键节点调用）
+    /// @notice 更新网格状态（授权调用者或农民/无人机）
     function updateGridStatus(
         address gridId,
         GridStatus newStatus
-    ) external {
-        GridInfo storage info = grids[gridId];
-        require(info.gridId != address(0), "Grid not found");
+    ) external onlyAuthorizedCaller {
+        require(grids[gridId].exists, "Grid not found");
+        
+        GridStatus oldStatus = grids[gridId].status;
+        grids[gridId].status = newStatus;
+        grids[gridId].lastStatusUpdateTime = uint32(block.timestamp);
 
-        GridStatus old = info.status;
-        info.status = newStatus;
-        info.lastStatusUpdateTime = uint32(block.timestamp);
-
-        emit GridStatusUpdated(gridId, old, newStatus);
+        emit GridStatusUpdated(gridId, oldStatus, newStatus);
     }
 
-    /// @notice 更新病害类型（通常在人工确认后调用）
+    /// @notice 更新病害类型
     function updateDiseaseType(
         address gridId,
         CitrusDiseaseType newType
-    ) external {
-        GridInfo storage info = grids[gridId];
-        require(info.gridId != address(0), "Grid not found");
+    ) external onlyAuthorizedCaller {
+        require(grids[gridId].exists, "Grid not found");
+        
+        CitrusDiseaseType oldType = grids[gridId].diseaseType;
+        grids[gridId].diseaseType = newType;
+        grids[gridId].lastStatusUpdateTime = uint32(block.timestamp);
 
-        CitrusDiseaseType old = info.diseaseType;
-        info.diseaseType = newType;
-        info.lastStatusUpdateTime = uint32(block.timestamp);
-
-        emit GridDiseaseTypeUpdated(gridId, old, newType);
+        emit GridDiseaseTypeUpdated(gridId, oldType, newType);
     }
 
-    /// @notice 添加日常养护记录（生物防治、施肥等）
+    /// @notice 添加维护记录（优化版）
     function addMaintenanceRecord(
         address gridId,
-        uint32 recordId,
-        string calldata operationType,
+        uint8 operationTypeCode,
         string calldata detail,
-        string calldata evidenceIPFS
-    ) external {
-        require(grids[gridId].gridId != address(0), "Grid not found");
-        require(bytes(operationType).length > 0, "Operation type required");
-
-        maintenanceRecords[gridId].push(GridMaintenanceRecord({
-            recordId: recordId,
+        bytes32 evidenceIPFSHash
+    ) external onlyFarmerOrDrone {
+        require(grids[gridId].exists, "Grid not found");
+        require(operationTypeCode > 0 && operationTypeCode <= 4, "Invalid type");
+        
+        uint32 recordId = maintenanceRecordCount[gridId];
+        
+        maintenanceRecords[gridId][recordId] = MaintenanceRecord({
             timestamp: uint32(block.timestamp),
-            operationType: operationType,
+            operationTypeCode: operationTypeCode,
             detail: detail,
-            evidenceIPFS: evidenceIPFS,
+            evidenceIPFSHash: evidenceIPFSHash,
             operator: msg.sender
-        }));
-
-        emit GridMaintenanceRecorded(gridId, recordId, operationType, msg.sender);
+        });
+        
+        maintenanceRecordCount[gridId]++;
+        
+        emit MaintenanceRecorded(gridId, recordId, operationTypeCode);
     }
 
-    // ─── 查询函数 ─────────────────────────────────────────────
-
+    // ─── 查询函数 ────────────────────────────────────────────
+    
     function getGrid(address gridId) external view returns (GridInfo memory) {
-        require(grids[gridId].gridId != address(0), "Grid not found");
+        require(grids[gridId].exists, "Grid not found");
         return grids[gridId];
     }
 
-    function getMaintenanceRecords(address gridId) external view returns (GridMaintenanceRecord[] memory) {
-        return maintenanceRecords[gridId];
+    function gridExists(address gridId) external view returns (bool) {
+        return grids[gridId].exists;
     }
 
-    function getMaintenanceRecordCount(address gridId) external view returns (uint256) {
-        return maintenanceRecords[gridId].length;
+    function getMaintenanceRecord(
+        address gridId, 
+        uint32 recordId
+    ) external view returns (MaintenanceRecord memory) {
+        require(recordId < maintenanceRecordCount[gridId], "Record not found");
+        return maintenanceRecords[gridId][recordId];
     }
 
-    function getMaintenanceRecordByIndex(address gridId, uint256 index) external view returns (GridMaintenanceRecord memory) {
-        require(index < maintenanceRecords[gridId].length, "Index out of bounds");
-        return maintenanceRecords[gridId][index];
+    /// @notice 获取最近N条维护记录
+    function getRecentMaintenanceRecords(
+        address gridId,
+        uint32 count
+    ) external view returns (MaintenanceRecord[] memory) {
+        uint32 total = maintenanceRecordCount[gridId];
+        uint32 actualCount = count > total ? total : count;
+        
+        MaintenanceRecord[] memory records = new MaintenanceRecord[](actualCount);
+        
+        for (uint32 i = 0; i < actualCount; i++) {
+            records[i] = maintenanceRecords[gridId][total - actualCount + i];
+        }
+        
+        return records;
     }
 }

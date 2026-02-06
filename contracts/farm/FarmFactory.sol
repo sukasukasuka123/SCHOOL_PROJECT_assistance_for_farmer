@@ -1,78 +1,145 @@
 // SPDX-License-Identifier: MIT
-pragma solidity ^0.8.0;
+pragma solidity ^0.8.20;
 
 import "./GridObjectFactory.sol";
 import "./DroneObjectFactory.sol";
+import "./User.sol";
 
-interface IGridObjectFactory {
-    function registerGrid(
-        address gridId,
-        string calldata gridCode,
-        address farmId,
-        GridObjectFactory.GridTerrainType terrainType
-    ) external;
-
-    function updateGridStatus(address gridId, GridObjectFactory.GridStatus newStatus) external;
-    function updateDiseaseType(address gridId, GridObjectFactory.CitrusDiseaseType newType) external;
-    function addMaintenanceRecord(
-        address gridId,
-        uint32 recordId,
-        string calldata operationType,
-        string calldata detail,
-        string calldata evidenceIPFS
-    ) external;
-
-    function getGrid(address gridId) external view returns (GridObjectFactory.GridInfo memory);
-}
-
-/// @title FarmFactory - 农场工厂，统一管理农场及其下属网格的权限与操作入口
+/// @notice 统一管理农场及其网格的权限与操作入口
 contract FarmFactory {
 
     struct Farm {
-        address farmId;
         string name;
         address owner;
-        uint256 gridCount;
+        uint32 createdTime;
+        bool exists;
     }
 
-    // farmId → Farm 信息
+    // 业务记录优化：使用映射 + 计数器
+    struct RiskDetectionRecord {
+        uint32 timestamp;
+        bytes32 gridCodeHash;
+        bytes32 gpsCenter;
+        uint8 riskLevel;
+        uint16 ndviValue;
+        uint16[3] spectralData;
+        uint8 psyllidDensity;
+        bytes32 evidenceIPFSHash;
+        address operatorDrone;
+    }
+
+    struct MarkingOperationLog {
+        uint32 timestamp;
+        uint32 linkedDetectionId;
+        bytes32 gridCodeHash;
+        uint8 markingPointCount;
+        uint8 markerTypeCode;
+        uint16 markerDosagePerPoint;
+        uint8 isolationPesticideCode;
+        uint16 isolationDosage;
+        address operatorDrone;
+        bytes32 operationIPFSHash;
+    }
+
+    struct DiseaseTreeRemovalRecord {
+        uint32 timestamp;
+        uint32 linkedMarkingId;
+        bytes32 gridCodeHash;
+        uint8 confirmedDiseaseCount;
+        uint8 falsePositiveCount;
+        bytes32 removalEvidenceIPFSHash;
+        address farmer;
+        bool replantScheduled;
+    }
+
+    struct ReplantingRecord {
+        uint32 timestamp;
+        uint32 linkedRemovalId;
+        bytes32 gridCodeHash;
+        uint8 seedlingCount;
+        uint8 seedlingVarietyCode;
+        bytes32 quarantineCertHash;
+        bytes32 replantIPFSHash;
+        address farmer;
+    }
+
+    // 农场信息
     mapping(address => Farm) public farms;
-
-    // farmId → gridCode → gridId（快速反查）
     mapping(address => mapping(string => address)) public farmGridCodeToId;
-
-    // farmId → 所有 gridId 列表（便于前端分页/展示）
     mapping(address => address[]) public farmGridList;
 
-    IGridObjectFactory public immutable gridFactory;
+    // 业务记录（使用映射存储）
+    mapping(address => mapping(uint32 => RiskDetectionRecord)) public riskDetections;
+    mapping(address => uint32) public riskDetectionCount;
+    
+    mapping(address => mapping(uint32 => MarkingOperationLog)) public markingOperations;
+    mapping(address => uint32) public markingOperationCount;
+    
+    mapping(address => mapping(uint32 => DiseaseTreeRemovalRecord)) public removals;
+    mapping(address => uint32) public removalCount;
+    
+    mapping(address => mapping(uint32 => ReplantingRecord)) public replantings;
+    mapping(address => uint32) public replantingCount;
 
-    // ─── 修饰符 ───────────────────────────────────────────────
+    GridObjectFactory public immutable gridFactory;
+    User public immutable userContract;
+    DroneObjectFactory public immutable droneFactory;
+
+    // ─── 事件 ────────────────────────────────────────────────
+    event FarmCreated(address indexed farmId, string name, address indexed owner);
+    event GridAddedToFarm(address indexed farmId, address indexed gridId, string gridCode);
+    event RiskDetected(address indexed farmId, uint32 indexed recordId, uint8 riskLevel);
+    event GridMarked(address indexed farmId, uint32 indexed operationId);
+    event TreesRemoved(address indexed farmId, uint32 indexed removalId);
+    event TreesReplanted(address indexed farmId, uint32 indexed replantId);
+
+    // ─── 修饰符 ──────────────────────────────────────────────
+    modifier onlyFarmer() {
+        require(userContract.getUserRole(msg.sender) == User.UserRole.Farmer, "Only farmer allowed");
+        _;
+    }
 
     modifier onlyFarmOwner(address farmId) {
+        require(farms[farmId].exists, "Farm not found");
         require(farms[farmId].owner == msg.sender, "Not farm owner");
         _;
     }
 
-    // ─── 事件 ─────────────────────────────────────────────────
-
-    event FarmCreated(address indexed farmId, string name, address owner);
-    event GridAddedToFarm(address indexed farmId, address indexed gridId, string gridCode);
-
-    constructor(address _gridFactory) {
-        require(_gridFactory != address(0), "Invalid grid factory");
-        gridFactory = IGridObjectFactory(_gridFactory);
+    modifier onlyScoutDrone() {
+        require(droneFactory.droneExists(msg.sender), "Not a drone");
+        require(droneFactory.getDroneType(msg.sender) == DroneObjectFactory.DroneType.Scout, "Only scout drone allowed");
+        _;
     }
 
-    function createFarm(address farmId, string calldata name) external {
+    modifier onlyMarkerDrone() {
+        require(droneFactory.droneExists(msg.sender), "Not a drone");
+        require(droneFactory.getDroneType(msg.sender) == DroneObjectFactory.DroneType.Marker, "Only marker drone allowed");
+        _;
+    }
+
+    // ─── 构造函数 ────────────────────────────────────────────
+    constructor(address _gridFactory, address _userContract, address _droneFactory) {
+        require(_gridFactory != address(0), "Invalid grid factory");
+        require(_userContract != address(0), "Invalid user contract");
+        require(_droneFactory != address(0), "Invalid drone factory");
+        
+        gridFactory = GridObjectFactory(_gridFactory);
+        userContract = User(_userContract);
+        droneFactory = DroneObjectFactory(_droneFactory);
+    }
+
+    // ─── 农场管理 ────────────────────────────────────────────
+    
+    function createFarm(address farmId, string calldata name) external onlyFarmer {
         require(farmId != address(0), "Invalid farmId");
         require(bytes(name).length > 0, "Name required");
-        require(farms[farmId].farmId == address(0), "Farm already exists");
+        require(!farms[farmId].exists, "Farm already exists");
 
         farms[farmId] = Farm({
-            farmId: farmId,
             name: name,
             owner: msg.sender,
-            gridCount: 0
+            createdTime: uint32(block.timestamp),
+            exists: true
         });
 
         emit FarmCreated(farmId, name, msg.sender);
@@ -84,19 +151,16 @@ contract FarmFactory {
         string calldata gridCode,
         GridObjectFactory.GridTerrainType terrainType
     ) external onlyFarmOwner(farmId) {
-        require(farms[farmId].farmId != address(0), "Farm not found");
+        require(gridId != address(0), "Invalid gridId");
         require(farmGridCodeToId[farmId][gridCode] == address(0), "Grid code already used");
 
         gridFactory.registerGrid(gridId, gridCode, farmId, terrainType);
 
         farmGridCodeToId[farmId][gridCode] = gridId;
         farmGridList[farmId].push(gridId);
-        farms[farmId].gridCount++;
 
         emit GridAddedToFarm(farmId, gridId, gridCode);
     }
-
-    // ─── 代理操作（果农通过 Farm 调用，统一权限控制） ──────
 
     function updateGridStatus(
         address farmId,
@@ -105,7 +169,6 @@ contract FarmFactory {
     ) external onlyFarmOwner(farmId) {
         address gridId = farmGridCodeToId[farmId][gridCode];
         require(gridId != address(0), "Grid not found");
-
         gridFactory.updateGridStatus(gridId, newStatus);
     }
 
@@ -116,27 +179,25 @@ contract FarmFactory {
     ) external onlyFarmOwner(farmId) {
         address gridId = farmGridCodeToId[farmId][gridCode];
         require(gridId != address(0), "Grid not found");
-
         gridFactory.updateDiseaseType(gridId, newType);
     }
 
     function addGridMaintenance(
         address farmId,
         string calldata gridCode,
-        uint32 recordId,
-        string calldata operationType,
+        uint8 operationTypeCode,
         string calldata detail,
-        string calldata evidenceIPFS
+        bytes32 evidenceIPFSHash
     ) external onlyFarmOwner(farmId) {
         address gridId = farmGridCodeToId[farmId][gridCode];
         require(gridId != address(0), "Grid not found");
-
-        gridFactory.addMaintenanceRecord(gridId, recordId, operationType, detail, evidenceIPFS);
+        gridFactory.addMaintenanceRecord(gridId, operationTypeCode, detail, evidenceIPFSHash);
     }
 
-    // ─── 查询 ─────────────────────────────────────────────────
-
+    // ─── 查询函数 ────────────────────────────────────────────
+    
     function getFarm(address farmId) external view returns (Farm memory) {
+        require(farms[farmId].exists, "Farm not found");
         return farms[farmId];
     }
 
@@ -148,176 +209,248 @@ contract FarmFactory {
         return farmGridList[farmId];
     }
 
-    function getGridInfo(address farmId, string calldata gridCode) external view returns (GridObjectFactory.GridInfo memory) {
+    function getGridInfo(address farmId, string calldata gridCode) 
+        external view returns (GridObjectFactory.GridInfo memory) 
+    {
         address gridId = farmGridCodeToId[farmId][gridCode];
         require(gridId != address(0), "Grid not found");
         return gridFactory.getGrid(gridId);
     }
-//———————————————————————————————————————————————————————————— 
-//——————————————业务结构体————————————————————————————————————
-//———————————————————————————————————————————————————————————— 
-    // 1. 风险区检测记录（侦察机发现木虱高风险区）
-    struct RiskDetectionRecord {
-        uint32 recordId;                // 记录唯一ID
-        uint32 timestamp;               // 检测时间
-        string gridCode;                // 网格编号
-        bytes32 gpsCenter;              // 网格中心坐标（简化存储为 bytes32）
-        uint8 riskLevel;                // 风险等级 0-100
-        uint16 ndviValue;               // NDVI × 100
-        uint16[3] spectralData;         // 680/730/800 nm 数据
-        uint8 psyllidDensity;           // 木虱密度（只/板）
-        string evidenceImageIPFS;       // 航拍证据
-        address operatorDroneId;        // 执行侦察的无人机地址
+
+    // ─── 业务函数 ────────────────────────────────────────────
+
+    function addRiskDetection(
+        address farmId,
+        string calldata gridCode,
+        bytes32 gpsCenter,
+        uint8 riskLevel,
+        uint16 ndviValue,
+        uint16[3] calldata spectralData,
+        uint8 psyllidDensity,
+        bytes32 evidenceIPFSHash
+    ) external onlyScoutDrone {
+        require(farms[farmId].exists, "Farm not found");
+        address gridId = farmGridCodeToId[farmId][gridCode];
+        require(gridId != address(0), "Grid not found");
+
+        uint32 recordId = riskDetectionCount[farmId];
+        
+        riskDetections[farmId][recordId] = RiskDetectionRecord({
+            timestamp: uint32(block.timestamp),
+            gridCodeHash: keccak256(bytes(gridCode)),
+            gpsCenter: gpsCenter,
+            riskLevel: riskLevel,
+            ndviValue: ndviValue,
+            spectralData: spectralData,
+            psyllidDensity: psyllidDensity,
+            evidenceIPFSHash: evidenceIPFSHash,
+            operatorDrone: msg.sender
+        });
+        
+        riskDetectionCount[farmId]++;
+
+        if (riskLevel >= 50) {
+            gridFactory.updateGridStatus(gridId, GridObjectFactory.GridStatus.PsyllidRisk);
+        }
+
+        emit RiskDetected(farmId, recordId, riskLevel);
     }
 
-    // 2. 标记操作记录（荧光标记 + 隔离带）
-    struct MarkingOperationLog {
-        uint32 operationId;
-        uint32 linkedDetectionId;       // 关联的检测记录ID
-        uint32 timestamp;
-        string gridCode;
-        uint8 markingPointCount;        // 标记点数
-        bytes32[] markingGPS;           // 标记点坐标数组
-        string markerType;              // 标记剂类型描述
-        uint16 markerDosagePerPoint;    // 单点用量 ml
-        string isolationPesticide;      // 隔离带农药
-        uint16 isolationDosage;         // 隔离带总用量 ml
-        address operatorDroneId;        // 执行标记的无人机
-        string operationImageIPFS;      // 标记完成照片
+    function addMarkingOperation(
+        address farmId,
+        string calldata gridCode,
+        uint32 linkedDetectionId,
+        uint8 markingPointCount,
+        uint8 markerTypeCode,
+        uint16 markerDosagePerPoint,
+        uint8 isolationPesticideCode,
+        uint16 isolationDosage,
+        bytes32 operationIPFSHash
+    ) external onlyMarkerDrone {
+        require(farms[farmId].exists, "Farm not found");
+        address gridId = farmGridCodeToId[farmId][gridCode];
+        require(gridId != address(0), "Grid not found");
+
+        uint32 operationId = markingOperationCount[farmId];
+        
+        markingOperations[farmId][operationId] = MarkingOperationLog({
+            timestamp: uint32(block.timestamp),
+            linkedDetectionId: linkedDetectionId,
+            gridCodeHash: keccak256(bytes(gridCode)),
+            markingPointCount: markingPointCount,
+            markerTypeCode: markerTypeCode,
+            markerDosagePerPoint: markerDosagePerPoint,
+            isolationPesticideCode: isolationPesticideCode,
+            isolationDosage: isolationDosage,
+            operatorDrone: msg.sender,
+            operationIPFSHash: operationIPFSHash
+        });
+        
+        markingOperationCount[farmId]++;
+        gridFactory.updateGridStatus(gridId, GridObjectFactory.GridStatus.MarkedSuspect);
+
+        emit GridMarked(farmId, operationId);
     }
 
-    // 3. 病株移除记录
-    struct DiseaseTreeRemovalRecord {
-        uint32 removalId;
-        uint32 linkedMarkingId;         // 关联的标记操作ID
-        uint32 timestamp;
-        string gridCode;
-        uint8 confirmedDiseaseCount;    // 确认病株数
-        uint8 falsePositiveCount;       // 误判数
-        bytes32[] removalGPS;           // 移除位置
-        string removalEvidenceIPFS;     // 照片证据
-        address farmerAddress;          // 执行移除的果农地址
-        bool replantScheduled;          // 是否已安排补种
+    function addTreeRemoval(
+        address farmId,
+        string calldata gridCode,
+        uint32 linkedMarkingId,
+        uint8 confirmedDiseaseCount,
+        uint8 falsePositiveCount,
+        bytes32 removalEvidenceIPFSHash,
+        bool replantScheduled
+    ) external onlyFarmOwner(farmId) {
+        address gridId = farmGridCodeToId[farmId][gridCode];
+        require(gridId != address(0), "Grid not found");
+
+        uint32 removalId = removalCount[farmId];
+        
+        removals[farmId][removalId] = DiseaseTreeRemovalRecord({
+            timestamp: uint32(block.timestamp),
+            linkedMarkingId: linkedMarkingId,
+            gridCodeHash: keccak256(bytes(gridCode)),
+            confirmedDiseaseCount: confirmedDiseaseCount,
+            falsePositiveCount: falsePositiveCount,
+            removalEvidenceIPFSHash: removalEvidenceIPFSHash,
+            farmer: msg.sender,
+            replantScheduled: replantScheduled
+        });
+        
+        removalCount[farmId]++;
+
+        if (confirmedDiseaseCount > 0) {
+            gridFactory.updateDiseaseType(gridId, GridObjectFactory.CitrusDiseaseType.HuangLongBing);
+            gridFactory.updateGridStatus(gridId, GridObjectFactory.GridStatus.Removed);
+        }
+
+        emit TreesRemoved(farmId, removalId);
     }
 
-    // 4. 补种记录
-    struct ReplantingRecord {
-        uint32 replantId;
-        uint32 linkedRemovalId;         // 关联的移除记录ID
-        uint32 timestamp;
-        string gridCode;
-        uint8 seedlingCount;
-        bytes32[] replantGPS;
-        string seedlingSource;          // 苗木来源
-        string quarantineCertHash;      // 检疫证明哈希
-        string seedlingVariety;         // 品种
-        string replantImageIPFS;
-        address farmerAddress;
+    function addReplanting(
+        address farmId,
+        string calldata gridCode,
+        uint32 linkedRemovalId,
+        uint8 seedlingCount,
+        uint8 seedlingVarietyCode,
+        bytes32 quarantineCertHash,
+        bytes32 replantIPFSHash
+    ) external onlyFarmOwner(farmId) {
+        address gridId = farmGridCodeToId[farmId][gridCode];
+        require(gridId != address(0), "Grid not found");
+
+        uint32 replantId = replantingCount[farmId];
+        
+        replantings[farmId][replantId] = ReplantingRecord({
+            timestamp: uint32(block.timestamp),
+            linkedRemovalId: linkedRemovalId,
+            gridCodeHash: keccak256(bytes(gridCode)),
+            seedlingCount: seedlingCount,
+            seedlingVarietyCode: seedlingVarietyCode,
+            quarantineCertHash: quarantineCertHash,
+            replantIPFSHash: replantIPFSHash,
+            farmer: msg.sender
+        });
+        
+        replantingCount[farmId]++;
+        gridFactory.updateGridStatus(gridId, GridObjectFactory.GridStatus.Replanted);
+
+        emit TreesReplanted(farmId, replantId);
     }
 
-    // 存储映射（以 farmId 为维度）
+    // ─── 业务记录查询 ────────────────────────────────────────
 
-    mapping(address => RiskDetectionRecord[]) public riskDetections;        // farmId => records
-    mapping(address => MarkingOperationLog[]) public markingOperations;
-    mapping(address => DiseaseTreeRemovalRecord[]) public removals;
-    mapping(address => ReplantingRecord[]) public replantings;
-
-    function getRiskDetections(address farmId) external view returns (RiskDetectionRecord[] memory) {
-        return riskDetections[farmId];
+    function getRiskDetection(address farmId, uint32 recordId) 
+        external view returns (RiskDetectionRecord memory) 
+    {
+        require(recordId < riskDetectionCount[farmId], "Record not found");
+        return riskDetections[farmId][recordId];
     }
 
-    function getMarkingOperations(address farmId) external view returns (MarkingOperationLog[] memory) {
-        return markingOperations[farmId];
+    function getRecentRiskDetections(address farmId, uint32 count) 
+        external view returns (RiskDetectionRecord[] memory) 
+    {
+        uint32 total = riskDetectionCount[farmId];
+        uint32 actualCount = count > total ? total : count;
+        
+        RiskDetectionRecord[] memory records = new RiskDetectionRecord[](actualCount);
+        for (uint32 i = 0; i < actualCount; i++) {
+            records[i] = riskDetections[farmId][total - actualCount + i];
+        }
+        return records;
     }
 
-    function getRemovals(address farmId) external view returns (DiseaseTreeRemovalRecord[] memory) {
-        return removals[farmId];
+    function getMarkingOperation(address farmId, uint32 operationId) 
+        external view returns (MarkingOperationLog memory) 
+    {
+        require(operationId < markingOperationCount[farmId], "Operation not found");
+        return markingOperations[farmId][operationId];
     }
 
-    function getReplantings(address farmId) external view returns (ReplantingRecord[] memory) {
-        return replantings[farmId];
+    function getRecentMarkingOperations(address farmId, uint32 count) 
+        external view returns (MarkingOperationLog[] memory) 
+    {
+        uint32 total = markingOperationCount[farmId];
+        uint32 actualCount = count > total ? total : count;
+        
+        MarkingOperationLog[] memory records = new MarkingOperationLog[](actualCount);
+        for (uint32 i = 0; i < actualCount; i++) {
+            records[i] = markingOperations[farmId][total - actualCount + i];
+        }
+        return records;
     }
 
-    event RiskDetected(address indexed farmId, string gridCode, uint32 recordId);
-    event GridMarked(address indexed farmId, string gridCode, uint32 operationId);
-    event TreesRemoved(address indexed farmId, string gridCode, uint32 removalId);
-    event TreesReplanted(address indexed farmId, string gridCode, uint32 replantId);
-
-    // 修改这几个函数的签名，使用 calldata 版本的结构体
-
-function addRiskDetection(
-    address farmId,
-    RiskDetectionRecord calldata record
-) external onlyFarmOwner(farmId) {
-    address gridId = farmGridCodeToId[farmId][record.gridCode];
-    require(gridId != address(0), "Grid not found");
-
-    // 强制覆盖链上生成字段
-    RiskDetectionRecord memory newRecord = record;
-    newRecord.timestamp = uint32(block.timestamp);
-
-    riskDetections[farmId].push(newRecord);
-
-    if (record.riskLevel >= 50) {
-        gridFactory.updateGridStatus(gridId, GridObjectFactory.GridStatus.PsyllidRisk);
+    function getRemoval(address farmId, uint32 removalId) 
+        external view returns (DiseaseTreeRemovalRecord memory) 
+    {
+        require(removalId < removalCount[farmId], "Removal not found");
+        return removals[farmId][removalId];
     }
 
-    emit RiskDetected(farmId, record.gridCode, record.recordId);
-}
-
-function addMarkingOperation(
-    address farmId,
-    MarkingOperationLog calldata record
-) external onlyFarmOwner(farmId) {
-    address gridId = farmGridCodeToId[farmId][record.gridCode];
-    require(gridId != address(0), "Grid not found");
-
-    MarkingOperationLog memory newRecord = record;
-    newRecord.timestamp = uint32(block.timestamp);
-
-    markingOperations[farmId].push(newRecord);
-
-    gridFactory.updateGridStatus(gridId, GridObjectFactory.GridStatus.MarkedSuspect);
-
-    emit GridMarked(farmId, record.gridCode, record.operationId);
-}
-
-function addTreeRemoval(
-    address farmId,
-    DiseaseTreeRemovalRecord calldata record
-) external onlyFarmOwner(farmId) {
-    address gridId = farmGridCodeToId[farmId][record.gridCode];
-    require(gridId != address(0), "Grid not found");
-
-    DiseaseTreeRemovalRecord memory newRecord = record;
-    newRecord.timestamp = uint32(block.timestamp);
-    newRecord.farmerAddress = msg.sender;
-
-    removals[farmId].push(newRecord);
-
-    if (record.confirmedDiseaseCount > 0) {
-        gridFactory.updateDiseaseType(gridId, GridObjectFactory.CitrusDiseaseType.HuangLongBing);
-        gridFactory.updateGridStatus(gridId, GridObjectFactory.GridStatus.Removed);
+    function getRecentRemovals(address farmId, uint32 count) 
+        external view returns (DiseaseTreeRemovalRecord[] memory) 
+    {
+        uint32 total = removalCount[farmId];
+        uint32 actualCount = count > total ? total : count;
+        
+        DiseaseTreeRemovalRecord[] memory records = new DiseaseTreeRemovalRecord[](actualCount);
+        for (uint32 i = 0; i < actualCount; i++) {
+            records[i] = removals[farmId][total - actualCount + i];
+        }
+        return records;
     }
 
-    emit TreesRemoved(farmId, record.gridCode, record.removalId);
-}
+    function getReplanting(address farmId, uint32 replantId) 
+        external view returns (ReplantingRecord memory) 
+    {
+        require(replantId < replantingCount[farmId], "Replanting not found");
+        return replantings[farmId][replantId];
+    }
 
-function addReplanting(
-    address farmId,
-    ReplantingRecord calldata record
-) external onlyFarmOwner(farmId) {
-    address gridId = farmGridCodeToId[farmId][record.gridCode];
-    require(gridId != address(0), "Grid not found");
+    function getRecentReplantings(address farmId, uint32 count) 
+        external view returns (ReplantingRecord[] memory) 
+    {
+        uint32 total = replantingCount[farmId];
+        uint32 actualCount = count > total ? total : count;
+        
+        ReplantingRecord[] memory records = new ReplantingRecord[](actualCount);
+        for (uint32 i = 0; i < actualCount; i++) {
+            records[i] = replantings[farmId][total - actualCount + i];
+        }
+        return records;
+    }
 
-    ReplantingRecord memory newRecord = record;
-    newRecord.timestamp = uint32(block.timestamp);
-    newRecord.farmerAddress = msg.sender;
-
-    replantings[farmId].push(newRecord);
-
-    gridFactory.updateGridStatus(gridId, GridObjectFactory.GridStatus.Replanted);
-
-    emit TreesReplanted(farmId, record.gridCode, record.replantId);
-}
+    function getRecordCounts(address farmId) external view returns (
+        uint32 risks,
+        uint32 markings,
+        uint32 removalsCount,
+        uint32 replantingsCount
+    ) {
+        return (
+            riskDetectionCount[farmId],
+            markingOperationCount[farmId],
+            removalCount[farmId],
+            replantingCount[farmId]
+        );
+    }
 }

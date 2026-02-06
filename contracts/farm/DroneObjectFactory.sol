@@ -1,116 +1,182 @@
 // SPDX-License-Identifier: MIT
-pragma solidity ^0.8.0;
+pragma solidity ^0.8.20;
 
+import "./User.sol";
+
+/// @notice 管理侦察机和标记机的注册、状态和维护记录
 contract DroneObjectFactory {
+    
     enum DroneType { Scout, Marker, Other }
-    enum state  { Used, Free, Maintenance } // Used - 使用中, Free - 空闲, Maintenance - 维护中
-    struct Drone{
-        address droneId;               // 无人机设备地址(即唯一的无人机ID)  
-        DroneType droneTypeValue;              // 设备类型："侦察机"/"标记机"
-        string firmwareVersion;        // 固件版本号
-        state droneState;              // 无人机状态
+    enum DroneState { Used, Free, Maintenance }
+    
+    struct Drone {
+        DroneType droneType;
+        string firmwareVersion;
+        DroneState state;
+        uint32 registeredTime;
+        bool exists;
     }
 
+    // 无人机信息映射
     mapping(address => Drone) public drones;
+    
+    // 维护日志优化：使用映射 + 计数器，避免大数组
+    struct MaintenanceLog {
+        uint32 timestamp;
+        uint8 maintenanceTypeCode;  // 编码：1=传感器校准, 2=固件升级, 3=其他
+        bool sensorCalibrated;
+        string firmwareVersion;
+        address technician;
+    }
+    
+    mapping(address => mapping(uint32 => MaintenanceLog)) public maintenanceLogs;
+    mapping(address => uint32) public maintenanceLogCount;
 
+    User public immutable userContract;
+
+    // ─── 事件 ────────────────────────────────────────────────
+    event DroneRegistered(
+        address indexed droneId, 
+        DroneType indexed droneType,
+        uint32 timestamp
+    );
+    event DroneStateUpdated(
+        address indexed droneId, 
+        DroneState indexed newState
+    );
+    event MaintenanceLogAdded(
+        address indexed droneId, 
+        uint32 indexed logId,
+        uint8 maintenanceType
+    );
+    event FirmwareUpdated(
+        address indexed droneId, 
+        string newVersion
+    );
+
+    // ─── 修饰符 ──────────────────────────────────────────────
+    modifier onlyTechnician() {
+        require(
+            userContract.getUserRole(msg.sender) == User.UserRole.Technician ||
+            userContract.getUserRole(msg.sender) == User.UserRole.Admin,
+            "Only technician or admin allowed"
+        );
+        _;
+    }
+
+    // ─── 构造函数 ────────────────────────────────────────────
+    constructor(address _userContract) {
+        require(_userContract != address(0), "Invalid user contract");
+        userContract = User(_userContract);
+    }
+
+    // ─── 核心函数 ────────────────────────────────────────────
+    
+    /// @notice 注册无人机
     function registerDrone(
         address _droneId,
         DroneType _droneType,
         string calldata _firmwareVersion,
-        state _droneState
-    ) external {
+        DroneState _droneState
+    ) external onlyTechnician {
         require(_droneId != address(0), "Invalid drone ID");
-        require(drones[_droneId].droneId == address(0), "Drone already registered");
+        require(!drones[_droneId].exists, "Drone already registered");
+        
         drones[_droneId] = Drone({
-            droneId: _droneId,
-            droneTypeValue: DroneType(_droneType),
+            droneType: _droneType,
             firmwareVersion: _firmwareVersion,
-            droneState: _droneState
+            state: _droneState,
+            registeredTime: uint32(block.timestamp),
+            exists: true
         });
+
+        emit DroneRegistered(_droneId, _droneType, uint32(block.timestamp));
     }
 
+    /// @notice 更新无人机状态
+    function updateDroneState(
+        address _droneId, 
+        DroneState _newState
+    ) external onlyTechnician {
+        require(drones[_droneId].exists, "Drone not found");
+        drones[_droneId].state = _newState;
+        emit DroneStateUpdated(_droneId, _newState);
+    }
+
+    /// @notice 更新固件版本
+    function updateFirmwareVersion(
+        address _droneId, 
+        string calldata _newFirmwareVersion
+    ) external onlyTechnician {
+        require(drones[_droneId].exists, "Drone not found");
+        drones[_droneId].firmwareVersion = _newFirmwareVersion;
+        emit FirmwareUpdated(_droneId, _newFirmwareVersion);
+    }
+
+    /// @notice 添加维护日志（优化版）
+    function addMaintenanceLog(
+        address _droneId,
+        uint8 _maintenanceTypeCode,
+        bool _sensorCalibrated,
+        string calldata _firmwareVersion
+    ) external onlyTechnician {
+        require(drones[_droneId].exists, "Drone not found");
+        require(_maintenanceTypeCode > 0 && _maintenanceTypeCode <= 3, "Invalid type");
+        
+        uint32 logId = maintenanceLogCount[_droneId];
+        
+        maintenanceLogs[_droneId][logId] = MaintenanceLog({
+            timestamp: uint32(block.timestamp),
+            maintenanceTypeCode: _maintenanceTypeCode,
+            sensorCalibrated: _sensorCalibrated,
+            firmwareVersion: _firmwareVersion,
+            technician: msg.sender
+        });
+        
+        maintenanceLogCount[_droneId]++;
+        
+        emit MaintenanceLogAdded(_droneId, logId, _maintenanceTypeCode);
+    }
+
+    // ─── 查询函数 ────────────────────────────────────────────
+    
     function getDrone(address _droneId) external view returns (Drone memory) {
+        require(drones[_droneId].exists, "Drone not found");
         return drones[_droneId];
     }
 
-    function updateDroneState(address _droneId, state _newState) external {
-        drones[_droneId].droneState = _newState;
+    function getDroneType(address _droneId) external view returns (DroneType) {
+        require(drones[_droneId].exists, "Drone not found");
+        return drones[_droneId].droneType;
     }
-    // ────────────────────────────────────────────────
-    //                  维护日志部分
-    // ────────────────────────────────────────────────
 
-    struct DroneMaintenanceLog {    
-        uint32 logId;                  // 日志ID    
-        address droneId;               // 无人机设备地址    
-        uint32 timestamp;              // 维护时间    
-        string droneType;              // 设备类型："侦察机"/"标记机"    
-        string maintenanceType;        // 维护类型："传感器校准"/"固件升级"    
-        bool sensorCalibrated;         // 传感器校准状态    
-        string firmwareVersion;        // 固件版本号    
-        address technicianAddress;     // 技术员地址    
-    }    
-    mapping(address => DroneMaintenanceLog[]) public droneMaintenanceLogs;
+    function droneExists(address _droneId) external view returns (bool) {
+        return drones[_droneId].exists;
+    }
 
-    function addDroneMaintenanceLog(
+    /// @notice 获取维护日志（按ID）
+    function getMaintenanceLog(
+        address _droneId, 
+        uint32 _logId
+    ) external view returns (MaintenanceLog memory) {
+        require(_logId < maintenanceLogCount[_droneId], "Log not found");
+        return maintenanceLogs[_droneId][_logId];
+    }
+
+    /// @notice 获取最近N条维护日志（避免返回全部）
+    function getRecentMaintenanceLogs(
         address _droneId,
-        uint32 _logId,
-        uint32 _timestamp,
-        string calldata _droneType,
-        string calldata _maintenanceType,
-        bool _sensorCalibrated,
-        string calldata _firmwareVersion,
-        address _technicianAddress
-    ) external {
-        droneMaintenanceLogs[_droneId].push(DroneMaintenanceLog({
-            logId: _logId,
-            droneId: _droneId,
-            timestamp: _timestamp,
-            droneType: _droneType,
-            maintenanceType: _maintenanceType,
-            sensorCalibrated: _sensorCalibrated,
-            firmwareVersion: _firmwareVersion,
-            technicianAddress: _technicianAddress
-        }));
-    }
-    function getDroneMaintenanceLogs(address _droneId) external view returns (DroneMaintenanceLog[] memory) {
-        return droneMaintenanceLogs[_droneId];
-    }
-    function getDroneMaintenanceLogCount(address _droneId) external view returns (uint256) {
-        return droneMaintenanceLogs[_droneId].length;
-    }
-    function getDroneMaintenanceLogByIndex(address _droneId, uint256 index) external view returns (DroneMaintenanceLog memory) {
-        require(index < droneMaintenanceLogs[_droneId].length, "Index out of bounds");
-        return droneMaintenanceLogs[_droneId][index];
-    }
-    function getDronMaintenanceLogById(address _droneId, uint32 _logId) external view returns (DroneMaintenanceLog memory) {
-        DroneMaintenanceLog[] memory logs = droneMaintenanceLogs[_droneId];
-        for (uint256 i = 0; i < logs.length; i++) {
-            if (logs[i].logId == _logId) {
-                return logs[i];
-            }
+        uint32 _count
+    ) external view returns (MaintenanceLog[] memory) {
+        uint32 total = maintenanceLogCount[_droneId];
+        uint32 count = _count > total ? total : _count;
+        
+        MaintenanceLog[] memory logs = new MaintenanceLog[](count);
+        
+        for (uint32 i = 0; i < count; i++) {
+            logs[i] = maintenanceLogs[_droneId][total - count + i];
         }
-        revert("Log ID not found");
-    }
-    function getDronMaintenanceLogInPage(address _droneId, uint256 page, uint256 pageSize) external view returns (DroneMaintenanceLog[] memory) {
-        DroneMaintenanceLog[] memory logs = droneMaintenanceLogs[_droneId];
-        uint256 start = page * pageSize;
-        uint256 end = start + pageSize;
-        if (end > logs.length) {
-            end = logs.length;
-        }
-        require(start < end, "Invalid page or page size");
-
-        DroneMaintenanceLog[] memory pagedLogs = new DroneMaintenanceLog[](end - start);
-        for (uint256 i = start; i < end; i++) {
-            pagedLogs[i - start] = logs[i];
-        }
-        return pagedLogs;
-    }
-    function updateFirmwareVersion(address _droneId, string calldata _newFirmwareVersion) external {
-        drones[_droneId].firmwareVersion = _newFirmwareVersion;
-    }
-    function updateDroneType(address _droneId, DroneType _newDroneType) external {
-        drones[_droneId].droneTypeValue = _newDroneType;
+        
+        return logs;
     }
 }
