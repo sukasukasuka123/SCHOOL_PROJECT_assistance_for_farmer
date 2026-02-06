@@ -1,0 +1,338 @@
+@startuml Smart_Contract_Architecture
+allowmixing
+' ===== 样式配置 =====
+skinparam class {
+    BackgroundColor<<Core>> LightBlue
+    BackgroundColor<<Factory>> LightGreen
+    BackgroundColor<<Data>> LightYellow
+    BorderColor Black
+    ArrowColor DarkBlue
+    FontSize 12
+}
+
+skinparam note {
+    BackgroundColor LightYellow
+    BorderColor Orange
+}
+
+' ===== 枚举定义 =====
+enum UserRole {
+    Admin
+    Technician
+    Farmer
+    Guest
+}
+
+enum DroneType {
+    Scout
+    Marker
+    Other
+}
+
+enum DroneState {
+    Used
+    Free
+    Maintenance
+}
+
+enum GridStatus {
+    Normal
+    PsyllidRisk
+    MarkedSuspect
+    ConfirmedInfected
+    Removed
+    Replanted
+    Quarantine
+    Unknown
+}
+
+enum GridTerrainType {
+    Valley
+    Flat
+    Ridge
+    Cliff
+}
+
+enum CitrusDiseaseType {
+    None
+    HuangLongBing
+    Anthracnose
+    Canker
+    Other
+}
+
+' ===== 核心合约 =====
+class User <<Core>> {
+    + adminCount : uint256
+    + registerUser(address, string, UserRole, string)
+    + updateUserRole(address, UserRole)
+    + getUserRole(address): UserRole
+    + getUserInfo(address): UserInfo
+    + userExists(address): bool
+}
+
+class UserInfo {
+    string name
+    UserRole role
+    string contactInfo
+    uint32 registeredTime
+    bool exists
+}
+
+class DroneObjectFactory <<Factory>> {
+    + userContract : User
+    + registerDrone(address, DroneType, string, DroneState)
+    + updateDroneState(address, DroneState)
+    + updateFirmwareVersion(address, string)
+    + addMaintenanceLog(address, uint8, bool, string)
+    + getDrone(address): Drone
+    + getDroneType(address): DroneType
+    + droneExists(address): bool
+    + getMaintenanceLog(address, uint32): MaintenanceLog
+    + getRecentMaintenanceLogs(address, uint32): List<MaintenanceLog>
+}
+
+class Drone {
+    DroneType droneType
+    string firmwareVersion
+    DroneState state
+    uint32 registeredTime
+    bool exists
+}
+
+class MaintenanceLog {
+    uint32 timestamp
+    uint8 maintenanceTypeCode
+    bool sensorCalibrated
+    string firmwareVersion
+    address technician
+}
+
+class GridObjectFactory <<Factory>> {
+    + userContract : User
+    + droneFactory : DroneObjectFactory
+    + authorizeCaller(address)
+    + revokeCaller(address)
+    + registerGrid(address, string, address, GridTerrainType)
+    + updateGridStatus(address, GridStatus)
+    + updateDiseaseType(address, CitrusDiseaseType)
+    + addMaintenanceRecord(address, uint8, string, bytes32)
+    + getGrid(address): GridInfo
+    + gridExists(address): bool
+    + getMaintenanceRecord(address, uint32): MaintenanceRecord
+    + getRecentMaintenanceRecords(address, uint32): List<MaintenanceRecord>
+}
+
+class GridInfo {
+    string gridCode
+    address farmId
+    GridTerrainType terrainType
+    GridStatus status
+    CitrusDiseaseType diseaseType
+    uint32 lastStatusUpdateTime
+    bool exists
+}
+
+class MaintenanceRecord {
+    uint32 timestamp
+    uint8 operationTypeCode
+    string detail
+    bytes32 evidenceIPFSHash
+    address operator
+}
+
+class FarmFactory <<Factory>> {
+    + gridFactory : GridObjectFactory
+    + userContract : User
+    + droneFactory : DroneObjectFactory
+    + createFarm(address, string)
+    + addGridToFarm(address, address, string, GridTerrainType)
+    + updateGridStatus(address, string, GridStatus)
+    + updateGridDiseaseType(address, string, CitrusDiseaseType)
+    + addGridMaintenance(address, string, uint8, string, bytes32)
+    + addRiskDetection(address, string, bytes32, uint8, uint16, uint16[3], uint8, bytes32)
+    + addMarkingOperation(address, string, uint32, uint8, uint8, uint16, uint8, uint16, bytes32)
+    + addTreeRemoval(address, string, uint32, uint8, uint8, bytes32, bool)
+    + addReplanting(address, string, uint32, uint8, uint8, bytes32, bytes32)
+    + getFarm(address): Farm
+    + getGridIdByCode(address, string): address
+    + getFarmGrids(address): List<address>
+    + getGridInfo(address, string): GridInfo
+    + getRiskDetection(address, uint32): RiskDetectionRecord
+    + getRecentRiskDetections(address, uint32): List<RiskDetectionRecord>
+    + getMarkingOperation(address, uint32): MarkingOperationLog
+    + getRecentMarkingOperations(address, uint32): List<MarkingOperationLog>
+    + getRemoval(address, uint32): DiseaseTreeRemovalRecord
+    + getRecentRemovals(address, uint32): List<DiseaseTreeRemovalRecord>
+    + getReplanting(address, uint32): ReplantingRecord
+    + getRecentReplantings(address, uint32): List<ReplantingRecord>
+    + getRecordCounts(address): (uint32, uint32, uint32, uint32)
+}
+
+class Farm {
+    string name
+    address owner
+    uint32 createdTime
+    bool exists
+}
+
+class RiskDetectionRecord {
+    uint32 timestamp
+    bytes32 gridCodeHash
+    bytes32 gpsCenter
+    uint8 riskLevel
+    uint16 ndviValue
+    uint16[3] spectralData
+    uint8 psyllidDensity
+    bytes32 evidenceIPFSHash
+    address operatorDrone
+}
+
+class MarkingOperationLog {
+    uint32 timestamp
+    uint32 linkedDetectionId
+    bytes32 gridCodeHash
+    uint8 markingPointCount
+    uint8 markerTypeCode
+    uint16 markerDosagePerPoint
+    uint8 isolationPesticideCode
+    uint16 isolationDosage
+    address operatorDrone
+    bytes32 operationIPFSHash
+}
+
+class DiseaseTreeRemovalRecord {
+    uint32 timestamp
+    uint32 linkedMarkingId
+    bytes32 gridCodeHash
+    uint8 confirmedDiseaseCount
+    uint8 falsePositiveCount
+    bytes32 removalEvidenceIPFSHash
+    address farmer
+    bool replantScheduled
+}
+
+class ReplantingRecord {
+    uint32 timestamp
+    uint32 linkedRemovalId
+    bytes32 gridCodeHash
+    uint8 seedlingCount
+    uint8 seedlingVarietyCode
+    bytes32 quarantineCertHash
+    bytes32 replantIPFSHash
+    address farmer
+}
+
+' ===== 依赖关系 =====
+DroneObjectFactory "1" *-- "1" User : uses >
+note on link
+  验证技术员权限\nonlyTechnician修饰符
+end note
+
+GridObjectFactory "1" *-- "1" User : uses >
+GridObjectFactory "1" *-- "1" DroneObjectFactory : uses >
+note on link
+  验证用户角色\n验证无人机类型
+end note
+
+FarmFactory "1" *-- "1" User : uses >
+FarmFactory "1" *-- "1" DroneObjectFactory : uses >
+FarmFactory "1" *-- "1" GridObjectFactory : delegates >
+note on link
+  FarmFactory 是授权调用者\n通过 authorizeCaller() 授权
+end note
+
+FarmFactory ..|> GridObjectFactory : <<authorized caller>>
+note on link #LightPink
+  部署后需调用 gridFactory.authorizeCaller(farmFactoryAddress)\nFarmFactory 才能调用 registerGrid() 等方法
+end note
+
+' ===== 角色与权限 =====
+package "角色与权限" {
+    actor Admin
+    actor Technician
+    actor Farmer
+    actor ScoutDrone
+    actor MarkerDrone
+}
+
+Admin --> User : 注册用户\n管理角色
+Technician --> DroneObjectFactory : 注册无人机\n维护记录
+Farmer --> FarmFactory : 创建农场\n管理网格\n病株移除\n补种操作
+ScoutDrone --> FarmFactory : 风险检测
+MarkerDrone --> FarmFactory : 标记操作
+
+' ===== 核心业务流程 =====
+package "核心业务流程" {
+    usecase "1. 侦察机检测风险" as UC1
+    usecase "2. 标记机荧光标记" as UC2
+    usecase "3. 果农移除病株" as UC3
+    usecase "4. 果农补种苗木" as UC4
+}
+
+ScoutDrone --> UC1
+UC1 ..> GridObjectFactory : 更新网格状态
+UC1 ..> FarmFactory : 记录风险数据
+
+MarkerDrone --> UC2
+UC2 ..> GridObjectFactory : 标记为待确认
+UC2 ..> FarmFactory : 记录标记操作
+
+Farmer --> UC3
+UC3 ..> GridObjectFactory : 更新为已移除
+UC3 ..> FarmFactory : 记录移除数据
+
+Farmer --> UC4
+UC4 ..> GridObjectFactory : 更新为已补种
+UC4 ..> FarmFactory : 记录补种数据
+
+' ===== 注释 =====
+note bottom of FarmFactory
+  <b>部署顺序（重要）:</b>\n
+  1. User\n
+  2. DroneObjectFactory(User)\n
+  3. GridObjectFactory(User, DroneObjectFactory)\n
+  4. FarmFactory(GridObjectFactory, User, DroneObjectFactory)\n
+  5. gridFactory.authorizeCaller(farmFactoryAddress) ⚠️
+end note
+
+note top of User
+  <b>核心职责:</b>\n
+  • 用户身份管理\n
+  • 角色权限验证\n
+  • 多管理员支持
+end note
+
+note top of DroneObjectFactory
+  <b>核心职责:</b>\n
+  • 无人机注册管理\n
+  • 固件版本控制\n
+  • 维护日志记录\n
+  • 状态跟踪
+end note
+
+note top of GridObjectFactory
+  <b>核心职责:</b>\n
+  • 网格基础信息\n
+  • 防控状态管理\n
+  • 病害类型追踪\n
+  • 日常维护记录\n
+  <b>授权机制:</b>\n
+  • authorizedCallers 映射\n
+  • 允许 FarmFactory 调用
+end note
+
+note top of FarmFactory
+  <b>核心职责:</b>\n
+  • 农场与网格关联\n
+  • 业务流程编排\n
+  • 风险-标记-移除-补种全流程\n
+  • 历史数据查询\n
+  <b>优化特性:</b>\n
+  • 映射存储替代数组\n
+  • 编码替代字符串\n
+  • IPFS 哈希存储\n
+  • Gas 优化查询
+end note
+
+@enduml

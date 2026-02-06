@@ -1,0 +1,147 @@
+@startuml Smart_Contract_Architecture
+allowmixing
+
+' ===== 全局样式 =====
+skinparam usecaseFontSize 28
+skinparam BackgroundColor #F5F5F5
+skinparam shadowing true
+skinparam dpi 300
+skinparam ArrowThickness 6
+skinparam defaultFontSize 24
+skinparam classFontSize 28
+skinparam actorFontSize 28
+
+skinparam class {
+    BorderColor Black
+    ArrowColor DarkBlue
+    FontSize 32
+}
+skinparam note {
+    BackgroundColor LightYellow
+    BorderColor Orange
+    FontSize 18
+}
+
+skinparam package {
+    BackgroundColor #F5F5F5
+    BorderColor #BDBDBD
+    FontSize 34
+}
+
+
+' ===== 枚举 =====
+enum UserRole {
+    Admin
+    Technician
+    Farmer
+    Guest
+}
+enum DroneType {
+    Scout
+    Marker
+    Other
+}
+enum DroneState {
+    Used
+    Free
+    Maintenance
+}
+enum GridStatus {
+    Normal
+    PsyllidRisk
+    MarkedSuspect
+    ConfirmedInfected
+    Removed
+    Replanted
+    Quarantine
+    Unknown
+}
+enum GridTerrainType {
+    Valley
+    Flat
+    Ridge
+    Cliff
+}
+enum CitrusDiseaseType {
+    None
+    HuangLongBing
+    Anthracnose
+    Canker
+    Other
+}
+
+' ===== 核心类（简化方法，保留字段） =====
+class User{
+    + adminCount : uint256
+}
+
+class DroneObjectFactory{}
+class GridObjectFactory{}
+class FarmFactory{}
+
+' ===== 依赖关系 =====
+DroneObjectFactory "1" *-- "1" User : uses
+GridObjectFactory "1" *-- "1" User : uses
+GridObjectFactory "1" *-- "1" DroneObjectFactory : uses
+FarmFactory "1" *-- "1" User : uses
+FarmFactory "1" *-- "1" DroneObjectFactory : uses
+FarmFactory "1" *-- "1" GridObjectFactory : delegates
+FarmFactory ..|> GridObjectFactory : <<authorized caller>>
+
+' ===== 角色与权限 =====
+package "角色与权限" {
+    actor Admin
+    actor Technician
+    actor Farmer
+    actor ScoutDrone
+    actor MarkerDrone
+}
+
+' ===== 彩虹色映射角色操作 =====
+' Admin: 红色 (#FF0000)
+' Technician: 橙色 (#FF7F00)
+' Farmer: 黄色 (#FFFF00)
+' ScoutDrone: 绿色 (#00FF00)
+' MarkerDrone: 蓝色 (#0000FF)
+
+Admin -[#FF0000]-> User : 注册用户/管理角色
+Technician -[#FF7F00]-> DroneObjectFactory : 注册无人机/维护记录
+Farmer -[#FFFF00]-> FarmFactory : 创建农场/管理网格/病株移除/补种
+ScoutDrone -[#00FF00]-> FarmFactory : 风险检测
+MarkerDrone -[#0000FF]-> FarmFactory : 标记操作
+
+' ===== 核心业务流程 =====
+package "核心业务流程" {
+    usecase "1. 侦察机检测风险" as UC1
+    usecase "2. 标记机荧光标记" as UC2
+    usecase "3. 果农移除病株" as UC3
+    usecase "4. 果农补种苗木" as UC4
+}
+
+ScoutDrone --> UC1
+UC1 ..> GridObjectFactory
+UC1 ..> FarmFactory
+
+MarkerDrone --> UC2
+UC2 ..> GridObjectFactory
+UC2 ..> FarmFactory
+
+Farmer --> UC3
+UC3 ..> GridObjectFactory
+UC3 ..> FarmFactory
+
+Farmer --> UC4
+UC4 ..> GridObjectFactory
+UC4 ..> FarmFactory
+
+' ===== 注释 =====
+note bottom of FarmFactory
+<b>部署顺序:</b>
+1. User
+2. DroneObjectFactory(User)
+3. GridObjectFactory(User, DroneObjectFactory)
+4. FarmFactory(GridObjectFactory, User, DroneObjectFactory)
+5. gridFactory.authorizeCaller(farmFactoryAddress)
+end note
+
+@enduml

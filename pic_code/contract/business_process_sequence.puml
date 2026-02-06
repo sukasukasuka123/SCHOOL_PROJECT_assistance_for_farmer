@@ -1,0 +1,388 @@
+@startuml Business Process Sequence Diagram
+
+!define SUCCESS_COLOR #C8E6C9
+!define WARNING_COLOR #FFECB3
+!define ERROR_COLOR #FFCDD2
+
+skinparam sequenceArrowThickness 2
+skinparam roundcorner 10
+skinparam maxmessagesize 200
+
+skinparam participant {
+    BackgroundColor #E3F2FD
+    BorderColor #1976D2
+    FontSize 12
+}
+
+skinparam actor {
+    BackgroundColor #FFF9C4
+    BorderColor #F57C00
+}
+
+skinparam note {
+    BackgroundColor #FFECB3
+    BorderColor #F57C00
+}
+
+title 黄龙病防控完整业务流程
+
+' ========================================
+' 参与者
+' ========================================
+
+actor "管理员\nAdmin" as Admin
+actor "技术员\nTechnician" as Tech
+actor "果农\nFarmer" as Farmer
+actor "侦察机\nScout Drone" as Scout
+actor "标记机\nMarker Drone" as Marker
+
+participant "User\n合约" as User
+participant "DroneObjectFactory\n合约" as DroneFactory
+participant "GridObjectFactory\n合约" as GridFactory
+participant "FarmFactory\n合约" as FarmFactory
+
+' ========================================
+' 阶段 0: 系统初始化
+' ========================================
+
+== 阶段 0: 系统初始化与部署 ==
+
+Admin -> User : 1. 部署 User 合约
+activate User
+User --> Admin : 部署成功，Admin 自动注册
+deactivate User
+
+Admin -> DroneFactory : 2. 部署 DroneObjectFactory(User地址)
+activate DroneFactory
+DroneFactory -> User : 验证 User 合约
+DroneFactory --> Admin : 部署成功
+deactivate DroneFactory
+
+Admin -> GridFactory : 3. 部署 GridObjectFactory\n(User地址, DroneFactory地址)
+activate GridFactory
+GridFactory -> User : 验证 User 合约
+GridFactory -> DroneFactory : 验证 DroneFactory 合约
+GridFactory --> Admin : 部署成功
+deactivate GridFactory
+
+Admin -> FarmFactory : 4. 部署 FarmFactory\n(GridFactory, User, DroneFactory)
+activate FarmFactory
+FarmFactory -> GridFactory : 验证 GridFactory
+FarmFactory -> User : 验证 User
+FarmFactory -> DroneFactory : 验证 DroneFactory
+FarmFactory --> Admin : 部署成功
+deactivate FarmFactory
+
+Admin -> GridFactory : 5. authorizeCaller(FarmFactory地址)
+activate GridFactory
+note right of GridFactory #FFE0B2
+    <b>⚠️ 关键步骤！</b>
+    授权 FarmFactory 
+    调用 GridFactory
+end note
+GridFactory --> Admin : ✅ 授权成功
+deactivate GridFactory
+
+|||
+
+' ========================================
+' 阶段 1: 用户与设备注册
+' ========================================
+
+== 阶段 1: 用户与设备注册 ==
+
+Admin -> User : registerUser(技术员, "张三", Technician)
+activate User
+User --> Admin : ✅ 技术员注册成功
+deactivate User
+
+Admin -> User : registerUser(果农, "李四", Farmer)
+activate User
+User --> Admin : ✅ 果农注册成功
+deactivate User
+
+Tech -> DroneFactory : registerDrone(Scout无人机, Scout, v1.0.0)
+activate DroneFactory
+DroneFactory -> User : 验证 msg.sender 是 Technician
+User --> DroneFactory : ✅ 权限验证通过
+DroneFactory --> Tech : ✅ 侦察机注册成功
+deactivate DroneFactory
+
+Tech -> DroneFactory : registerDrone(Marker无人机, Marker, v1.0.0)
+activate DroneFactory
+DroneFactory -> User : 验证 msg.sender 是 Technician
+DroneFactory --> Tech : ✅ 标记机注册成功
+deactivate DroneFactory
+
+|||
+
+' ========================================
+' 阶段 2: 农场与网格创建
+' ========================================
+
+== 阶段 2: 农场与网格创建 ==
+
+Farmer -> FarmFactory : createFarm(farmId, "阳光柑橘园")
+activate FarmFactory
+FarmFactory -> User : 验证 msg.sender 是 Farmer
+User --> FarmFactory : ✅ 权限验证通过
+FarmFactory --> Farmer : ✅ 农场创建成功
+note right SUCCESS_COLOR
+    事件: FarmCreated
+end note
+deactivate FarmFactory
+
+Farmer -> FarmFactory : addGridToFarm(farmId, gridId, "A1", Valley)
+activate FarmFactory
+FarmFactory -> User : 验证果农是农场所有者
+User --> FarmFactory : ✅ 验证通过
+FarmFactory -> GridFactory : registerGrid(gridId, "A1", farmId, Valley)
+activate GridFactory
+GridFactory -> GridFactory : 检查 authorizedCallers[FarmFactory]
+note right SUCCESS_COLOR
+    FarmFactory 已被授权
+    可以调用 registerGrid
+end note
+GridFactory --> FarmFactory : ✅ 网格注册成功
+deactivate GridFactory
+FarmFactory --> Farmer : ✅ 网格添加成功
+note right SUCCESS_COLOR
+    事件: GridAddedToFarm
+    事件: GridRegistered
+end note
+deactivate FarmFactory
+
+|||
+
+' ========================================
+' 阶段 3: 风险检测（侦察机）
+' ========================================
+
+== 阶段 3: 风险检测流程 ==
+
+Scout -> FarmFactory : addRiskDetection(\n  farmId, "A1",\n  gps, riskLevel=75, ndvi, spectral, density, ipfsHash)
+activate FarmFactory
+note right of Scout
+    <b>侦察机发现:</b>
+    • 风险等级: 75%
+    • 木虱密度: 15只/板
+    • NDVI 异常
+end note
+FarmFactory -> DroneFactory : 验证 msg.sender 是 Scout 类型
+activate DroneFactory
+DroneFactory --> FarmFactory : ✅ 是侦察机
+deactivate DroneFactory
+
+FarmFactory -> FarmFactory : 存储风险检测记录\nriskDetections[farmId][recordId]
+note right SUCCESS_COLOR
+    <b>优化存储:</b>
+    • 映射存储，非数组
+    • Gas 消耗固定
+    • bytes32 存储 IPFS hash
+end note
+
+FarmFactory -> GridFactory : updateGridStatus(gridId, PsyllidRisk)
+activate GridFactory
+GridFactory -> GridFactory : 更新网格状态为 "木虱风险"
+GridFactory --> FarmFactory : ✅ 状态更新成功
+note right SUCCESS_COLOR
+    事件: GridStatusUpdated
+    Normal → PsyllidRisk
+end note
+deactivate GridFactory
+
+FarmFactory --> Scout : ✅ 风险检测记录已保存
+note right SUCCESS_COLOR
+    事件: RiskDetected
+    farmId, recordId, riskLevel=75
+end note
+deactivate FarmFactory
+
+|||
+
+' ========================================
+' 阶段 4: 荧光标记（标记机）
+' ========================================
+
+== 阶段 4: 荧光标记流程 ==
+
+Marker -> FarmFactory : addMarkingOperation(\n  farmId, "A1", linkedDetectionId,\n  pointCount=5, markerType=1, dosage, pesticide, ipfsHash)
+activate FarmFactory
+note right of Marker
+    <b>标记机操作:</b>
+    • 标记点数: 5
+    • 标记剂类型: 1
+    • 隔离带农药: 2
+end note
+
+FarmFactory -> DroneFactory : 验证 msg.sender 是 Marker 类型
+activate DroneFactory
+DroneFactory --> FarmFactory : ✅ 是标记机
+deactivate DroneFactory
+
+FarmFactory -> FarmFactory : 存储标记操作记录\nmarkingOperations[farmId][operationId]
+note right SUCCESS_COLOR
+    <b>数据编码:</b>
+    • markerTypeCode: uint8
+    • isolationPesticideCode: uint8
+    • 节省 70% 存储
+end note
+
+FarmFactory -> GridFactory : updateGridStatus(gridId, MarkedSuspect)
+activate GridFactory
+GridFactory -> GridFactory : 更新网格状态为 "已标记待确认"
+GridFactory --> FarmFactory : ✅ 状态更新成功
+note right SUCCESS_COLOR
+    事件: GridStatusUpdated
+    PsyllidRisk → MarkedSuspect
+end note
+deactivate GridFactory
+
+FarmFactory --> Marker : ✅ 标记操作记录已保存
+note right SUCCESS_COLOR
+    事件: GridMarked
+    farmId, operationId
+end note
+deactivate FarmFactory
+
+|||
+
+' ========================================
+' 阶段 5: 病株移除（果农）
+' ========================================
+
+== 阶段 5: 病株移除流程 ==
+
+Farmer -> Farmer : 现场人工确认黄龙病
+note right of Farmer
+    <b>人工确认:</b>
+    • 确认病株: 3 棵
+    • 误判: 2 棵
+    • 拍照取证
+end note
+
+Farmer -> FarmFactory : addTreeRemoval(\n  farmId, "A1", linkedMarkingId,\n  confirmedCount=3, falseCount=2,\n  ipfsHash, replantScheduled=true)
+activate FarmFactory
+
+FarmFactory -> User : 验证果农是农场所有者
+activate User
+User --> FarmFactory : ✅ 验证通过
+deactivate User
+
+FarmFactory -> FarmFactory : 存储移除记录\nremovals[farmId][removalId]
+note right SUCCESS_COLOR
+    <b>关联数据:</b>
+    • linkedMarkingId
+    • 追溯完整链路
+end note
+
+FarmFactory -> GridFactory : updateDiseaseType(gridId, HuangLongBing)
+activate GridFactory
+GridFactory --> FarmFactory : ✅ 病害类型更新
+deactivate GridFactory
+
+FarmFactory -> GridFactory : updateGridStatus(gridId, Removed)
+activate GridFactory
+GridFactory --> FarmFactory : ✅ 状态更新为已移除
+note right SUCCESS_COLOR
+    事件: GridStatusUpdated
+    MarkedSuspect → Removed
+    
+    事件: GridDiseaseTypeUpdated
+    None → HuangLongBing
+end note
+deactivate GridFactory
+
+FarmFactory --> Farmer : ✅ 移除记录已保存
+note right SUCCESS_COLOR
+    事件: TreesRemoved
+    farmId, removalId
+end note
+deactivate FarmFactory
+
+|||
+
+' ========================================
+' 阶段 6: 补种操作（果农）
+' ========================================
+
+== 阶段 6: 补种流程 ==
+
+Farmer -> Farmer : 采购健康苗木\n获取检疫证明
+note right of Farmer
+    <b>补种准备:</b>
+    • 苗木数量: 3 棵
+    • 品种: 沃柑 (code=1)
+    • 检疫证明哈希
+end note
+
+Farmer -> FarmFactory : addReplanting(\n  farmId, "A1", linkedRemovalId,\n  seedlingCount=3, varietyCode=1,\n  quarantineHash, ipfsHash)
+activate FarmFactory
+
+FarmFactory -> User : 验证果农是农场所有者
+activate User
+User --> FarmFactory : ✅ 验证通过
+deactivate User
+
+FarmFactory -> FarmFactory : 存储补种记录\nreplantings[farmId][replantId]
+note right SUCCESS_COLOR
+    <b>数据完整性:</b>
+    • linkedRemovalId
+    • quarantineCertHash
+    • 确保可追溯
+end note
+
+FarmFactory -> GridFactory : updateGridStatus(gridId, Replanted)
+activate GridFactory
+GridFactory --> FarmFactory : ✅ 状态更新为已补种
+note right SUCCESS_COLOR
+    事件: GridStatusUpdated
+    Removed → Replanted
+end note
+deactivate GridFactory
+
+FarmFactory --> Farmer : ✅ 补种记录已保存
+note right SUCCESS_COLOR
+    事件: TreesReplanted
+    farmId, replantId
+    
+    <b>流程完成！</b>
+end note
+deactivate FarmFactory
+
+|||
+
+' ========================================
+' 阶段 7: 数据查询
+' ========================================
+
+== 阶段 7: 历史数据查询 ==
+
+Farmer -> FarmFactory : getRecordCounts(farmId)
+activate FarmFactory
+FarmFactory --> Farmer : 返回 (risks=10, markings=8,\nremovals=5, replantings=5)
+deactivate FarmFactory
+
+Farmer -> FarmFactory : getRecentRiskDetections(farmId, 5)
+activate FarmFactory
+note right SUCCESS_COLOR
+    <b>优化查询:</b>
+    • 只返回最近 5 条
+    • 避免加载全部数据
+    • Gas 消耗固定
+end note
+FarmFactory --> Farmer : 返回最近 5 条风险检测记录
+deactivate FarmFactory
+
+Farmer -> FarmFactory : getRiskDetection(farmId, recordId)
+activate FarmFactory
+note right SUCCESS_COLOR
+    <b>O(1) 查询:</b>
+    • 直接映射访问
+    • mapping[farmId][recordId]
+    • 无需遍历
+end note
+FarmFactory --> Farmer : 返回指定记录详情
+deactivate FarmFactory
+
+@enduml
