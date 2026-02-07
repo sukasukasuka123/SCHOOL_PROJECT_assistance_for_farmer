@@ -3,28 +3,112 @@
     "inputs": [
       {
         "internalType": "address",
+        "name": "_userContract",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "nonpayable",
+    "type": "constructor"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "droneId",
+        "type": "address"
+      },
+      {
+        "indexed": true,
+        "internalType": "enum DroneObjectFactory.DroneType",
+        "name": "droneType",
+        "type": "uint8"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint32",
+        "name": "timestamp",
+        "type": "uint32"
+      }
+    ],
+    "name": "DroneRegistered",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "droneId",
+        "type": "address"
+      },
+      {
+        "indexed": true,
+        "internalType": "enum DroneObjectFactory.DroneState",
+        "name": "newState",
+        "type": "uint8"
+      }
+    ],
+    "name": "DroneStateUpdated",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "droneId",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "internalType": "string",
+        "name": "newVersion",
+        "type": "string"
+      }
+    ],
+    "name": "FirmwareUpdated",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "droneId",
+        "type": "address"
+      },
+      {
+        "indexed": true,
+        "internalType": "uint32",
+        "name": "logId",
+        "type": "uint32"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint8",
+        "name": "maintenanceType",
+        "type": "uint8"
+      }
+    ],
+    "name": "MaintenanceLogAdded",
+    "type": "event"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
         "name": "_droneId",
         "type": "address"
       },
       {
-        "internalType": "uint32",
-        "name": "_logId",
-        "type": "uint32"
-      },
-      {
-        "internalType": "uint32",
-        "name": "_timestamp",
-        "type": "uint32"
-      },
-      {
-        "internalType": "string",
-        "name": "_droneType",
-        "type": "string"
-      },
-      {
-        "internalType": "string",
-        "name": "_maintenanceType",
-        "type": "string"
+        "internalType": "uint8",
+        "name": "_maintenanceTypeCode",
+        "type": "uint8"
       },
       {
         "internalType": "bool",
@@ -35,14 +119,9 @@
         "internalType": "string",
         "name": "_firmwareVersion",
         "type": "string"
-      },
-      {
-        "internalType": "address",
-        "name": "_technicianAddress",
-        "type": "address"
       }
     ],
-    "name": "addDroneMaintenanceLog",
+    "name": "addMaintenanceLog",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"
@@ -51,56 +130,16 @@
     "inputs": [
       {
         "internalType": "address",
-        "name": "",
+        "name": "_droneId",
         "type": "address"
-      },
-      {
-        "internalType": "uint256",
-        "name": "",
-        "type": "uint256"
       }
     ],
-    "name": "droneMaintenanceLogs",
+    "name": "droneExists",
     "outputs": [
       {
-        "internalType": "uint32",
-        "name": "logId",
-        "type": "uint32"
-      },
-      {
-        "internalType": "address",
-        "name": "droneId",
-        "type": "address"
-      },
-      {
-        "internalType": "uint32",
-        "name": "timestamp",
-        "type": "uint32"
-      },
-      {
-        "internalType": "string",
-        "name": "droneType",
-        "type": "string"
-      },
-      {
-        "internalType": "string",
-        "name": "maintenanceType",
-        "type": "string"
-      },
-      {
         "internalType": "bool",
-        "name": "sensorCalibrated",
+        "name": "",
         "type": "bool"
-      },
-      {
-        "internalType": "string",
-        "name": "firmwareVersion",
-        "type": "string"
-      },
-      {
-        "internalType": "address",
-        "name": "technicianAddress",
-        "type": "address"
       }
     ],
     "stateMutability": "view",
@@ -117,13 +156,8 @@
     "name": "drones",
     "outputs": [
       {
-        "internalType": "address",
-        "name": "droneId",
-        "type": "address"
-      },
-      {
         "internalType": "enum DroneObjectFactory.DroneType",
-        "name": "droneTypeValue",
+        "name": "droneType",
         "type": "uint8"
       },
       {
@@ -132,146 +166,19 @@
         "type": "string"
       },
       {
-        "internalType": "enum DroneObjectFactory.state",
-        "name": "droneState",
+        "internalType": "enum DroneObjectFactory.DroneState",
+        "name": "state",
         "type": "uint8"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "address",
-        "name": "_droneId",
-        "type": "address"
       },
       {
         "internalType": "uint32",
-        "name": "_logId",
+        "name": "registeredTime",
         "type": "uint32"
-      }
-    ],
-    "name": "getDronMaintenanceLogById",
-    "outputs": [
-      {
-        "components": [
-          {
-            "internalType": "uint32",
-            "name": "logId",
-            "type": "uint32"
-          },
-          {
-            "internalType": "address",
-            "name": "droneId",
-            "type": "address"
-          },
-          {
-            "internalType": "uint32",
-            "name": "timestamp",
-            "type": "uint32"
-          },
-          {
-            "internalType": "string",
-            "name": "droneType",
-            "type": "string"
-          },
-          {
-            "internalType": "string",
-            "name": "maintenanceType",
-            "type": "string"
-          },
-          {
-            "internalType": "bool",
-            "name": "sensorCalibrated",
-            "type": "bool"
-          },
-          {
-            "internalType": "string",
-            "name": "firmwareVersion",
-            "type": "string"
-          },
-          {
-            "internalType": "address",
-            "name": "technicianAddress",
-            "type": "address"
-          }
-        ],
-        "internalType": "struct DroneObjectFactory.DroneMaintenanceLog",
-        "name": "",
-        "type": "tuple"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "address",
-        "name": "_droneId",
-        "type": "address"
       },
       {
-        "internalType": "uint256",
-        "name": "page",
-        "type": "uint256"
-      },
-      {
-        "internalType": "uint256",
-        "name": "pageSize",
-        "type": "uint256"
-      }
-    ],
-    "name": "getDronMaintenanceLogInPage",
-    "outputs": [
-      {
-        "components": [
-          {
-            "internalType": "uint32",
-            "name": "logId",
-            "type": "uint32"
-          },
-          {
-            "internalType": "address",
-            "name": "droneId",
-            "type": "address"
-          },
-          {
-            "internalType": "uint32",
-            "name": "timestamp",
-            "type": "uint32"
-          },
-          {
-            "internalType": "string",
-            "name": "droneType",
-            "type": "string"
-          },
-          {
-            "internalType": "string",
-            "name": "maintenanceType",
-            "type": "string"
-          },
-          {
-            "internalType": "bool",
-            "name": "sensorCalibrated",
-            "type": "bool"
-          },
-          {
-            "internalType": "string",
-            "name": "firmwareVersion",
-            "type": "string"
-          },
-          {
-            "internalType": "address",
-            "name": "technicianAddress",
-            "type": "address"
-          }
-        ],
-        "internalType": "struct DroneObjectFactory.DroneMaintenanceLog[]",
-        "name": "",
-        "type": "tuple[]"
+        "internalType": "bool",
+        "name": "exists",
+        "type": "bool"
       }
     ],
     "stateMutability": "view",
@@ -290,13 +197,8 @@
       {
         "components": [
           {
-            "internalType": "address",
-            "name": "droneId",
-            "type": "address"
-          },
-          {
             "internalType": "enum DroneObjectFactory.DroneType",
-            "name": "droneTypeValue",
+            "name": "droneType",
             "type": "uint8"
           },
           {
@@ -305,9 +207,19 @@
             "type": "string"
           },
           {
-            "internalType": "enum DroneObjectFactory.state",
-            "name": "droneState",
+            "internalType": "enum DroneObjectFactory.DroneState",
+            "name": "state",
             "type": "uint8"
+          },
+          {
+            "internalType": "uint32",
+            "name": "registeredTime",
+            "type": "uint32"
+          },
+          {
+            "internalType": "bool",
+            "name": "exists",
+            "type": "bool"
           }
         ],
         "internalType": "struct DroneObjectFactory.Drone",
@@ -324,41 +236,45 @@
         "internalType": "address",
         "name": "_droneId",
         "type": "address"
-      },
-      {
-        "internalType": "uint256",
-        "name": "index",
-        "type": "uint256"
       }
     ],
-    "name": "getDroneMaintenanceLogByIndex",
+    "name": "getDroneType",
+    "outputs": [
+      {
+        "internalType": "enum DroneObjectFactory.DroneType",
+        "name": "",
+        "type": "uint8"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "_droneId",
+        "type": "address"
+      },
+      {
+        "internalType": "uint32",
+        "name": "_logId",
+        "type": "uint32"
+      }
+    ],
+    "name": "getMaintenanceLog",
     "outputs": [
       {
         "components": [
-          {
-            "internalType": "uint32",
-            "name": "logId",
-            "type": "uint32"
-          },
-          {
-            "internalType": "address",
-            "name": "droneId",
-            "type": "address"
-          },
           {
             "internalType": "uint32",
             "name": "timestamp",
             "type": "uint32"
           },
           {
-            "internalType": "string",
-            "name": "droneType",
-            "type": "string"
-          },
-          {
-            "internalType": "string",
-            "name": "maintenanceType",
-            "type": "string"
+            "internalType": "uint8",
+            "name": "maintenanceTypeCode",
+            "type": "uint8"
           },
           {
             "internalType": "bool",
@@ -372,11 +288,11 @@
           },
           {
             "internalType": "address",
-            "name": "technicianAddress",
+            "name": "technician",
             "type": "address"
           }
         ],
-        "internalType": "struct DroneObjectFactory.DroneMaintenanceLog",
+        "internalType": "struct DroneObjectFactory.MaintenanceLog",
         "name": "",
         "type": "tuple"
       }
@@ -390,55 +306,26 @@
         "internalType": "address",
         "name": "_droneId",
         "type": "address"
-      }
-    ],
-    "name": "getDroneMaintenanceLogCount",
-    "outputs": [
+      },
       {
-        "internalType": "uint256",
-        "name": "",
-        "type": "uint256"
+        "internalType": "uint32",
+        "name": "_count",
+        "type": "uint32"
       }
     ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "address",
-        "name": "_droneId",
-        "type": "address"
-      }
-    ],
-    "name": "getDroneMaintenanceLogs",
+    "name": "getRecentMaintenanceLogs",
     "outputs": [
       {
         "components": [
-          {
-            "internalType": "uint32",
-            "name": "logId",
-            "type": "uint32"
-          },
-          {
-            "internalType": "address",
-            "name": "droneId",
-            "type": "address"
-          },
           {
             "internalType": "uint32",
             "name": "timestamp",
             "type": "uint32"
           },
           {
-            "internalType": "string",
-            "name": "droneType",
-            "type": "string"
-          },
-          {
-            "internalType": "string",
-            "name": "maintenanceType",
-            "type": "string"
+            "internalType": "uint8",
+            "name": "maintenanceTypeCode",
+            "type": "uint8"
           },
           {
             "internalType": "bool",
@@ -452,13 +339,76 @@
           },
           {
             "internalType": "address",
-            "name": "technicianAddress",
+            "name": "technician",
             "type": "address"
           }
         ],
-        "internalType": "struct DroneObjectFactory.DroneMaintenanceLog[]",
+        "internalType": "struct DroneObjectFactory.MaintenanceLog[]",
         "name": "",
         "type": "tuple[]"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "name": "maintenanceLogCount",
+    "outputs": [
+      {
+        "internalType": "uint32",
+        "name": "",
+        "type": "uint32"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+      },
+      {
+        "internalType": "uint32",
+        "name": "",
+        "type": "uint32"
+      }
+    ],
+    "name": "maintenanceLogs",
+    "outputs": [
+      {
+        "internalType": "uint32",
+        "name": "timestamp",
+        "type": "uint32"
+      },
+      {
+        "internalType": "uint8",
+        "name": "maintenanceTypeCode",
+        "type": "uint8"
+      },
+      {
+        "internalType": "bool",
+        "name": "sensorCalibrated",
+        "type": "bool"
+      },
+      {
+        "internalType": "string",
+        "name": "firmwareVersion",
+        "type": "string"
+      },
+      {
+        "internalType": "address",
+        "name": "technician",
+        "type": "address"
       }
     ],
     "stateMutability": "view",
@@ -482,7 +432,7 @@
         "type": "string"
       },
       {
-        "internalType": "enum DroneObjectFactory.state",
+        "internalType": "enum DroneObjectFactory.DroneState",
         "name": "_droneState",
         "type": "uint8"
       }
@@ -500,30 +450,12 @@
         "type": "address"
       },
       {
-        "internalType": "enum DroneObjectFactory.state",
+        "internalType": "enum DroneObjectFactory.DroneState",
         "name": "_newState",
         "type": "uint8"
       }
     ],
     "name": "updateDroneState",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "address",
-        "name": "_droneId",
-        "type": "address"
-      },
-      {
-        "internalType": "enum DroneObjectFactory.DroneType",
-        "name": "_newDroneType",
-        "type": "uint8"
-      }
-    ],
-    "name": "updateDroneType",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"
@@ -544,6 +476,19 @@
     "name": "updateFirmwareVersion",
     "outputs": [],
     "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "userContract",
+    "outputs": [
+      {
+        "internalType": "contract User",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "view",
     "type": "function"
   }
 ]

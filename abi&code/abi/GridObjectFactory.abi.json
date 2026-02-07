@@ -1,27 +1,44 @@
 [
   {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "_userContract",
+        "type": "address"
+      },
+      {
+        "internalType": "address",
+        "name": "_droneFactory",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "nonpayable",
+    "type": "constructor"
+  },
+  {
     "anonymous": false,
     "inputs": [
       {
         "indexed": true,
         "internalType": "address",
-        "name": "farmId",
+        "name": "caller",
         "type": "address"
-      },
+      }
+    ],
+    "name": "CallerAuthorized",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
       {
         "indexed": true,
         "internalType": "address",
-        "name": "gridId",
+        "name": "caller",
         "type": "address"
-      },
-      {
-        "indexed": false,
-        "internalType": "string",
-        "name": "gridCode",
-        "type": "string"
       }
     ],
-    "name": "FarmGridRegistered",
+    "name": "CallerRevoked",
     "type": "event"
   },
   {
@@ -55,29 +72,23 @@
       {
         "indexed": true,
         "internalType": "address",
+        "name": "farmId",
+        "type": "address"
+      },
+      {
+        "indexed": true,
+        "internalType": "address",
         "name": "gridId",
         "type": "address"
       },
       {
         "indexed": false,
-        "internalType": "uint32",
-        "name": "recordId",
-        "type": "uint32"
-      },
-      {
-        "indexed": false,
         "internalType": "string",
-        "name": "operationType",
+        "name": "gridCode",
         "type": "string"
-      },
-      {
-        "indexed": false,
-        "internalType": "address",
-        "name": "operator",
-        "type": "address"
       }
     ],
-    "name": "GridMaintenanceRecorded",
+    "name": "GridRegistered",
     "type": "event"
   },
   {
@@ -90,19 +101,44 @@
         "type": "address"
       },
       {
-        "indexed": false,
+        "indexed": true,
         "internalType": "enum GridObjectFactory.GridStatus",
         "name": "oldStatus",
         "type": "uint8"
       },
       {
-        "indexed": false,
+        "indexed": true,
         "internalType": "enum GridObjectFactory.GridStatus",
         "name": "newStatus",
         "type": "uint8"
       }
     ],
     "name": "GridStatusUpdated",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "gridId",
+        "type": "address"
+      },
+      {
+        "indexed": true,
+        "internalType": "uint32",
+        "name": "recordId",
+        "type": "uint32"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint8",
+        "name": "operationType",
+        "type": "uint8"
+      }
+    ],
+    "name": "MaintenanceRecorded",
     "type": "event"
   },
   {
@@ -113,14 +149,9 @@
         "type": "address"
       },
       {
-        "internalType": "uint32",
-        "name": "recordId",
-        "type": "uint32"
-      },
-      {
-        "internalType": "string",
-        "name": "operationType",
-        "type": "string"
+        "internalType": "uint8",
+        "name": "operationTypeCode",
+        "type": "uint8"
       },
       {
         "internalType": "string",
@@ -128,14 +159,59 @@
         "type": "string"
       },
       {
-        "internalType": "string",
-        "name": "evidenceIPFS",
-        "type": "string"
+        "internalType": "bytes32",
+        "name": "evidenceIPFSHash",
+        "type": "bytes32"
       }
     ],
     "name": "addMaintenanceRecord",
     "outputs": [],
     "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "_caller",
+        "type": "address"
+      }
+    ],
+    "name": "authorizeCaller",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "name": "authorizedCallers",
+    "outputs": [
+      {
+        "internalType": "bool",
+        "name": "",
+        "type": "bool"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "droneFactory",
+    "outputs": [
+      {
+        "internalType": "contract DroneObjectFactory",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "view",
     "type": "function"
   },
   {
@@ -150,11 +226,6 @@
     "outputs": [
       {
         "components": [
-          {
-            "internalType": "address",
-            "name": "gridId",
-            "type": "address"
-          },
           {
             "internalType": "string",
             "name": "gridCode",
@@ -184,6 +255,11 @@
             "internalType": "uint32",
             "name": "lastStatusUpdateTime",
             "type": "uint32"
+          },
+          {
+            "internalType": "bool",
+            "name": "exists",
+            "type": "bool"
           }
         ],
         "internalType": "struct GridObjectFactory.GridInfo",
@@ -202,29 +278,24 @@
         "type": "address"
       },
       {
-        "internalType": "uint256",
-        "name": "index",
-        "type": "uint256"
+        "internalType": "uint32",
+        "name": "recordId",
+        "type": "uint32"
       }
     ],
-    "name": "getMaintenanceRecordByIndex",
+    "name": "getMaintenanceRecord",
     "outputs": [
       {
         "components": [
-          {
-            "internalType": "uint32",
-            "name": "recordId",
-            "type": "uint32"
-          },
           {
             "internalType": "uint32",
             "name": "timestamp",
             "type": "uint32"
           },
           {
-            "internalType": "string",
-            "name": "operationType",
-            "type": "string"
+            "internalType": "uint8",
+            "name": "operationTypeCode",
+            "type": "uint8"
           },
           {
             "internalType": "string",
@@ -232,9 +303,9 @@
             "type": "string"
           },
           {
-            "internalType": "string",
-            "name": "evidenceIPFS",
-            "type": "string"
+            "internalType": "bytes32",
+            "name": "evidenceIPFSHash",
+            "type": "bytes32"
           },
           {
             "internalType": "address",
@@ -242,7 +313,7 @@
             "type": "address"
           }
         ],
-        "internalType": "struct GridObjectFactory.GridMaintenanceRecord",
+        "internalType": "struct GridObjectFactory.MaintenanceRecord",
         "name": "",
         "type": "tuple"
       }
@@ -256,14 +327,46 @@
         "internalType": "address",
         "name": "gridId",
         "type": "address"
+      },
+      {
+        "internalType": "uint32",
+        "name": "count",
+        "type": "uint32"
       }
     ],
-    "name": "getMaintenanceRecordCount",
+    "name": "getRecentMaintenanceRecords",
     "outputs": [
       {
-        "internalType": "uint256",
+        "components": [
+          {
+            "internalType": "uint32",
+            "name": "timestamp",
+            "type": "uint32"
+          },
+          {
+            "internalType": "uint8",
+            "name": "operationTypeCode",
+            "type": "uint8"
+          },
+          {
+            "internalType": "string",
+            "name": "detail",
+            "type": "string"
+          },
+          {
+            "internalType": "bytes32",
+            "name": "evidenceIPFSHash",
+            "type": "bytes32"
+          },
+          {
+            "internalType": "address",
+            "name": "operator",
+            "type": "address"
+          }
+        ],
+        "internalType": "struct GridObjectFactory.MaintenanceRecord[]",
         "name": "",
-        "type": "uint256"
+        "type": "tuple[]"
       }
     ],
     "stateMutability": "view",
@@ -277,44 +380,12 @@
         "type": "address"
       }
     ],
-    "name": "getMaintenanceRecords",
+    "name": "gridExists",
     "outputs": [
       {
-        "components": [
-          {
-            "internalType": "uint32",
-            "name": "recordId",
-            "type": "uint32"
-          },
-          {
-            "internalType": "uint32",
-            "name": "timestamp",
-            "type": "uint32"
-          },
-          {
-            "internalType": "string",
-            "name": "operationType",
-            "type": "string"
-          },
-          {
-            "internalType": "string",
-            "name": "detail",
-            "type": "string"
-          },
-          {
-            "internalType": "string",
-            "name": "evidenceIPFS",
-            "type": "string"
-          },
-          {
-            "internalType": "address",
-            "name": "operator",
-            "type": "address"
-          }
-        ],
-        "internalType": "struct GridObjectFactory.GridMaintenanceRecord[]",
+        "internalType": "bool",
         "name": "",
-        "type": "tuple[]"
+        "type": "bool"
       }
     ],
     "stateMutability": "view",
@@ -330,11 +401,6 @@
     ],
     "name": "grids",
     "outputs": [
-      {
-        "internalType": "address",
-        "name": "gridId",
-        "type": "address"
-      },
       {
         "internalType": "string",
         "name": "gridCode",
@@ -364,6 +430,30 @@
         "internalType": "uint32",
         "name": "lastStatusUpdateTime",
         "type": "uint32"
+      },
+      {
+        "internalType": "bool",
+        "name": "exists",
+        "type": "bool"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "name": "maintenanceRecordCount",
+    "outputs": [
+      {
+        "internalType": "uint32",
+        "name": "",
+        "type": "uint32"
       }
     ],
     "stateMutability": "view",
@@ -377,27 +467,22 @@
         "type": "address"
       },
       {
-        "internalType": "uint256",
+        "internalType": "uint32",
         "name": "",
-        "type": "uint256"
+        "type": "uint32"
       }
     ],
     "name": "maintenanceRecords",
     "outputs": [
       {
         "internalType": "uint32",
-        "name": "recordId",
-        "type": "uint32"
-      },
-      {
-        "internalType": "uint32",
         "name": "timestamp",
         "type": "uint32"
       },
       {
-        "internalType": "string",
-        "name": "operationType",
-        "type": "string"
+        "internalType": "uint8",
+        "name": "operationTypeCode",
+        "type": "uint8"
       },
       {
         "internalType": "string",
@@ -405,9 +490,9 @@
         "type": "string"
       },
       {
-        "internalType": "string",
-        "name": "evidenceIPFS",
-        "type": "string"
+        "internalType": "bytes32",
+        "name": "evidenceIPFSHash",
+        "type": "bytes32"
       },
       {
         "internalType": "address",
@@ -450,6 +535,19 @@
     "inputs": [
       {
         "internalType": "address",
+        "name": "_caller",
+        "type": "address"
+      }
+    ],
+    "name": "revokeCaller",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
         "name": "gridId",
         "type": "address"
       },
@@ -480,6 +578,19 @@
     "name": "updateGridStatus",
     "outputs": [],
     "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "userContract",
+    "outputs": [
+      {
+        "internalType": "contract User",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "view",
     "type": "function"
   }
 ]

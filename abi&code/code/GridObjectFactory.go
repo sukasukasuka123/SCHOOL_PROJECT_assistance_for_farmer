@@ -31,28 +31,27 @@ var (
 
 // GridObjectFactoryGridInfo is an auto generated low-level Go binding around an user-defined struct.
 type GridObjectFactoryGridInfo struct {
-	GridId               common.Address
 	GridCode             string
 	FarmId               common.Address
 	TerrainType          uint8
 	Status               uint8
 	DiseaseType          uint8
 	LastStatusUpdateTime uint32
+	Exists               bool
 }
 
-// GridObjectFactoryGridMaintenanceRecord is an auto generated low-level Go binding around an user-defined struct.
-type GridObjectFactoryGridMaintenanceRecord struct {
-	RecordId      uint32
-	Timestamp     uint32
-	OperationType string
-	Detail        string
-	EvidenceIPFS  string
-	Operator      common.Address
+// GridObjectFactoryMaintenanceRecord is an auto generated low-level Go binding around an user-defined struct.
+type GridObjectFactoryMaintenanceRecord struct {
+	Timestamp         uint32
+	OperationTypeCode uint8
+	Detail            string
+	EvidenceIPFSHash  [32]byte
+	Operator          common.Address
 }
 
 // GridObjectFactoryMetaData contains all meta data concerning the GridObjectFactory contract.
 var GridObjectFactoryMetaData = &bind.MetaData{
-	ABI: "[{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"address\",\"name\":\"farmId\",\"type\":\"address\"},{\"indexed\":true,\"internalType\":\"address\",\"name\":\"gridId\",\"type\":\"address\"},{\"indexed\":false,\"internalType\":\"string\",\"name\":\"gridCode\",\"type\":\"string\"}],\"name\":\"FarmGridRegistered\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"address\",\"name\":\"gridId\",\"type\":\"address\"},{\"indexed\":false,\"internalType\":\"enumGridObjectFactory.CitrusDiseaseType\",\"name\":\"oldType\",\"type\":\"uint8\"},{\"indexed\":false,\"internalType\":\"enumGridObjectFactory.CitrusDiseaseType\",\"name\":\"newType\",\"type\":\"uint8\"}],\"name\":\"GridDiseaseTypeUpdated\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"address\",\"name\":\"gridId\",\"type\":\"address\"},{\"indexed\":false,\"internalType\":\"uint32\",\"name\":\"recordId\",\"type\":\"uint32\"},{\"indexed\":false,\"internalType\":\"string\",\"name\":\"operationType\",\"type\":\"string\"},{\"indexed\":false,\"internalType\":\"address\",\"name\":\"operator\",\"type\":\"address\"}],\"name\":\"GridMaintenanceRecorded\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"address\",\"name\":\"gridId\",\"type\":\"address\"},{\"indexed\":false,\"internalType\":\"enumGridObjectFactory.GridStatus\",\"name\":\"oldStatus\",\"type\":\"uint8\"},{\"indexed\":false,\"internalType\":\"enumGridObjectFactory.GridStatus\",\"name\":\"newStatus\",\"type\":\"uint8\"}],\"name\":\"GridStatusUpdated\",\"type\":\"event\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"gridId\",\"type\":\"address\"},{\"internalType\":\"uint32\",\"name\":\"recordId\",\"type\":\"uint32\"},{\"internalType\":\"string\",\"name\":\"operationType\",\"type\":\"string\"},{\"internalType\":\"string\",\"name\":\"detail\",\"type\":\"string\"},{\"internalType\":\"string\",\"name\":\"evidenceIPFS\",\"type\":\"string\"}],\"name\":\"addMaintenanceRecord\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"gridId\",\"type\":\"address\"}],\"name\":\"getGrid\",\"outputs\":[{\"components\":[{\"internalType\":\"address\",\"name\":\"gridId\",\"type\":\"address\"},{\"internalType\":\"string\",\"name\":\"gridCode\",\"type\":\"string\"},{\"internalType\":\"address\",\"name\":\"farmId\",\"type\":\"address\"},{\"internalType\":\"enumGridObjectFactory.GridTerrainType\",\"name\":\"terrainType\",\"type\":\"uint8\"},{\"internalType\":\"enumGridObjectFactory.GridStatus\",\"name\":\"status\",\"type\":\"uint8\"},{\"internalType\":\"enumGridObjectFactory.CitrusDiseaseType\",\"name\":\"diseaseType\",\"type\":\"uint8\"},{\"internalType\":\"uint32\",\"name\":\"lastStatusUpdateTime\",\"type\":\"uint32\"}],\"internalType\":\"structGridObjectFactory.GridInfo\",\"name\":\"\",\"type\":\"tuple\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"gridId\",\"type\":\"address\"},{\"internalType\":\"uint256\",\"name\":\"index\",\"type\":\"uint256\"}],\"name\":\"getMaintenanceRecordByIndex\",\"outputs\":[{\"components\":[{\"internalType\":\"uint32\",\"name\":\"recordId\",\"type\":\"uint32\"},{\"internalType\":\"uint32\",\"name\":\"timestamp\",\"type\":\"uint32\"},{\"internalType\":\"string\",\"name\":\"operationType\",\"type\":\"string\"},{\"internalType\":\"string\",\"name\":\"detail\",\"type\":\"string\"},{\"internalType\":\"string\",\"name\":\"evidenceIPFS\",\"type\":\"string\"},{\"internalType\":\"address\",\"name\":\"operator\",\"type\":\"address\"}],\"internalType\":\"structGridObjectFactory.GridMaintenanceRecord\",\"name\":\"\",\"type\":\"tuple\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"gridId\",\"type\":\"address\"}],\"name\":\"getMaintenanceRecordCount\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"gridId\",\"type\":\"address\"}],\"name\":\"getMaintenanceRecords\",\"outputs\":[{\"components\":[{\"internalType\":\"uint32\",\"name\":\"recordId\",\"type\":\"uint32\"},{\"internalType\":\"uint32\",\"name\":\"timestamp\",\"type\":\"uint32\"},{\"internalType\":\"string\",\"name\":\"operationType\",\"type\":\"string\"},{\"internalType\":\"string\",\"name\":\"detail\",\"type\":\"string\"},{\"internalType\":\"string\",\"name\":\"evidenceIPFS\",\"type\":\"string\"},{\"internalType\":\"address\",\"name\":\"operator\",\"type\":\"address\"}],\"internalType\":\"structGridObjectFactory.GridMaintenanceRecord[]\",\"name\":\"\",\"type\":\"tuple[]\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"}],\"name\":\"grids\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"gridId\",\"type\":\"address\"},{\"internalType\":\"string\",\"name\":\"gridCode\",\"type\":\"string\"},{\"internalType\":\"address\",\"name\":\"farmId\",\"type\":\"address\"},{\"internalType\":\"enumGridObjectFactory.GridTerrainType\",\"name\":\"terrainType\",\"type\":\"uint8\"},{\"internalType\":\"enumGridObjectFactory.GridStatus\",\"name\":\"status\",\"type\":\"uint8\"},{\"internalType\":\"enumGridObjectFactory.CitrusDiseaseType\",\"name\":\"diseaseType\",\"type\":\"uint8\"},{\"internalType\":\"uint32\",\"name\":\"lastStatusUpdateTime\",\"type\":\"uint32\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"},{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"name\":\"maintenanceRecords\",\"outputs\":[{\"internalType\":\"uint32\",\"name\":\"recordId\",\"type\":\"uint32\"},{\"internalType\":\"uint32\",\"name\":\"timestamp\",\"type\":\"uint32\"},{\"internalType\":\"string\",\"name\":\"operationType\",\"type\":\"string\"},{\"internalType\":\"string\",\"name\":\"detail\",\"type\":\"string\"},{\"internalType\":\"string\",\"name\":\"evidenceIPFS\",\"type\":\"string\"},{\"internalType\":\"address\",\"name\":\"operator\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"gridId\",\"type\":\"address\"},{\"internalType\":\"string\",\"name\":\"gridCode\",\"type\":\"string\"},{\"internalType\":\"address\",\"name\":\"farmId\",\"type\":\"address\"},{\"internalType\":\"enumGridObjectFactory.GridTerrainType\",\"name\":\"terrainType\",\"type\":\"uint8\"}],\"name\":\"registerGrid\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"gridId\",\"type\":\"address\"},{\"internalType\":\"enumGridObjectFactory.CitrusDiseaseType\",\"name\":\"newType\",\"type\":\"uint8\"}],\"name\":\"updateDiseaseType\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"gridId\",\"type\":\"address\"},{\"internalType\":\"enumGridObjectFactory.GridStatus\",\"name\":\"newStatus\",\"type\":\"uint8\"}],\"name\":\"updateGridStatus\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"}]",
+	ABI: "[{\"inputs\":[{\"internalType\":\"address\",\"name\":\"_userContract\",\"type\":\"address\"},{\"internalType\":\"address\",\"name\":\"_droneFactory\",\"type\":\"address\"}],\"stateMutability\":\"nonpayable\",\"type\":\"constructor\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"address\",\"name\":\"caller\",\"type\":\"address\"}],\"name\":\"CallerAuthorized\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"address\",\"name\":\"caller\",\"type\":\"address\"}],\"name\":\"CallerRevoked\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"address\",\"name\":\"gridId\",\"type\":\"address\"},{\"indexed\":false,\"internalType\":\"enumGridObjectFactory.CitrusDiseaseType\",\"name\":\"oldType\",\"type\":\"uint8\"},{\"indexed\":false,\"internalType\":\"enumGridObjectFactory.CitrusDiseaseType\",\"name\":\"newType\",\"type\":\"uint8\"}],\"name\":\"GridDiseaseTypeUpdated\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"address\",\"name\":\"farmId\",\"type\":\"address\"},{\"indexed\":true,\"internalType\":\"address\",\"name\":\"gridId\",\"type\":\"address\"},{\"indexed\":false,\"internalType\":\"string\",\"name\":\"gridCode\",\"type\":\"string\"}],\"name\":\"GridRegistered\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"address\",\"name\":\"gridId\",\"type\":\"address\"},{\"indexed\":true,\"internalType\":\"enumGridObjectFactory.GridStatus\",\"name\":\"oldStatus\",\"type\":\"uint8\"},{\"indexed\":true,\"internalType\":\"enumGridObjectFactory.GridStatus\",\"name\":\"newStatus\",\"type\":\"uint8\"}],\"name\":\"GridStatusUpdated\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"address\",\"name\":\"gridId\",\"type\":\"address\"},{\"indexed\":true,\"internalType\":\"uint32\",\"name\":\"recordId\",\"type\":\"uint32\"},{\"indexed\":false,\"internalType\":\"uint8\",\"name\":\"operationType\",\"type\":\"uint8\"}],\"name\":\"MaintenanceRecorded\",\"type\":\"event\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"gridId\",\"type\":\"address\"},{\"internalType\":\"uint8\",\"name\":\"operationTypeCode\",\"type\":\"uint8\"},{\"internalType\":\"string\",\"name\":\"detail\",\"type\":\"string\"},{\"internalType\":\"bytes32\",\"name\":\"evidenceIPFSHash\",\"type\":\"bytes32\"}],\"name\":\"addMaintenanceRecord\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"_caller\",\"type\":\"address\"}],\"name\":\"authorizeCaller\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"}],\"name\":\"authorizedCallers\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"droneFactory\",\"outputs\":[{\"internalType\":\"contractDroneObjectFactory\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"gridId\",\"type\":\"address\"}],\"name\":\"getGrid\",\"outputs\":[{\"components\":[{\"internalType\":\"string\",\"name\":\"gridCode\",\"type\":\"string\"},{\"internalType\":\"address\",\"name\":\"farmId\",\"type\":\"address\"},{\"internalType\":\"enumGridObjectFactory.GridTerrainType\",\"name\":\"terrainType\",\"type\":\"uint8\"},{\"internalType\":\"enumGridObjectFactory.GridStatus\",\"name\":\"status\",\"type\":\"uint8\"},{\"internalType\":\"enumGridObjectFactory.CitrusDiseaseType\",\"name\":\"diseaseType\",\"type\":\"uint8\"},{\"internalType\":\"uint32\",\"name\":\"lastStatusUpdateTime\",\"type\":\"uint32\"},{\"internalType\":\"bool\",\"name\":\"exists\",\"type\":\"bool\"}],\"internalType\":\"structGridObjectFactory.GridInfo\",\"name\":\"\",\"type\":\"tuple\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"gridId\",\"type\":\"address\"},{\"internalType\":\"uint32\",\"name\":\"recordId\",\"type\":\"uint32\"}],\"name\":\"getMaintenanceRecord\",\"outputs\":[{\"components\":[{\"internalType\":\"uint32\",\"name\":\"timestamp\",\"type\":\"uint32\"},{\"internalType\":\"uint8\",\"name\":\"operationTypeCode\",\"type\":\"uint8\"},{\"internalType\":\"string\",\"name\":\"detail\",\"type\":\"string\"},{\"internalType\":\"bytes32\",\"name\":\"evidenceIPFSHash\",\"type\":\"bytes32\"},{\"internalType\":\"address\",\"name\":\"operator\",\"type\":\"address\"}],\"internalType\":\"structGridObjectFactory.MaintenanceRecord\",\"name\":\"\",\"type\":\"tuple\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"gridId\",\"type\":\"address\"},{\"internalType\":\"uint32\",\"name\":\"count\",\"type\":\"uint32\"}],\"name\":\"getRecentMaintenanceRecords\",\"outputs\":[{\"components\":[{\"internalType\":\"uint32\",\"name\":\"timestamp\",\"type\":\"uint32\"},{\"internalType\":\"uint8\",\"name\":\"operationTypeCode\",\"type\":\"uint8\"},{\"internalType\":\"string\",\"name\":\"detail\",\"type\":\"string\"},{\"internalType\":\"bytes32\",\"name\":\"evidenceIPFSHash\",\"type\":\"bytes32\"},{\"internalType\":\"address\",\"name\":\"operator\",\"type\":\"address\"}],\"internalType\":\"structGridObjectFactory.MaintenanceRecord[]\",\"name\":\"\",\"type\":\"tuple[]\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"gridId\",\"type\":\"address\"}],\"name\":\"gridExists\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"}],\"name\":\"grids\",\"outputs\":[{\"internalType\":\"string\",\"name\":\"gridCode\",\"type\":\"string\"},{\"internalType\":\"address\",\"name\":\"farmId\",\"type\":\"address\"},{\"internalType\":\"enumGridObjectFactory.GridTerrainType\",\"name\":\"terrainType\",\"type\":\"uint8\"},{\"internalType\":\"enumGridObjectFactory.GridStatus\",\"name\":\"status\",\"type\":\"uint8\"},{\"internalType\":\"enumGridObjectFactory.CitrusDiseaseType\",\"name\":\"diseaseType\",\"type\":\"uint8\"},{\"internalType\":\"uint32\",\"name\":\"lastStatusUpdateTime\",\"type\":\"uint32\"},{\"internalType\":\"bool\",\"name\":\"exists\",\"type\":\"bool\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"}],\"name\":\"maintenanceRecordCount\",\"outputs\":[{\"internalType\":\"uint32\",\"name\":\"\",\"type\":\"uint32\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"},{\"internalType\":\"uint32\",\"name\":\"\",\"type\":\"uint32\"}],\"name\":\"maintenanceRecords\",\"outputs\":[{\"internalType\":\"uint32\",\"name\":\"timestamp\",\"type\":\"uint32\"},{\"internalType\":\"uint8\",\"name\":\"operationTypeCode\",\"type\":\"uint8\"},{\"internalType\":\"string\",\"name\":\"detail\",\"type\":\"string\"},{\"internalType\":\"bytes32\",\"name\":\"evidenceIPFSHash\",\"type\":\"bytes32\"},{\"internalType\":\"address\",\"name\":\"operator\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"gridId\",\"type\":\"address\"},{\"internalType\":\"string\",\"name\":\"gridCode\",\"type\":\"string\"},{\"internalType\":\"address\",\"name\":\"farmId\",\"type\":\"address\"},{\"internalType\":\"enumGridObjectFactory.GridTerrainType\",\"name\":\"terrainType\",\"type\":\"uint8\"}],\"name\":\"registerGrid\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"_caller\",\"type\":\"address\"}],\"name\":\"revokeCaller\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"gridId\",\"type\":\"address\"},{\"internalType\":\"enumGridObjectFactory.CitrusDiseaseType\",\"name\":\"newType\",\"type\":\"uint8\"}],\"name\":\"updateDiseaseType\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"gridId\",\"type\":\"address\"},{\"internalType\":\"enumGridObjectFactory.GridStatus\",\"name\":\"newStatus\",\"type\":\"uint8\"}],\"name\":\"updateGridStatus\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"userContract\",\"outputs\":[{\"internalType\":\"contractUser\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"}]",
 }
 
 // GridObjectFactoryABI is the input ABI used to generate the binding from.
@@ -201,9 +200,71 @@ func (_GridObjectFactory *GridObjectFactoryTransactorRaw) Transact(opts *bind.Tr
 	return _GridObjectFactory.Contract.contract.Transact(opts, method, params...)
 }
 
+// AuthorizedCallers is a free data retrieval call binding the contract method 0x536fff6c.
+//
+// Solidity: function authorizedCallers(address ) view returns(bool)
+func (_GridObjectFactory *GridObjectFactoryCaller) AuthorizedCallers(opts *bind.CallOpts, arg0 common.Address) (bool, error) {
+	var out []interface{}
+	err := _GridObjectFactory.contract.Call(opts, &out, "authorizedCallers", arg0)
+
+	if err != nil {
+		return *new(bool), err
+	}
+
+	out0 := *abi.ConvertType(out[0], new(bool)).(*bool)
+
+	return out0, err
+
+}
+
+// AuthorizedCallers is a free data retrieval call binding the contract method 0x536fff6c.
+//
+// Solidity: function authorizedCallers(address ) view returns(bool)
+func (_GridObjectFactory *GridObjectFactorySession) AuthorizedCallers(arg0 common.Address) (bool, error) {
+	return _GridObjectFactory.Contract.AuthorizedCallers(&_GridObjectFactory.CallOpts, arg0)
+}
+
+// AuthorizedCallers is a free data retrieval call binding the contract method 0x536fff6c.
+//
+// Solidity: function authorizedCallers(address ) view returns(bool)
+func (_GridObjectFactory *GridObjectFactoryCallerSession) AuthorizedCallers(arg0 common.Address) (bool, error) {
+	return _GridObjectFactory.Contract.AuthorizedCallers(&_GridObjectFactory.CallOpts, arg0)
+}
+
+// DroneFactory is a free data retrieval call binding the contract method 0xc7b26142.
+//
+// Solidity: function droneFactory() view returns(address)
+func (_GridObjectFactory *GridObjectFactoryCaller) DroneFactory(opts *bind.CallOpts) (common.Address, error) {
+	var out []interface{}
+	err := _GridObjectFactory.contract.Call(opts, &out, "droneFactory")
+
+	if err != nil {
+		return *new(common.Address), err
+	}
+
+	out0 := *abi.ConvertType(out[0], new(common.Address)).(*common.Address)
+
+	return out0, err
+
+}
+
+// DroneFactory is a free data retrieval call binding the contract method 0xc7b26142.
+//
+// Solidity: function droneFactory() view returns(address)
+func (_GridObjectFactory *GridObjectFactorySession) DroneFactory() (common.Address, error) {
+	return _GridObjectFactory.Contract.DroneFactory(&_GridObjectFactory.CallOpts)
+}
+
+// DroneFactory is a free data retrieval call binding the contract method 0xc7b26142.
+//
+// Solidity: function droneFactory() view returns(address)
+func (_GridObjectFactory *GridObjectFactoryCallerSession) DroneFactory() (common.Address, error) {
+	return _GridObjectFactory.Contract.DroneFactory(&_GridObjectFactory.CallOpts)
+}
+
 // GetGrid is a free data retrieval call binding the contract method 0x4e3fb04a.
 //
-// Solidity: function getGrid(address gridId) view returns((address,string,address,uint8,uint8,uint8,uint32))
+// Solidity: function getGrid(address gridId) view returns((string,address,uint8,uint8,uint8,uint32,bool))
 func (_GridObjectFactory *GridObjectFactoryCaller) GetGrid(opts *bind.CallOpts, gridId common.Address) (GridObjectFactoryGridInfo, error) {
 	var out []interface{}
 	err := _GridObjectFactory.contract.Call(opts, &out, "getGrid", gridId)
@@ -220,146 +281,146 @@ func (_GridObjectFactory *GridObjectFactoryCaller) GetGrid(opts *bind.CallOpts, 
 
 // GetGrid is a free data retrieval call binding the contract method 0x4e3fb04a.
 //
-// Solidity: function getGrid(address gridId) view returns((address,string,address,uint8,uint8,uint8,uint32))
+// Solidity: function getGrid(address gridId) view returns((string,address,uint8,uint8,uint8,uint32,bool))
 func (_GridObjectFactory *GridObjectFactorySession) GetGrid(gridId common.Address) (GridObjectFactoryGridInfo, error) {
 	return _GridObjectFactory.Contract.GetGrid(&_GridObjectFactory.CallOpts, gridId)
 }
 
 // GetGrid is a free data retrieval call binding the contract method 0x4e3fb04a.
 //
-// Solidity: function getGrid(address gridId) view returns((address,string,address,uint8,uint8,uint8,uint32))
+// Solidity: function getGrid(address gridId) view returns((string,address,uint8,uint8,uint8,uint32,bool))
 func (_GridObjectFactory *GridObjectFactoryCallerSession) GetGrid(gridId common.Address) (GridObjectFactoryGridInfo, error) {
 	return _GridObjectFactory.Contract.GetGrid(&_GridObjectFactory.CallOpts, gridId)
 }
 
-// GetMaintenanceRecordByIndex is a free data retrieval call binding the contract method 0xdf6e1f4c.
+// GetMaintenanceRecord is a free data retrieval call binding the contract method 0x18ff6b88.
 //
-// Solidity: function getMaintenanceRecordByIndex(address gridId, uint256 index) view returns((uint32,uint32,string,string,string,address))
-func (_GridObjectFactory *GridObjectFactoryCaller) GetMaintenanceRecordByIndex(opts *bind.CallOpts, gridId common.Address, index *big.Int) (GridObjectFactoryGridMaintenanceRecord, error) {
+// Solidity: function getMaintenanceRecord(address gridId, uint32 recordId) view returns((uint32,uint8,string,bytes32,address))
+func (_GridObjectFactory *GridObjectFactoryCaller) GetMaintenanceRecord(opts *bind.CallOpts, gridId common.Address, recordId uint32) (GridObjectFactoryMaintenanceRecord, error) {
 	var out []interface{}
-	err := _GridObjectFactory.contract.Call(opts, &out, "getMaintenanceRecordByIndex", gridId, index)
+	err := _GridObjectFactory.contract.Call(opts, &out, "getMaintenanceRecord", gridId, recordId)
 
 	if err != nil {
-		return *new(GridObjectFactoryGridMaintenanceRecord), err
+		return *new(GridObjectFactoryMaintenanceRecord), err
 	}
 
-	out0 := *abi.ConvertType(out[0], new(GridObjectFactoryGridMaintenanceRecord)).(*GridObjectFactoryGridMaintenanceRecord)
+	out0 := *abi.ConvertType(out[0], new(GridObjectFactoryMaintenanceRecord)).(*GridObjectFactoryMaintenanceRecord)
 
 	return out0, err
 
 }
 
-// GetMaintenanceRecordByIndex is a free data retrieval call binding the contract method 0xdf6e1f4c.
+// GetMaintenanceRecord is a free data retrieval call binding the contract method 0x18ff6b88.
 //
-// Solidity: function getMaintenanceRecordByIndex(address gridId, uint256 index) view returns((uint32,uint32,string,string,string,address))
-func (_GridObjectFactory *GridObjectFactorySession) GetMaintenanceRecordByIndex(gridId common.Address, index *big.Int) (GridObjectFactoryGridMaintenanceRecord, error) {
-	return _GridObjectFactory.Contract.GetMaintenanceRecordByIndex(&_GridObjectFactory.CallOpts, gridId, index)
+// Solidity: function getMaintenanceRecord(address gridId, uint32 recordId) view returns((uint32,uint8,string,bytes32,address))
+func (_GridObjectFactory *GridObjectFactorySession) GetMaintenanceRecord(gridId common.Address, recordId uint32) (GridObjectFactoryMaintenanceRecord, error) {
+	return _GridObjectFactory.Contract.GetMaintenanceRecord(&_GridObjectFactory.CallOpts, gridId, recordId)
 }
 
-// GetMaintenanceRecordByIndex is a free data retrieval call binding the contract method 0xdf6e1f4c.
+// GetMaintenanceRecord is a free data retrieval call binding the contract method 0x18ff6b88.
 //
-// Solidity: function getMaintenanceRecordByIndex(address gridId, uint256 index) view returns((uint32,uint32,string,string,string,address))
-func (_GridObjectFactory *GridObjectFactoryCallerSession) GetMaintenanceRecordByIndex(gridId common.Address, index *big.Int) (GridObjectFactoryGridMaintenanceRecord, error) {
-	return _GridObjectFactory.Contract.GetMaintenanceRecordByIndex(&_GridObjectFactory.CallOpts, gridId, index)
+// Solidity: function getMaintenanceRecord(address gridId, uint32 recordId) view returns((uint32,uint8,string,bytes32,address))
+func (_GridObjectFactory *GridObjectFactoryCallerSession) GetMaintenanceRecord(gridId common.Address, recordId uint32) (GridObjectFactoryMaintenanceRecord, error) {
+	return _GridObjectFactory.Contract.GetMaintenanceRecord(&_GridObjectFactory.CallOpts, gridId, recordId)
 }
 
-// GetMaintenanceRecordCount is a free data retrieval call binding the contract method 0x7629699b.
+// GetRecentMaintenanceRecords is a free data retrieval call binding the contract method 0x13fcfc2b.
 //
-// Solidity: function getMaintenanceRecordCount(address gridId) view returns(uint256)
-func (_GridObjectFactory *GridObjectFactoryCaller) GetMaintenanceRecordCount(opts *bind.CallOpts, gridId common.Address) (*big.Int, error) {
+// Solidity: function getRecentMaintenanceRecords(address gridId, uint32 count) view returns((uint32,uint8,string,bytes32,address)[])
+func (_GridObjectFactory *GridObjectFactoryCaller) GetRecentMaintenanceRecords(opts *bind.CallOpts, gridId common.Address, count uint32) ([]GridObjectFactoryMaintenanceRecord, error) {
 	var out []interface{}
-	err := _GridObjectFactory.contract.Call(opts, &out, "getMaintenanceRecordCount", gridId)
+	err := _GridObjectFactory.contract.Call(opts, &out, "getRecentMaintenanceRecords", gridId, count)
 
 	if err != nil {
-		return *new(*big.Int), err
+		return *new([]GridObjectFactoryMaintenanceRecord), err
 	}
 
-	out0 := *abi.ConvertType(out[0], new(*big.Int)).(**big.Int)
+	out0 := *abi.ConvertType(out[0], new([]GridObjectFactoryMaintenanceRecord)).(*[]GridObjectFactoryMaintenanceRecord)
 
 	return out0, err
 
 }
 
-// GetMaintenanceRecordCount is a free data retrieval call binding the contract method 0x7629699b.
+// GetRecentMaintenanceRecords is a free data retrieval call binding the contract method 0x13fcfc2b.
 //
-// Solidity: function getMaintenanceRecordCount(address gridId) view returns(uint256)
-func (_GridObjectFactory *GridObjectFactorySession) GetMaintenanceRecordCount(gridId common.Address) (*big.Int, error) {
-	return _GridObjectFactory.Contract.GetMaintenanceRecordCount(&_GridObjectFactory.CallOpts, gridId)
+// Solidity: function getRecentMaintenanceRecords(address gridId, uint32 count) view returns((uint32,uint8,string,bytes32,address)[])
+func (_GridObjectFactory *GridObjectFactorySession) GetRecentMaintenanceRecords(gridId common.Address, count uint32) ([]GridObjectFactoryMaintenanceRecord, error) {
+	return _GridObjectFactory.Contract.GetRecentMaintenanceRecords(&_GridObjectFactory.CallOpts, gridId, count)
 }
 
-// GetMaintenanceRecordCount is a free data retrieval call binding the contract method 0x7629699b.
+// GetRecentMaintenanceRecords is a free data retrieval call binding the contract method 0x13fcfc2b.
 //
-// Solidity: function getMaintenanceRecordCount(address gridId) view returns(uint256)
-func (_GridObjectFactory *GridObjectFactoryCallerSession) GetMaintenanceRecordCount(gridId common.Address) (*big.Int, error) {
-	return _GridObjectFactory.Contract.GetMaintenanceRecordCount(&_GridObjectFactory.CallOpts, gridId)
+// Solidity: function getRecentMaintenanceRecords(address gridId, uint32 count) view returns((uint32,uint8,string,bytes32,address)[])
+func (_GridObjectFactory *GridObjectFactoryCallerSession) GetRecentMaintenanceRecords(gridId common.Address, count uint32) ([]GridObjectFactoryMaintenanceRecord, error) {
+	return _GridObjectFactory.Contract.GetRecentMaintenanceRecords(&_GridObjectFactory.CallOpts, gridId, count)
 }
 
-// GetMaintenanceRecords is a free data retrieval call binding the contract method 0xf67bc1dd.
+// GridExists is a free data retrieval call binding the contract method 0xcbf62e42.
 //
-// Solidity: function getMaintenanceRecords(address gridId) view returns((uint32,uint32,string,string,string,address)[])
-func (_GridObjectFactory *GridObjectFactoryCaller) GetMaintenanceRecords(opts *bind.CallOpts, gridId common.Address) ([]GridObjectFactoryGridMaintenanceRecord, error) {
+// Solidity: function gridExists(address gridId) view returns(bool)
+func (_GridObjectFactory *GridObjectFactoryCaller) GridExists(opts *bind.CallOpts, gridId common.Address) (bool, error) {
 	var out []interface{}
-	err := _GridObjectFactory.contract.Call(opts, &out, "getMaintenanceRecords", gridId)
+	err := _GridObjectFactory.contract.Call(opts, &out, "gridExists", gridId)
 
 	if err != nil {
-		return *new([]GridObjectFactoryGridMaintenanceRecord), err
+		return *new(bool), err
 	}
 
-	out0 := *abi.ConvertType(out[0], new([]GridObjectFactoryGridMaintenanceRecord)).(*[]GridObjectFactoryGridMaintenanceRecord)
+	out0 := *abi.ConvertType(out[0], new(bool)).(*bool)
 
 	return out0, err
 
 }
 
-// GetMaintenanceRecords is a free data retrieval call binding the contract method 0xf67bc1dd.
+// GridExists is a free data retrieval call binding the contract method 0xcbf62e42.
 //
-// Solidity: function getMaintenanceRecords(address gridId) view returns((uint32,uint32,string,string,string,address)[])
-func (_GridObjectFactory *GridObjectFactorySession) GetMaintenanceRecords(gridId common.Address) ([]GridObjectFactoryGridMaintenanceRecord, error) {
-	return _GridObjectFactory.Contract.GetMaintenanceRecords(&_GridObjectFactory.CallOpts, gridId)
+// Solidity: function gridExists(address gridId) view returns(bool)
+func (_GridObjectFactory *GridObjectFactorySession) GridExists(gridId common.Address) (bool, error) {
+	return _GridObjectFactory.Contract.GridExists(&_GridObjectFactory.CallOpts, gridId)
 }
 
-// GetMaintenanceRecords is a free data retrieval call binding the contract method 0xf67bc1dd.
+// GridExists is a free data retrieval call binding the contract method 0xcbf62e42.
 //
-// Solidity: function getMaintenanceRecords(address gridId) view returns((uint32,uint32,string,string,string,address)[])
-func (_GridObjectFactory *GridObjectFactoryCallerSession) GetMaintenanceRecords(gridId common.Address) ([]GridObjectFactoryGridMaintenanceRecord, error) {
-	return _GridObjectFactory.Contract.GetMaintenanceRecords(&_GridObjectFactory.CallOpts, gridId)
+// Solidity: function gridExists(address gridId) view returns(bool)
+func (_GridObjectFactory *GridObjectFactoryCallerSession) GridExists(gridId common.Address) (bool, error) {
+	return _GridObjectFactory.Contract.GridExists(&_GridObjectFactory.CallOpts, gridId)
 }
 
 // Grids is a free data retrieval call binding the contract method 0xadbb79cd.
 //
-// Solidity: function grids(address ) view returns(address gridId, string gridCode, address farmId, uint8 terrainType, uint8 status, uint8 diseaseType, uint32 lastStatusUpdateTime)
+// Solidity: function grids(address ) view returns(string gridCode, address farmId, uint8 terrainType, uint8 status, uint8 diseaseType, uint32 lastStatusUpdateTime, bool exists)
 func (_GridObjectFactory *GridObjectFactoryCaller) Grids(opts *bind.CallOpts, arg0 common.Address) (struct {
-	GridId               common.Address
 	GridCode             string
 	FarmId               common.Address
 	TerrainType          uint8
 	Status               uint8
 	DiseaseType          uint8
 	LastStatusUpdateTime uint32
+	Exists               bool
 }, error) {
 	var out []interface{}
 	err := _GridObjectFactory.contract.Call(opts, &out, "grids", arg0)
 
 	outstruct := new(struct {
-		GridId               common.Address
 		GridCode             string
 		FarmId               common.Address
 		TerrainType          uint8
 		Status               uint8
 		DiseaseType          uint8
 		LastStatusUpdateTime uint32
+		Exists               bool
 	})
 	if err != nil {
 		return *outstruct, err
 	}
 
-	outstruct.GridId = *abi.ConvertType(out[0], new(common.Address)).(*common.Address)
-	outstruct.GridCode = *abi.ConvertType(out[1], new(string)).(*string)
-	outstruct.FarmId = *abi.ConvertType(out[2], new(common.Address)).(*common.Address)
-	outstruct.TerrainType = *abi.ConvertType(out[3], new(uint8)).(*uint8)
-	outstruct.Status = *abi.ConvertType(out[4], new(uint8)).(*uint8)
-	outstruct.DiseaseType = *abi.ConvertType(out[5], new(uint8)).(*uint8)
-	outstruct.LastStatusUpdateTime = *abi.ConvertType(out[6], new(uint32)).(*uint32)
+	outstruct.GridCode = *abi.ConvertType(out[0], new(string)).(*string)
+	outstruct.FarmId = *abi.ConvertType(out[1], new(common.Address)).(*common.Address)
+	outstruct.TerrainType = *abi.ConvertType(out[2], new(uint8)).(*uint8)
+	outstruct.Status = *abi.ConvertType(out[3], new(uint8)).(*uint8)
+	outstruct.DiseaseType = *abi.ConvertType(out[4], new(uint8)).(*uint8)
+	outstruct.LastStatusUpdateTime = *abi.ConvertType(out[5], new(uint32)).(*uint32)
+	outstruct.Exists = *abi.ConvertType(out[6], new(bool)).(*bool)
 
 	return *outstruct, err
 
@@ -367,118 +428,196 @@ func (_GridObjectFactory *GridObjectFactoryCaller) Grids(opts *bind.CallOpts, ar
 
 // Grids is a free data retrieval call binding the contract method 0xadbb79cd.
 //
-// Solidity: function grids(address ) view returns(address gridId, string gridCode, address farmId, uint8 terrainType, uint8 status, uint8 diseaseType, uint32 lastStatusUpdateTime)
+// Solidity: function grids(address ) view returns(string gridCode, address farmId, uint8 terrainType, uint8 status, uint8 diseaseType, uint32 lastStatusUpdateTime, bool exists)
 func (_GridObjectFactory *GridObjectFactorySession) Grids(arg0 common.Address) (struct {
-	GridId               common.Address
 	GridCode             string
 	FarmId               common.Address
 	TerrainType          uint8
 	Status               uint8
 	DiseaseType          uint8
 	LastStatusUpdateTime uint32
+	Exists               bool
 }, error) {
 	return _GridObjectFactory.Contract.Grids(&_GridObjectFactory.CallOpts, arg0)
 }
 
 // Grids is a free data retrieval call binding the contract method 0xadbb79cd.
 //
-// Solidity: function grids(address ) view returns(address gridId, string gridCode, address farmId, uint8 terrainType, uint8 status, uint8 diseaseType, uint32 lastStatusUpdateTime)
+// Solidity: function grids(address ) view returns(string gridCode, address farmId, uint8 terrainType, uint8 status, uint8 diseaseType, uint32 lastStatusUpdateTime, bool exists)
 func (_GridObjectFactory *GridObjectFactoryCallerSession) Grids(arg0 common.Address) (struct {
-	GridId               common.Address
 	GridCode             string
 	FarmId               common.Address
 	TerrainType          uint8
 	Status               uint8
 	DiseaseType          uint8
 	LastStatusUpdateTime uint32
+	Exists               bool
 }, error) {
 	return _GridObjectFactory.Contract.Grids(&_GridObjectFactory.CallOpts, arg0)
 }
 
-// MaintenanceRecords is a free data retrieval call binding the contract method 0xa2cc6d5a.
+// MaintenanceRecordCount is a free data retrieval call binding the contract method 0xbb318b4f.
 //
-// Solidity: function maintenanceRecords(address , uint256 ) view returns(uint32 recordId, uint32 timestamp, string operationType, string detail, string evidenceIPFS, address operator)
-func (_GridObjectFactory *GridObjectFactoryCaller) MaintenanceRecords(opts *bind.CallOpts, arg0 common.Address, arg1 *big.Int) (struct {
-	RecordId      uint32
-	Timestamp     uint32
-	OperationType string
-	Detail        string
-	EvidenceIPFS  string
-	Operator      common.Address
+// Solidity: function maintenanceRecordCount(address ) view returns(uint32)
+func (_GridObjectFactory *GridObjectFactoryCaller) MaintenanceRecordCount(opts *bind.CallOpts, arg0 common.Address) (uint32, error) {
+	var out []interface{}
+	err := _GridObjectFactory.contract.Call(opts, &out, "maintenanceRecordCount", arg0)
+
+	if err != nil {
+		return *new(uint32), err
+	}
+
+	out0 := *abi.ConvertType(out[0], new(uint32)).(*uint32)
+
+	return out0, err
+
+}
+
+// MaintenanceRecordCount is a free data retrieval call binding the contract method 0xbb318b4f.
+//
+// Solidity: function maintenanceRecordCount(address ) view returns(uint32)
+func (_GridObjectFactory *GridObjectFactorySession) MaintenanceRecordCount(arg0 common.Address) (uint32, error) {
+	return _GridObjectFactory.Contract.MaintenanceRecordCount(&_GridObjectFactory.CallOpts, arg0)
+}
+
+// MaintenanceRecordCount is a free data retrieval call binding the contract method 0xbb318b4f.
+//
+// Solidity: function maintenanceRecordCount(address ) view returns(uint32)
+func (_GridObjectFactory *GridObjectFactoryCallerSession) MaintenanceRecordCount(arg0 common.Address) (uint32, error) {
+	return _GridObjectFactory.Contract.MaintenanceRecordCount(&_GridObjectFactory.CallOpts, arg0)
+}
+
+// MaintenanceRecords is a free data retrieval call binding the contract method 0xe93725f9.
+//
+// Solidity: function maintenanceRecords(address , uint32 ) view returns(uint32 timestamp, uint8 operationTypeCode, string detail, bytes32 evidenceIPFSHash, address operator)
+func (_GridObjectFactory *GridObjectFactoryCaller) MaintenanceRecords(opts *bind.CallOpts, arg0 common.Address, arg1 uint32) (struct {
+	Timestamp         uint32
+	OperationTypeCode uint8
+	Detail            string
+	EvidenceIPFSHash  [32]byte
+	Operator          common.Address
 }, error) {
 	var out []interface{}
 	err := _GridObjectFactory.contract.Call(opts, &out, "maintenanceRecords", arg0, arg1)
 
 	outstruct := new(struct {
-		RecordId      uint32
-		Timestamp     uint32
-		OperationType string
-		Detail        string
-		EvidenceIPFS  string
-		Operator      common.Address
+		Timestamp         uint32
+		OperationTypeCode uint8
+		Detail            string
+		EvidenceIPFSHash  [32]byte
+		Operator          common.Address
 	})
 	if err != nil {
 		return *outstruct, err
 	}
 
-	outstruct.RecordId = *abi.ConvertType(out[0], new(uint32)).(*uint32)
-	outstruct.Timestamp = *abi.ConvertType(out[1], new(uint32)).(*uint32)
-	outstruct.OperationType = *abi.ConvertType(out[2], new(string)).(*string)
-	outstruct.Detail = *abi.ConvertType(out[3], new(string)).(*string)
-	outstruct.EvidenceIPFS = *abi.ConvertType(out[4], new(string)).(*string)
-	outstruct.Operator = *abi.ConvertType(out[5], new(common.Address)).(*common.Address)
+	outstruct.Timestamp = *abi.ConvertType(out[0], new(uint32)).(*uint32)
+	outstruct.OperationTypeCode = *abi.ConvertType(out[1], new(uint8)).(*uint8)
+	outstruct.Detail = *abi.ConvertType(out[2], new(string)).(*string)
+	outstruct.EvidenceIPFSHash = *abi.ConvertType(out[3], new([32]byte)).(*[32]byte)
+	outstruct.Operator = *abi.ConvertType(out[4], new(common.Address)).(*common.Address)
 
 	return *outstruct, err
 
 }
 
-// MaintenanceRecords is a free data retrieval call binding the contract method 0xa2cc6d5a.
+// MaintenanceRecords is a free data retrieval call binding the contract method 0xe93725f9.
 //
-// Solidity: function maintenanceRecords(address , uint256 ) view returns(uint32 recordId, uint32 timestamp, string operationType, string detail, string evidenceIPFS, address operator)
-func (_GridObjectFactory *GridObjectFactorySession) MaintenanceRecords(arg0 common.Address, arg1 *big.Int) (struct {
-	RecordId      uint32
-	Timestamp     uint32
-	OperationType string
-	Detail        string
-	EvidenceIPFS  string
-	Operator      common.Address
+// Solidity: function maintenanceRecords(address , uint32 ) view returns(uint32 timestamp, uint8 operationTypeCode, string detail, bytes32 evidenceIPFSHash, address operator)
+func (_GridObjectFactory *GridObjectFactorySession) MaintenanceRecords(arg0 common.Address, arg1 uint32) (struct {
+	Timestamp         uint32
+	OperationTypeCode uint8
+	Detail            string
+	EvidenceIPFSHash  [32]byte
+	Operator          common.Address
 }, error) {
 	return _GridObjectFactory.Contract.MaintenanceRecords(&_GridObjectFactory.CallOpts, arg0, arg1)
 }
 
-// MaintenanceRecords is a free data retrieval call binding the contract method 0xa2cc6d5a.
+// MaintenanceRecords is a free data retrieval call binding the contract method 0xe93725f9.
 //
-// Solidity: function maintenanceRecords(address , uint256 ) view returns(uint32 recordId, uint32 timestamp, string operationType, string detail, string evidenceIPFS, address operator)
-func (_GridObjectFactory *GridObjectFactoryCallerSession) MaintenanceRecords(arg0 common.Address, arg1 *big.Int) (struct {
-	RecordId      uint32
-	Timestamp     uint32
-	OperationType string
-	Detail        string
-	EvidenceIPFS  string
-	Operator      common.Address
+// Solidity: function maintenanceRecords(address , uint32 ) view returns(uint32 timestamp, uint8 operationTypeCode, string detail, bytes32 evidenceIPFSHash, address operator)
+func (_GridObjectFactory *GridObjectFactoryCallerSession) MaintenanceRecords(arg0 common.Address, arg1 uint32) (struct {
+	Timestamp         uint32
+	OperationTypeCode uint8
+	Detail            string
+	EvidenceIPFSHash  [32]byte
+	Operator          common.Address
 }, error) {
 	return _GridObjectFactory.Contract.MaintenanceRecords(&_GridObjectFactory.CallOpts, arg0, arg1)
 }
 
-// AddMaintenanceRecord is a paid mutator transaction binding the contract method 0x1c426167.
+// UserContract is a free data retrieval call binding the contract method 0x5000596b.
 //
-// Solidity: function addMaintenanceRecord(address gridId, uint32 recordId, string operationType, string detail, string evidenceIPFS) returns()
-func (_GridObjectFactory *GridObjectFactoryTransactor) AddMaintenanceRecord(opts *bind.TransactOpts, gridId common.Address, recordId uint32, operationType string, detail string, evidenceIPFS string) (*types.Transaction, error) {
-	return _GridObjectFactory.contract.Transact(opts, "addMaintenanceRecord", gridId, recordId, operationType, detail, evidenceIPFS)
+// Solidity: function userContract() view returns(address)
+func (_GridObjectFactory *GridObjectFactoryCaller) UserContract(opts *bind.CallOpts) (common.Address, error) {
+	var out []interface{}
+	err := _GridObjectFactory.contract.Call(opts, &out, "userContract")
+
+	if err != nil {
+		return *new(common.Address), err
+	}
+
+	out0 := *abi.ConvertType(out[0], new(common.Address)).(*common.Address)
+
+	return out0, err
+
 }
 
-// AddMaintenanceRecord is a paid mutator transaction binding the contract method 0x1c426167.
+// UserContract is a free data retrieval call binding the contract method 0x5000596b.
 //
-// Solidity: function addMaintenanceRecord(address gridId, uint32 recordId, string operationType, string detail, string evidenceIPFS) returns()
-func (_GridObjectFactory *GridObjectFactorySession) AddMaintenanceRecord(gridId common.Address, recordId uint32, operationType string, detail string, evidenceIPFS string) (*types.Transaction, error) {
-	return _GridObjectFactory.Contract.AddMaintenanceRecord(&_GridObjectFactory.TransactOpts, gridId, recordId, operationType, detail, evidenceIPFS)
+// Solidity: function userContract() view returns(address)
+func (_GridObjectFactory *GridObjectFactorySession) UserContract() (common.Address, error) {
+	return _GridObjectFactory.Contract.UserContract(&_GridObjectFactory.CallOpts)
 }
 
-// AddMaintenanceRecord is a paid mutator transaction binding the contract method 0x1c426167.
+// UserContract is a free data retrieval call binding the contract method 0x5000596b.
 //
-// Solidity: function addMaintenanceRecord(address gridId, uint32 recordId, string operationType, string detail, string evidenceIPFS) returns()
-func (_GridObjectFactory *GridObjectFactoryTransactorSession) AddMaintenanceRecord(gridId common.Address, recordId uint32, operationType string, detail string, evidenceIPFS string) (*types.Transaction, error) {
-	return _GridObjectFactory.Contract.AddMaintenanceRecord(&_GridObjectFactory.TransactOpts, gridId, recordId, operationType, detail, evidenceIPFS)
+// Solidity: function userContract() view returns(address)
+func (_GridObjectFactory *GridObjectFactoryCallerSession) UserContract() (common.Address, error) {
+	return _GridObjectFactory.Contract.UserContract(&_GridObjectFactory.CallOpts)
+}
+
+// AddMaintenanceRecord is a paid mutator transaction binding the contract method 0x8c4f7db5.
+//
+// Solidity: function addMaintenanceRecord(address gridId, uint8 operationTypeCode, string detail, bytes32 evidenceIPFSHash) returns()
+func (_GridObjectFactory *GridObjectFactoryTransactor) AddMaintenanceRecord(opts *bind.TransactOpts, gridId common.Address, operationTypeCode uint8, detail string, evidenceIPFSHash [32]byte) (*types.Transaction, error) {
+	return _GridObjectFactory.contract.Transact(opts, "addMaintenanceRecord", gridId, operationTypeCode, detail, evidenceIPFSHash)
+}
+
+// AddMaintenanceRecord is a paid mutator transaction binding the contract method 0x8c4f7db5.
+//
+// Solidity: function addMaintenanceRecord(address gridId, uint8 operationTypeCode, string detail, bytes32 evidenceIPFSHash) returns()
+func (_GridObjectFactory *GridObjectFactorySession) AddMaintenanceRecord(gridId common.Address, operationTypeCode uint8, detail string, evidenceIPFSHash [32]byte) (*types.Transaction, error) {
+	return _GridObjectFactory.Contract.AddMaintenanceRecord(&_GridObjectFactory.TransactOpts, gridId, operationTypeCode, detail, evidenceIPFSHash)
+}
+
+// AddMaintenanceRecord is a paid mutator transaction binding the contract method 0x8c4f7db5.
+//
+// Solidity: function addMaintenanceRecord(address gridId, uint8 operationTypeCode, string detail, bytes32 evidenceIPFSHash) returns()
+func (_GridObjectFactory *GridObjectFactoryTransactorSession) AddMaintenanceRecord(gridId common.Address, operationTypeCode uint8, detail string, evidenceIPFSHash [32]byte) (*types.Transaction, error) {
+	return _GridObjectFactory.Contract.AddMaintenanceRecord(&_GridObjectFactory.TransactOpts, gridId, operationTypeCode, detail, evidenceIPFSHash)
+}
+
+// AuthorizeCaller is a paid mutator transaction binding the contract method 0x2c388d5d.
+//
+// Solidity: function authorizeCaller(address _caller) returns()
+func (_GridObjectFactory *GridObjectFactoryTransactor) AuthorizeCaller(opts *bind.TransactOpts, _caller common.Address) (*types.Transaction, error) {
+	return _GridObjectFactory.contract.Transact(opts, "authorizeCaller", _caller)
+}
+
+// AuthorizeCaller is a paid mutator transaction binding the contract method 0x2c388d5d.
+//
+// Solidity: function authorizeCaller(address _caller) returns()
+func (_GridObjectFactory *GridObjectFactorySession) AuthorizeCaller(_caller common.Address) (*types.Transaction, error) {
+	return _GridObjectFactory.Contract.AuthorizeCaller(&_GridObjectFactory.TransactOpts, _caller)
+}
+
+// AuthorizeCaller is a paid mutator transaction binding the contract method 0x2c388d5d.
+//
+// Solidity: function authorizeCaller(address _caller) returns()
+func (_GridObjectFactory *GridObjectFactoryTransactorSession) AuthorizeCaller(_caller common.Address) (*types.Transaction, error) {
+	return _GridObjectFactory.Contract.AuthorizeCaller(&_GridObjectFactory.TransactOpts, _caller)
 }
 
 // RegisterGrid is a paid mutator transaction binding the contract method 0x39b85f7f.
@@ -500,6 +639,27 @@ func (_GridObjectFactory *GridObjectFactorySession) RegisterGrid(gridId common.A
 // Solidity: function registerGrid(address gridId, string gridCode, address farmId, uint8 terrainType) returns()
 func (_GridObjectFactory *GridObjectFactoryTransactorSession) RegisterGrid(gridId common.Address, gridCode string, farmId common.Address, terrainType uint8) (*types.Transaction, error) {
 	return _GridObjectFactory.Contract.RegisterGrid(&_GridObjectFactory.TransactOpts, gridId, gridCode, farmId, terrainType)
+}
+
+// RevokeCaller is a paid mutator transaction binding the contract method 0xb7743530.
+//
+// Solidity: function revokeCaller(address _caller) returns()
+func (_GridObjectFactory *GridObjectFactoryTransactor) RevokeCaller(opts *bind.TransactOpts, _caller common.Address) (*types.Transaction, error) {
+	return _GridObjectFactory.contract.Transact(opts, "revokeCaller", _caller)
+}
+
+// RevokeCaller is a paid mutator transaction binding the contract method 0xb7743530.
+//
+// Solidity: function revokeCaller(address _caller) returns()
+func (_GridObjectFactory *GridObjectFactorySession) RevokeCaller(_caller common.Address) (*types.Transaction, error) {
+	return _GridObjectFactory.Contract.RevokeCaller(&_GridObjectFactory.TransactOpts, _caller)
+}
+
+// RevokeCaller is a paid mutator transaction binding the contract method 0xb7743530.
+//
+// Solidity: function revokeCaller(address _caller) returns()
+func (_GridObjectFactory *GridObjectFactoryTransactorSession) RevokeCaller(_caller common.Address) (*types.Transaction, error) {
+	return _GridObjectFactory.Contract.RevokeCaller(&_GridObjectFactory.TransactOpts, _caller)
 }
 
 // UpdateDiseaseType is a paid mutator transaction binding the contract method 0x9e888917.
@@ -544,9 +704,9 @@ func (_GridObjectFactory *GridObjectFactoryTransactorSession) UpdateGridStatus(g
 	return _GridObjectFactory.Contract.UpdateGridStatus(&_GridObjectFactory.TransactOpts, gridId, newStatus)
 }
 
-// GridObjectFactoryFarmGridRegisteredIterator is returned from FilterFarmGridRegistered and is used to iterate over the raw logs and unpacked data for FarmGridRegistered events raised by the GridObjectFactory contract.
-type GridObjectFactoryFarmGridRegisteredIterator struct {
-	Event *GridObjectFactoryFarmGridRegistered // Event containing the contract specifics and raw log
+// GridObjectFactoryCallerAuthorizedIterator is returned from FilterCallerAuthorized and is used to iterate over the raw logs and unpacked data for CallerAuthorized events raised by the GridObjectFactory contract.
+type GridObjectFactoryCallerAuthorizedIterator struct {
+	Event *GridObjectFactoryCallerAuthorized // Event containing the contract specifics and raw log
 
 	contract *bind.BoundContract // Generic contract to use for unpacking event data
 	event    string              // Event name to use for unpacking event data
@@ -560,7 +720,7 @@ type GridObjectFactoryFarmGridRegisteredIterator struct {
 // Next advances the iterator to the subsequent event, returning whether there
 // are any more events found. In case of a retrieval or parsing error, false is
 // returned and Error() can be queried for the exact failure.
-func (it *GridObjectFactoryFarmGridRegisteredIterator) Next() bool {
+func (it *GridObjectFactoryCallerAuthorizedIterator) Next() bool {
 	// If the iterator failed, stop iterating
 	if it.fail != nil {
 		return false
@@ -569,7 +729,7 @@ func (it *GridObjectFactoryFarmGridRegisteredIterator) Next() bool {
 	if it.done {
 		select {
 		case log := <-it.logs:
-			it.Event = new(GridObjectFactoryFarmGridRegistered)
+			it.Event = new(GridObjectFactoryCallerAuthorized)
 			if err := it.contract.UnpackLog(it.Event, it.event, log); err != nil {
 				it.fail = err
 				return false
@@ -584,7 +744,7 @@ func (it *GridObjectFactoryFarmGridRegisteredIterator) Next() bool {
 	// Iterator still in progress, wait for either a data or an error event
 	select {
 	case log := <-it.logs:
-		it.Event = new(GridObjectFactoryFarmGridRegistered)
+		it.Event = new(GridObjectFactoryCallerAuthorized)
 		if err := it.contract.UnpackLog(it.Event, it.event, log); err != nil {
 			it.fail = err
 			return false
@@ -600,61 +760,51 @@ func (it *GridObjectFactoryFarmGridRegisteredIterator) Next() bool {
 }
 
 // Error returns any retrieval or parsing error occurred during filtering.
-func (it *GridObjectFactoryFarmGridRegisteredIterator) Error() error {
+func (it *GridObjectFactoryCallerAuthorizedIterator) Error() error {
 	return it.fail
 }
 
 // Close terminates the iteration process, releasing any pending underlying
 // resources.
-func (it *GridObjectFactoryFarmGridRegisteredIterator) Close() error {
+func (it *GridObjectFactoryCallerAuthorizedIterator) Close() error {
 	it.sub.Unsubscribe()
 	return nil
 }
 
-// GridObjectFactoryFarmGridRegistered represents a FarmGridRegistered event raised by the GridObjectFactory contract.
-type GridObjectFactoryFarmGridRegistered struct {
-	FarmId   common.Address
-	GridId   common.Address
-	GridCode string
-	Raw      types.Log // Blockchain specific contextual infos
+// GridObjectFactoryCallerAuthorized represents a CallerAuthorized event raised by the GridObjectFactory contract.
+type GridObjectFactoryCallerAuthorized struct {
+	Caller common.Address
+	Raw    types.Log // Blockchain specific contextual infos
 }
 
-// FilterFarmGridRegistered is a free log retrieval operation binding the contract event 0xb4043ad9452e8039c88af7ed262dbb5e8afd1ecd023590a82eb223bf40a10668.
+// FilterCallerAuthorized is a free log retrieval operation binding the contract event 0x6acfd92212f0ec670af78f8ba2273e4a85ac17023475650c25be0440602bff2d.
 //
-// Solidity: event FarmGridRegistered(address indexed farmId, address indexed gridId, string gridCode)
-func (_GridObjectFactory *GridObjectFactoryFilterer) FilterFarmGridRegistered(opts *bind.FilterOpts, farmId []common.Address, gridId []common.Address) (*GridObjectFactoryFarmGridRegisteredIterator, error) {
+// Solidity: event CallerAuthorized(address indexed caller)
+func (_GridObjectFactory *GridObjectFactoryFilterer) FilterCallerAuthorized(opts *bind.FilterOpts, caller []common.Address) (*GridObjectFactoryCallerAuthorizedIterator, error) {
 
-	var farmIdRule []interface{}
-	for _, farmIdItem := range farmId {
-		farmIdRule = append(farmIdRule, farmIdItem)
-	}
-	var gridIdRule []interface{}
-	for _, gridIdItem := range gridId {
-		gridIdRule = append(gridIdRule, gridIdItem)
+	var callerRule []interface{}
+	for _, callerItem := range caller {
+		callerRule = append(callerRule, callerItem)
 	}
 
-	logs, sub, err := _GridObjectFactory.contract.FilterLogs(opts, "FarmGridRegistered", farmIdRule, gridIdRule)
+	logs, sub, err := _GridObjectFactory.contract.FilterLogs(opts, "CallerAuthorized", callerRule)
 	if err != nil {
 		return nil, err
 	}
-	return &GridObjectFactoryFarmGridRegisteredIterator{contract: _GridObjectFactory.contract, event: "FarmGridRegistered", logs: logs, sub: sub}, nil
+	return &GridObjectFactoryCallerAuthorizedIterator{contract: _GridObjectFactory.contract, event: "CallerAuthorized", logs: logs, sub: sub}, nil
 }
 
-// WatchFarmGridRegistered is a free log subscription operation binding the contract event 0xb4043ad9452e8039c88af7ed262dbb5e8afd1ecd023590a82eb223bf40a10668.
+// WatchCallerAuthorized is a free log subscription operation binding the contract event 0x6acfd92212f0ec670af78f8ba2273e4a85ac17023475650c25be0440602bff2d.
 //
-// Solidity: event FarmGridRegistered(address indexed farmId, address indexed gridId, string gridCode)
-func (_GridObjectFactory *GridObjectFactoryFilterer) WatchFarmGridRegistered(opts *bind.WatchOpts, sink chan<- *GridObjectFactoryFarmGridRegistered, farmId []common.Address, gridId []common.Address) (event.Subscription, error) {
+// Solidity: event CallerAuthorized(address indexed caller)
+func (_GridObjectFactory *GridObjectFactoryFilterer) WatchCallerAuthorized(opts *bind.WatchOpts, sink chan<- *GridObjectFactoryCallerAuthorized, caller []common.Address) (event.Subscription, error) {
 
-	var farmIdRule []interface{}
-	for _, farmIdItem := range farmId {
-		farmIdRule = append(farmIdRule, farmIdItem)
-	}
-	var gridIdRule []interface{}
-	for _, gridIdItem := range gridId {
-		gridIdRule = append(gridIdRule, gridIdItem)
+	var callerRule []interface{}
+	for _, callerItem := range caller {
+		callerRule = append(callerRule, callerItem)
 	}
 
-	logs, sub, err := _GridObjectFactory.contract.WatchLogs(opts, "FarmGridRegistered", farmIdRule, gridIdRule)
+	logs, sub, err := _GridObjectFactory.contract.WatchLogs(opts, "CallerAuthorized", callerRule)
 	if err != nil {
 		return nil, err
 	}
@@ -664,8 +814,8 @@ func (_GridObjectFactory *GridObjectFactoryFilterer) WatchFarmGridRegistered(opt
 			select {
 			case log := <-logs:
 				// New log arrived, parse the event and forward to the user
-				event := new(GridObjectFactoryFarmGridRegistered)
-				if err := _GridObjectFactory.contract.UnpackLog(event, "FarmGridRegistered", log); err != nil {
+				event := new(GridObjectFactoryCallerAuthorized)
+				if err := _GridObjectFactory.contract.UnpackLog(event, "CallerAuthorized", log); err != nil {
 					return err
 				}
 				event.Raw = log
@@ -686,12 +836,156 @@ func (_GridObjectFactory *GridObjectFactoryFilterer) WatchFarmGridRegistered(opt
 	}), nil
 }
 
-// ParseFarmGridRegistered is a log parse operation binding the contract event 0xb4043ad9452e8039c88af7ed262dbb5e8afd1ecd023590a82eb223bf40a10668.
+// ParseCallerAuthorized is a log parse operation binding the contract event 0x6acfd92212f0ec670af78f8ba2273e4a85ac17023475650c25be0440602bff2d.
 //
-// Solidity: event FarmGridRegistered(address indexed farmId, address indexed gridId, string gridCode)
-func (_GridObjectFactory *GridObjectFactoryFilterer) ParseFarmGridRegistered(log types.Log) (*GridObjectFactoryFarmGridRegistered, error) {
-	event := new(GridObjectFactoryFarmGridRegistered)
-	if err := _GridObjectFactory.contract.UnpackLog(event, "FarmGridRegistered", log); err != nil {
+// Solidity: event CallerAuthorized(address indexed caller)
+func (_GridObjectFactory *GridObjectFactoryFilterer) ParseCallerAuthorized(log types.Log) (*GridObjectFactoryCallerAuthorized, error) {
+	event := new(GridObjectFactoryCallerAuthorized)
+	if err := _GridObjectFactory.contract.UnpackLog(event, "CallerAuthorized", log); err != nil {
+		return nil, err
+	}
+	event.Raw = log
+	return event, nil
+}
+
+// GridObjectFactoryCallerRevokedIterator is returned from FilterCallerRevoked and is used to iterate over the raw logs and unpacked data for CallerRevoked events raised by the GridObjectFactory contract.
+type GridObjectFactoryCallerRevokedIterator struct {
+	Event *GridObjectFactoryCallerRevoked // Event containing the contract specifics and raw log
+
+	contract *bind.BoundContract // Generic contract to use for unpacking event data
+	event    string              // Event name to use for unpacking event data
+
+	logs chan types.Log        // Log channel receiving the found contract events
+	sub  ethereum.Subscription // Subscription for errors, completion and termination
+	done bool                  // Whether the subscription completed delivering logs
+	fail error                 // Occurred error to stop iteration
+}
+
+// Next advances the iterator to the subsequent event, returning whether there
+// are any more events found. In case of a retrieval or parsing error, false is
+// returned and Error() can be queried for the exact failure.
+func (it *GridObjectFactoryCallerRevokedIterator) Next() bool {
+	// If the iterator failed, stop iterating
+	if it.fail != nil {
+		return false
+	}
+	// If the iterator completed, deliver directly whatever's available
+	if it.done {
+		select {
+		case log := <-it.logs:
+			it.Event = new(GridObjectFactoryCallerRevoked)
+			if err := it.contract.UnpackLog(it.Event, it.event, log); err != nil {
+				it.fail = err
+				return false
+			}
+			it.Event.Raw = log
+			return true
+
+		default:
+			return false
+		}
+	}
+	// Iterator still in progress, wait for either a data or an error event
+	select {
+	case log := <-it.logs:
+		it.Event = new(GridObjectFactoryCallerRevoked)
+		if err := it.contract.UnpackLog(it.Event, it.event, log); err != nil {
+			it.fail = err
+			return false
+		}
+		it.Event.Raw = log
+		return true
+
+	case err := <-it.sub.Err():
+		it.done = true
+		it.fail = err
+		return it.Next()
+	}
+}
+
+// Error returns any retrieval or parsing error occurred during filtering.
+func (it *GridObjectFactoryCallerRevokedIterator) Error() error {
+	return it.fail
+}
+
+// Close terminates the iteration process, releasing any pending underlying
+// resources.
+func (it *GridObjectFactoryCallerRevokedIterator) Close() error {
+	it.sub.Unsubscribe()
+	return nil
+}
+
+// GridObjectFactoryCallerRevoked represents a CallerRevoked event raised by the GridObjectFactory contract.
+type GridObjectFactoryCallerRevoked struct {
+	Caller common.Address
+	Raw    types.Log // Blockchain specific contextual infos
+}
+
+// FilterCallerRevoked is a free log retrieval operation binding the contract event 0x0491b0192bae7692618bfa4eff3f4942d2d8ec3300ef2e63d325b45e937c4ff1.
+//
+// Solidity: event CallerRevoked(address indexed caller)
+func (_GridObjectFactory *GridObjectFactoryFilterer) FilterCallerRevoked(opts *bind.FilterOpts, caller []common.Address) (*GridObjectFactoryCallerRevokedIterator, error) {
+
+	var callerRule []interface{}
+	for _, callerItem := range caller {
+		callerRule = append(callerRule, callerItem)
+	}
+
+	logs, sub, err := _GridObjectFactory.contract.FilterLogs(opts, "CallerRevoked", callerRule)
+	if err != nil {
+		return nil, err
+	}
+	return &GridObjectFactoryCallerRevokedIterator{contract: _GridObjectFactory.contract, event: "CallerRevoked", logs: logs, sub: sub}, nil
+}
+
+// WatchCallerRevoked is a free log subscription operation binding the contract event 0x0491b0192bae7692618bfa4eff3f4942d2d8ec3300ef2e63d325b45e937c4ff1.
+//
+// Solidity: event CallerRevoked(address indexed caller)
+func (_GridObjectFactory *GridObjectFactoryFilterer) WatchCallerRevoked(opts *bind.WatchOpts, sink chan<- *GridObjectFactoryCallerRevoked, caller []common.Address) (event.Subscription, error) {
+
+	var callerRule []interface{}
+	for _, callerItem := range caller {
+		callerRule = append(callerRule, callerItem)
+	}
+
+	logs, sub, err := _GridObjectFactory.contract.WatchLogs(opts, "CallerRevoked", callerRule)
+	if err != nil {
+		return nil, err
+	}
+	return event.NewSubscription(func(quit <-chan struct{}) error {
+		defer sub.Unsubscribe()
+		for {
+			select {
+			case log := <-logs:
+				// New log arrived, parse the event and forward to the user
+				event := new(GridObjectFactoryCallerRevoked)
+				if err := _GridObjectFactory.contract.UnpackLog(event, "CallerRevoked", log); err != nil {
+					return err
+				}
+				event.Raw = log
+
+				select {
+				case sink <- event:
+				case err := <-sub.Err():
+					return err
+				case <-quit:
+					return nil
+				}
+			case err := <-sub.Err():
+				return err
+			case <-quit:
+				return nil
+			}
+		}
+	}), nil
+}
+
+// ParseCallerRevoked is a log parse operation binding the contract event 0x0491b0192bae7692618bfa4eff3f4942d2d8ec3300ef2e63d325b45e937c4ff1.
+//
+// Solidity: event CallerRevoked(address indexed caller)
+func (_GridObjectFactory *GridObjectFactoryFilterer) ParseCallerRevoked(log types.Log) (*GridObjectFactoryCallerRevoked, error) {
+	event := new(GridObjectFactoryCallerRevoked)
+	if err := _GridObjectFactory.contract.UnpackLog(event, "CallerRevoked", log); err != nil {
 		return nil, err
 	}
 	event.Raw = log
@@ -844,9 +1138,9 @@ func (_GridObjectFactory *GridObjectFactoryFilterer) ParseGridDiseaseTypeUpdated
 	return event, nil
 }
 
-// GridObjectFactoryGridMaintenanceRecordedIterator is returned from FilterGridMaintenanceRecorded and is used to iterate over the raw logs and unpacked data for GridMaintenanceRecorded events raised by the GridObjectFactory contract.
-type GridObjectFactoryGridMaintenanceRecordedIterator struct {
-	Event *GridObjectFactoryGridMaintenanceRecorded // Event containing the contract specifics and raw log
+// GridObjectFactoryGridRegisteredIterator is returned from FilterGridRegistered and is used to iterate over the raw logs and unpacked data for GridRegistered events raised by the GridObjectFactory contract.
+type GridObjectFactoryGridRegisteredIterator struct {
+	Event *GridObjectFactoryGridRegistered // Event containing the contract specifics and raw log
 
 	contract *bind.BoundContract // Generic contract to use for unpacking event data
 	event    string              // Event name to use for unpacking event data
@@ -860,7 +1154,7 @@ type GridObjectFactoryGridMaintenanceRecordedIterator struct {
 // Next advances the iterator to the subsequent event, returning whether there
 // are any more events found. In case of a retrieval or parsing error, false is
 // returned and Error() can be queried for the exact failure.
-func (it *GridObjectFactoryGridMaintenanceRecordedIterator) Next() bool {
+func (it *GridObjectFactoryGridRegisteredIterator) Next() bool {
 	// If the iterator failed, stop iterating
 	if it.fail != nil {
 		return false
@@ -869,7 +1163,7 @@ func (it *GridObjectFactoryGridMaintenanceRecordedIterator) Next() bool {
 	if it.done {
 		select {
 		case log := <-it.logs:
-			it.Event = new(GridObjectFactoryGridMaintenanceRecorded)
+			it.Event = new(GridObjectFactoryGridRegistered)
 			if err := it.contract.UnpackLog(it.Event, it.event, log); err != nil {
 				it.fail = err
 				return false
@@ -884,7 +1178,7 @@ func (it *GridObjectFactoryGridMaintenanceRecordedIterator) Next() bool {
 	// Iterator still in progress, wait for either a data or an error event
 	select {
 	case log := <-it.logs:
-		it.Event = new(GridObjectFactoryGridMaintenanceRecorded)
+		it.Event = new(GridObjectFactoryGridRegistered)
 		if err := it.contract.UnpackLog(it.Event, it.event, log); err != nil {
 			it.fail = err
 			return false
@@ -900,54 +1194,61 @@ func (it *GridObjectFactoryGridMaintenanceRecordedIterator) Next() bool {
 }
 
 // Error returns any retrieval or parsing error occurred during filtering.
-func (it *GridObjectFactoryGridMaintenanceRecordedIterator) Error() error {
+func (it *GridObjectFactoryGridRegisteredIterator) Error() error {
 	return it.fail
 }
 
 // Close terminates the iteration process, releasing any pending underlying
 // resources.
-func (it *GridObjectFactoryGridMaintenanceRecordedIterator) Close() error {
+func (it *GridObjectFactoryGridRegisteredIterator) Close() error {
 	it.sub.Unsubscribe()
 	return nil
 }
 
-// GridObjectFactoryGridMaintenanceRecorded represents a GridMaintenanceRecorded event raised by the GridObjectFactory contract.
-type GridObjectFactoryGridMaintenanceRecorded struct {
-	GridId        common.Address
-	RecordId      uint32
-	OperationType string
-	Operator      common.Address
-	Raw           types.Log // Blockchain specific contextual infos
+// GridObjectFactoryGridRegistered represents a GridRegistered event raised by the GridObjectFactory contract.
+type GridObjectFactoryGridRegistered struct {
+	FarmId   common.Address
+	GridId   common.Address
+	GridCode string
+	Raw      types.Log // Blockchain specific contextual infos
 }
 
-// FilterGridMaintenanceRecorded is a free log retrieval operation binding the contract event 0x90b71c895d8aac16c64f910d031d8d438c34bb27c341bbdeb3f69f5b05d9d9b7.
+// FilterGridRegistered is a free log retrieval operation binding the contract event 0x9023782af8a470114d8ec3d466f6315216c9ace02192cca1160639bfbd260675.
 //
-// Solidity: event GridMaintenanceRecorded(address indexed gridId, uint32 recordId, string operationType, address operator)
-func (_GridObjectFactory *GridObjectFactoryFilterer) FilterGridMaintenanceRecorded(opts *bind.FilterOpts, gridId []common.Address) (*GridObjectFactoryGridMaintenanceRecordedIterator, error) {
+// Solidity: event GridRegistered(address indexed farmId, address indexed gridId, string gridCode)
+func (_GridObjectFactory *GridObjectFactoryFilterer) FilterGridRegistered(opts *bind.FilterOpts, farmId []common.Address, gridId []common.Address) (*GridObjectFactoryGridRegisteredIterator, error) {
 
+	var farmIdRule []interface{}
+	for _, farmIdItem := range farmId {
+		farmIdRule = append(farmIdRule, farmIdItem)
+	}
 	var gridIdRule []interface{}
 	for _, gridIdItem := range gridId {
 		gridIdRule = append(gridIdRule, gridIdItem)
 	}
 
-	logs, sub, err := _GridObjectFactory.contract.FilterLogs(opts, "GridMaintenanceRecorded", gridIdRule)
+	logs, sub, err := _GridObjectFactory.contract.FilterLogs(opts, "GridRegistered", farmIdRule, gridIdRule)
 	if err != nil {
 		return nil, err
 	}
-	return &GridObjectFactoryGridMaintenanceRecordedIterator{contract: _GridObjectFactory.contract, event: "GridMaintenanceRecorded", logs: logs, sub: sub}, nil
+	return &GridObjectFactoryGridRegisteredIterator{contract: _GridObjectFactory.contract, event: "GridRegistered", logs: logs, sub: sub}, nil
 }
 
-// WatchGridMaintenanceRecorded is a free log subscription operation binding the contract event 0x90b71c895d8aac16c64f910d031d8d438c34bb27c341bbdeb3f69f5b05d9d9b7.
+// WatchGridRegistered is a free log subscription operation binding the contract event 0x9023782af8a470114d8ec3d466f6315216c9ace02192cca1160639bfbd260675.
 //
-// Solidity: event GridMaintenanceRecorded(address indexed gridId, uint32 recordId, string operationType, address operator)
-func (_GridObjectFactory *GridObjectFactoryFilterer) WatchGridMaintenanceRecorded(opts *bind.WatchOpts, sink chan<- *GridObjectFactoryGridMaintenanceRecorded, gridId []common.Address) (event.Subscription, error) {
+// Solidity: event GridRegistered(address indexed farmId, address indexed gridId, string gridCode)
+func (_GridObjectFactory *GridObjectFactoryFilterer) WatchGridRegistered(opts *bind.WatchOpts, sink chan<- *GridObjectFactoryGridRegistered, farmId []common.Address, gridId []common.Address) (event.Subscription, error) {
 
+	var farmIdRule []interface{}
+	for _, farmIdItem := range farmId {
+		farmIdRule = append(farmIdRule, farmIdItem)
+	}
 	var gridIdRule []interface{}
 	for _, gridIdItem := range gridId {
 		gridIdRule = append(gridIdRule, gridIdItem)
 	}
 
-	logs, sub, err := _GridObjectFactory.contract.WatchLogs(opts, "GridMaintenanceRecorded", gridIdRule)
+	logs, sub, err := _GridObjectFactory.contract.WatchLogs(opts, "GridRegistered", farmIdRule, gridIdRule)
 	if err != nil {
 		return nil, err
 	}
@@ -957,8 +1258,8 @@ func (_GridObjectFactory *GridObjectFactoryFilterer) WatchGridMaintenanceRecorde
 			select {
 			case log := <-logs:
 				// New log arrived, parse the event and forward to the user
-				event := new(GridObjectFactoryGridMaintenanceRecorded)
-				if err := _GridObjectFactory.contract.UnpackLog(event, "GridMaintenanceRecorded", log); err != nil {
+				event := new(GridObjectFactoryGridRegistered)
+				if err := _GridObjectFactory.contract.UnpackLog(event, "GridRegistered", log); err != nil {
 					return err
 				}
 				event.Raw = log
@@ -979,12 +1280,12 @@ func (_GridObjectFactory *GridObjectFactoryFilterer) WatchGridMaintenanceRecorde
 	}), nil
 }
 
-// ParseGridMaintenanceRecorded is a log parse operation binding the contract event 0x90b71c895d8aac16c64f910d031d8d438c34bb27c341bbdeb3f69f5b05d9d9b7.
+// ParseGridRegistered is a log parse operation binding the contract event 0x9023782af8a470114d8ec3d466f6315216c9ace02192cca1160639bfbd260675.
 //
-// Solidity: event GridMaintenanceRecorded(address indexed gridId, uint32 recordId, string operationType, address operator)
-func (_GridObjectFactory *GridObjectFactoryFilterer) ParseGridMaintenanceRecorded(log types.Log) (*GridObjectFactoryGridMaintenanceRecorded, error) {
-	event := new(GridObjectFactoryGridMaintenanceRecorded)
-	if err := _GridObjectFactory.contract.UnpackLog(event, "GridMaintenanceRecorded", log); err != nil {
+// Solidity: event GridRegistered(address indexed farmId, address indexed gridId, string gridCode)
+func (_GridObjectFactory *GridObjectFactoryFilterer) ParseGridRegistered(log types.Log) (*GridObjectFactoryGridRegistered, error) {
+	event := new(GridObjectFactoryGridRegistered)
+	if err := _GridObjectFactory.contract.UnpackLog(event, "GridRegistered", log); err != nil {
 		return nil, err
 	}
 	event.Raw = log
@@ -1068,15 +1369,23 @@ type GridObjectFactoryGridStatusUpdated struct {
 
 // FilterGridStatusUpdated is a free log retrieval operation binding the contract event 0xde93df79c81c16af41ba78f153dbf7f25dd33d3e21527e15b46c51d9d5aaee0d.
 //
-// Solidity: event GridStatusUpdated(address indexed gridId, uint8 oldStatus, uint8 newStatus)
-func (_GridObjectFactory *GridObjectFactoryFilterer) FilterGridStatusUpdated(opts *bind.FilterOpts, gridId []common.Address) (*GridObjectFactoryGridStatusUpdatedIterator, error) {
+// Solidity: event GridStatusUpdated(address indexed gridId, uint8 indexed oldStatus, uint8 indexed newStatus)
+func (_GridObjectFactory *GridObjectFactoryFilterer) FilterGridStatusUpdated(opts *bind.FilterOpts, gridId []common.Address, oldStatus []uint8, newStatus []uint8) (*GridObjectFactoryGridStatusUpdatedIterator, error) {
 
 	var gridIdRule []interface{}
 	for _, gridIdItem := range gridId {
 		gridIdRule = append(gridIdRule, gridIdItem)
 	}
+	var oldStatusRule []interface{}
+	for _, oldStatusItem := range oldStatus {
+		oldStatusRule = append(oldStatusRule, oldStatusItem)
+	}
+	var newStatusRule []interface{}
+	for _, newStatusItem := range newStatus {
+		newStatusRule = append(newStatusRule, newStatusItem)
+	}
 
-	logs, sub, err := _GridObjectFactory.contract.FilterLogs(opts, "GridStatusUpdated", gridIdRule)
+	logs, sub, err := _GridObjectFactory.contract.FilterLogs(opts, "GridStatusUpdated", gridIdRule, oldStatusRule, newStatusRule)
 	if err != nil {
 		return nil, err
 	}
@@ -1085,15 +1394,23 @@ func (_GridObjectFactory *GridObjectFactoryFilterer) FilterGridStatusUpdated(opt
 
 // WatchGridStatusUpdated is a free log subscription operation binding the contract event 0xde93df79c81c16af41ba78f153dbf7f25dd33d3e21527e15b46c51d9d5aaee0d.
 //
-// Solidity: event GridStatusUpdated(address indexed gridId, uint8 oldStatus, uint8 newStatus)
-func (_GridObjectFactory *GridObjectFactoryFilterer) WatchGridStatusUpdated(opts *bind.WatchOpts, sink chan<- *GridObjectFactoryGridStatusUpdated, gridId []common.Address) (event.Subscription, error) {
+// Solidity: event GridStatusUpdated(address indexed gridId, uint8 indexed oldStatus, uint8 indexed newStatus)
+func (_GridObjectFactory *GridObjectFactoryFilterer) WatchGridStatusUpdated(opts *bind.WatchOpts, sink chan<- *GridObjectFactoryGridStatusUpdated, gridId []common.Address, oldStatus []uint8, newStatus []uint8) (event.Subscription, error) {
 
 	var gridIdRule []interface{}
 	for _, gridIdItem := range gridId {
 		gridIdRule = append(gridIdRule, gridIdItem)
 	}
+	var oldStatusRule []interface{}
+	for _, oldStatusItem := range oldStatus {
+		oldStatusRule = append(oldStatusRule, oldStatusItem)
+	}
+	var newStatusRule []interface{}
+	for _, newStatusItem := range newStatus {
+		newStatusRule = append(newStatusRule, newStatusItem)
+	}
 
-	logs, sub, err := _GridObjectFactory.contract.WatchLogs(opts, "GridStatusUpdated", gridIdRule)
+	logs, sub, err := _GridObjectFactory.contract.WatchLogs(opts, "GridStatusUpdated", gridIdRule, oldStatusRule, newStatusRule)
 	if err != nil {
 		return nil, err
 	}
@@ -1127,10 +1444,164 @@ func (_GridObjectFactory *GridObjectFactoryFilterer) WatchGridStatusUpdated(opts
 
 // ParseGridStatusUpdated is a log parse operation binding the contract event 0xde93df79c81c16af41ba78f153dbf7f25dd33d3e21527e15b46c51d9d5aaee0d.
 //
-// Solidity: event GridStatusUpdated(address indexed gridId, uint8 oldStatus, uint8 newStatus)
+// Solidity: event GridStatusUpdated(address indexed gridId, uint8 indexed oldStatus, uint8 indexed newStatus)
 func (_GridObjectFactory *GridObjectFactoryFilterer) ParseGridStatusUpdated(log types.Log) (*GridObjectFactoryGridStatusUpdated, error) {
 	event := new(GridObjectFactoryGridStatusUpdated)
 	if err := _GridObjectFactory.contract.UnpackLog(event, "GridStatusUpdated", log); err != nil {
+		return nil, err
+	}
+	event.Raw = log
+	return event, nil
+}
+
+// GridObjectFactoryMaintenanceRecordedIterator is returned from FilterMaintenanceRecorded and is used to iterate over the raw logs and unpacked data for MaintenanceRecorded events raised by the GridObjectFactory contract.
+type GridObjectFactoryMaintenanceRecordedIterator struct {
+	Event *GridObjectFactoryMaintenanceRecorded // Event containing the contract specifics and raw log
+
+	contract *bind.BoundContract // Generic contract to use for unpacking event data
+	event    string              // Event name to use for unpacking event data
+
+	logs chan types.Log        // Log channel receiving the found contract events
+	sub  ethereum.Subscription // Subscription for errors, completion and termination
+	done bool                  // Whether the subscription completed delivering logs
+	fail error                 // Occurred error to stop iteration
+}
+
+// Next advances the iterator to the subsequent event, returning whether there
+// are any more events found. In case of a retrieval or parsing error, false is
+// returned and Error() can be queried for the exact failure.
+func (it *GridObjectFactoryMaintenanceRecordedIterator) Next() bool {
+	// If the iterator failed, stop iterating
+	if it.fail != nil {
+		return false
+	}
+	// If the iterator completed, deliver directly whatever's available
+	if it.done {
+		select {
+		case log := <-it.logs:
+			it.Event = new(GridObjectFactoryMaintenanceRecorded)
+			if err := it.contract.UnpackLog(it.Event, it.event, log); err != nil {
+				it.fail = err
+				return false
+			}
+			it.Event.Raw = log
+			return true
+
+		default:
+			return false
+		}
+	}
+	// Iterator still in progress, wait for either a data or an error event
+	select {
+	case log := <-it.logs:
+		it.Event = new(GridObjectFactoryMaintenanceRecorded)
+		if err := it.contract.UnpackLog(it.Event, it.event, log); err != nil {
+			it.fail = err
+			return false
+		}
+		it.Event.Raw = log
+		return true
+
+	case err := <-it.sub.Err():
+		it.done = true
+		it.fail = err
+		return it.Next()
+	}
+}
+
+// Error returns any retrieval or parsing error occurred during filtering.
+func (it *GridObjectFactoryMaintenanceRecordedIterator) Error() error {
+	return it.fail
+}
+
+// Close terminates the iteration process, releasing any pending underlying
+// resources.
+func (it *GridObjectFactoryMaintenanceRecordedIterator) Close() error {
+	it.sub.Unsubscribe()
+	return nil
+}
+
+// GridObjectFactoryMaintenanceRecorded represents a MaintenanceRecorded event raised by the GridObjectFactory contract.
+type GridObjectFactoryMaintenanceRecorded struct {
+	GridId        common.Address
+	RecordId      uint32
+	OperationType uint8
+	Raw           types.Log // Blockchain specific contextual infos
+}
+
+// FilterMaintenanceRecorded is a free log retrieval operation binding the contract event 0x67717799ec1ff866286ec717a03156f2bb4418e3dfbf93c290498a23b846897b.
+//
+// Solidity: event MaintenanceRecorded(address indexed gridId, uint32 indexed recordId, uint8 operationType)
+func (_GridObjectFactory *GridObjectFactoryFilterer) FilterMaintenanceRecorded(opts *bind.FilterOpts, gridId []common.Address, recordId []uint32) (*GridObjectFactoryMaintenanceRecordedIterator, error) {
+
+	var gridIdRule []interface{}
+	for _, gridIdItem := range gridId {
+		gridIdRule = append(gridIdRule, gridIdItem)
+	}
+	var recordIdRule []interface{}
+	for _, recordIdItem := range recordId {
+		recordIdRule = append(recordIdRule, recordIdItem)
+	}
+
+	logs, sub, err := _GridObjectFactory.contract.FilterLogs(opts, "MaintenanceRecorded", gridIdRule, recordIdRule)
+	if err != nil {
+		return nil, err
+	}
+	return &GridObjectFactoryMaintenanceRecordedIterator{contract: _GridObjectFactory.contract, event: "MaintenanceRecorded", logs: logs, sub: sub}, nil
+}
+
+// WatchMaintenanceRecorded is a free log subscription operation binding the contract event 0x67717799ec1ff866286ec717a03156f2bb4418e3dfbf93c290498a23b846897b.
+//
+// Solidity: event MaintenanceRecorded(address indexed gridId, uint32 indexed recordId, uint8 operationType)
+func (_GridObjectFactory *GridObjectFactoryFilterer) WatchMaintenanceRecorded(opts *bind.WatchOpts, sink chan<- *GridObjectFactoryMaintenanceRecorded, gridId []common.Address, recordId []uint32) (event.Subscription, error) {
+
+	var gridIdRule []interface{}
+	for _, gridIdItem := range gridId {
+		gridIdRule = append(gridIdRule, gridIdItem)
+	}
+	var recordIdRule []interface{}
+	for _, recordIdItem := range recordId {
+		recordIdRule = append(recordIdRule, recordIdItem)
+	}
+
+	logs, sub, err := _GridObjectFactory.contract.WatchLogs(opts, "MaintenanceRecorded", gridIdRule, recordIdRule)
+	if err != nil {
+		return nil, err
+	}
+	return event.NewSubscription(func(quit <-chan struct{}) error {
+		defer sub.Unsubscribe()
+		for {
+			select {
+			case log := <-logs:
+				// New log arrived, parse the event and forward to the user
+				event := new(GridObjectFactoryMaintenanceRecorded)
+				if err := _GridObjectFactory.contract.UnpackLog(event, "MaintenanceRecorded", log); err != nil {
+					return err
+				}
+				event.Raw = log
+
+				select {
+				case sink <- event:
+				case err := <-sub.Err():
+					return err
+				case <-quit:
+					return nil
+				}
+			case err := <-sub.Err():
+				return err
+			case <-quit:
+				return nil
+			}
+		}
+	}), nil
+}
+
+// ParseMaintenanceRecorded is a log parse operation binding the contract event 0x67717799ec1ff866286ec717a03156f2bb4418e3dfbf93c290498a23b846897b.
+//
+// Solidity: event MaintenanceRecorded(address indexed gridId, uint32 indexed recordId, uint8 operationType)
+func (_GridObjectFactory *GridObjectFactoryFilterer) ParseMaintenanceRecorded(log types.Log) (*GridObjectFactoryMaintenanceRecorded, error) {
+	event := new(GridObjectFactoryMaintenanceRecorded)
+	if err := _GridObjectFactory.contract.UnpackLog(event, "MaintenanceRecorded", log); err != nil {
 		return nil, err
 	}
 	event.Raw = log

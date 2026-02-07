@@ -31,27 +31,25 @@ var (
 
 // DroneObjectFactoryDrone is an auto generated low-level Go binding around an user-defined struct.
 type DroneObjectFactoryDrone struct {
-	DroneId         common.Address
-	DroneTypeValue  uint8
+	DroneType       uint8
 	FirmwareVersion string
-	DroneState      uint8
+	State           uint8
+	RegisteredTime  uint32
+	Exists          bool
 }
 
-// DroneObjectFactoryDroneMaintenanceLog is an auto generated low-level Go binding around an user-defined struct.
-type DroneObjectFactoryDroneMaintenanceLog struct {
-	LogId             uint32
-	DroneId           common.Address
-	Timestamp         uint32
-	DroneType         string
-	MaintenanceType   string
-	SensorCalibrated  bool
-	FirmwareVersion   string
-	TechnicianAddress common.Address
+// DroneObjectFactoryMaintenanceLog is an auto generated low-level Go binding around an user-defined struct.
+type DroneObjectFactoryMaintenanceLog struct {
+	Timestamp           uint32
+	MaintenanceTypeCode uint8
+	SensorCalibrated    bool
+	FirmwareVersion     string
+	Technician          common.Address
 }
 
 // DroneObjectFactoryMetaData contains all meta data concerning the DroneObjectFactory contract.
 var DroneObjectFactoryMetaData = &bind.MetaData{
-	ABI: "[{\"inputs\":[{\"internalType\":\"address\",\"name\":\"_droneId\",\"type\":\"address\"},{\"internalType\":\"uint32\",\"name\":\"_logId\",\"type\":\"uint32\"},{\"internalType\":\"uint32\",\"name\":\"_timestamp\",\"type\":\"uint32\"},{\"internalType\":\"string\",\"name\":\"_droneType\",\"type\":\"string\"},{\"internalType\":\"string\",\"name\":\"_maintenanceType\",\"type\":\"string\"},{\"internalType\":\"bool\",\"name\":\"_sensorCalibrated\",\"type\":\"bool\"},{\"internalType\":\"string\",\"name\":\"_firmwareVersion\",\"type\":\"string\"},{\"internalType\":\"address\",\"name\":\"_technicianAddress\",\"type\":\"address\"}],\"name\":\"addDroneMaintenanceLog\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"},{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"name\":\"droneMaintenanceLogs\",\"outputs\":[{\"internalType\":\"uint32\",\"name\":\"logId\",\"type\":\"uint32\"},{\"internalType\":\"address\",\"name\":\"droneId\",\"type\":\"address\"},{\"internalType\":\"uint32\",\"name\":\"timestamp\",\"type\":\"uint32\"},{\"internalType\":\"string\",\"name\":\"droneType\",\"type\":\"string\"},{\"internalType\":\"string\",\"name\":\"maintenanceType\",\"type\":\"string\"},{\"internalType\":\"bool\",\"name\":\"sensorCalibrated\",\"type\":\"bool\"},{\"internalType\":\"string\",\"name\":\"firmwareVersion\",\"type\":\"string\"},{\"internalType\":\"address\",\"name\":\"technicianAddress\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"}],\"name\":\"drones\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"droneId\",\"type\":\"address\"},{\"internalType\":\"enumDroneObjectFactory.DroneType\",\"name\":\"droneTypeValue\",\"type\":\"uint8\"},{\"internalType\":\"string\",\"name\":\"firmwareVersion\",\"type\":\"string\"},{\"internalType\":\"enumDroneObjectFactory.state\",\"name\":\"droneState\",\"type\":\"uint8\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"_droneId\",\"type\":\"address\"},{\"internalType\":\"uint32\",\"name\":\"_logId\",\"type\":\"uint32\"}],\"name\":\"getDronMaintenanceLogById\",\"outputs\":[{\"components\":[{\"internalType\":\"uint32\",\"name\":\"logId\",\"type\":\"uint32\"},{\"internalType\":\"address\",\"name\":\"droneId\",\"type\":\"address\"},{\"internalType\":\"uint32\",\"name\":\"timestamp\",\"type\":\"uint32\"},{\"internalType\":\"string\",\"name\":\"droneType\",\"type\":\"string\"},{\"internalType\":\"string\",\"name\":\"maintenanceType\",\"type\":\"string\"},{\"internalType\":\"bool\",\"name\":\"sensorCalibrated\",\"type\":\"bool\"},{\"internalType\":\"string\",\"name\":\"firmwareVersion\",\"type\":\"string\"},{\"internalType\":\"address\",\"name\":\"technicianAddress\",\"type\":\"address\"}],\"internalType\":\"structDroneObjectFactory.DroneMaintenanceLog\",\"name\":\"\",\"type\":\"tuple\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"_droneId\",\"type\":\"address\"},{\"internalType\":\"uint256\",\"name\":\"page\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"pageSize\",\"type\":\"uint256\"}],\"name\":\"getDronMaintenanceLogInPage\",\"outputs\":[{\"components\":[{\"internalType\":\"uint32\",\"name\":\"logId\",\"type\":\"uint32\"},{\"internalType\":\"address\",\"name\":\"droneId\",\"type\":\"address\"},{\"internalType\":\"uint32\",\"name\":\"timestamp\",\"type\":\"uint32\"},{\"internalType\":\"string\",\"name\":\"droneType\",\"type\":\"string\"},{\"internalType\":\"string\",\"name\":\"maintenanceType\",\"type\":\"string\"},{\"internalType\":\"bool\",\"name\":\"sensorCalibrated\",\"type\":\"bool\"},{\"internalType\":\"string\",\"name\":\"firmwareVersion\",\"type\":\"string\"},{\"internalType\":\"address\",\"name\":\"technicianAddress\",\"type\":\"address\"}],\"internalType\":\"structDroneObjectFactory.DroneMaintenanceLog[]\",\"name\":\"\",\"type\":\"tuple[]\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"_droneId\",\"type\":\"address\"}],\"name\":\"getDrone\",\"outputs\":[{\"components\":[{\"internalType\":\"address\",\"name\":\"droneId\",\"type\":\"address\"},{\"internalType\":\"enumDroneObjectFactory.DroneType\",\"name\":\"droneTypeValue\",\"type\":\"uint8\"},{\"internalType\":\"string\",\"name\":\"firmwareVersion\",\"type\":\"string\"},{\"internalType\":\"enumDroneObjectFactory.state\",\"name\":\"droneState\",\"type\":\"uint8\"}],\"internalType\":\"structDroneObjectFactory.Drone\",\"name\":\"\",\"type\":\"tuple\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"_droneId\",\"type\":\"address\"},{\"internalType\":\"uint256\",\"name\":\"index\",\"type\":\"uint256\"}],\"name\":\"getDroneMaintenanceLogByIndex\",\"outputs\":[{\"components\":[{\"internalType\":\"uint32\",\"name\":\"logId\",\"type\":\"uint32\"},{\"internalType\":\"address\",\"name\":\"droneId\",\"type\":\"address\"},{\"internalType\":\"uint32\",\"name\":\"timestamp\",\"type\":\"uint32\"},{\"internalType\":\"string\",\"name\":\"droneType\",\"type\":\"string\"},{\"internalType\":\"string\",\"name\":\"maintenanceType\",\"type\":\"string\"},{\"internalType\":\"bool\",\"name\":\"sensorCalibrated\",\"type\":\"bool\"},{\"internalType\":\"string\",\"name\":\"firmwareVersion\",\"type\":\"string\"},{\"internalType\":\"address\",\"name\":\"technicianAddress\",\"type\":\"address\"}],\"internalType\":\"structDroneObjectFactory.DroneMaintenanceLog\",\"name\":\"\",\"type\":\"tuple\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"_droneId\",\"type\":\"address\"}],\"name\":\"getDroneMaintenanceLogCount\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"_droneId\",\"type\":\"address\"}],\"name\":\"getDroneMaintenanceLogs\",\"outputs\":[{\"components\":[{\"internalType\":\"uint32\",\"name\":\"logId\",\"type\":\"uint32\"},{\"internalType\":\"address\",\"name\":\"droneId\",\"type\":\"address\"},{\"internalType\":\"uint32\",\"name\":\"timestamp\",\"type\":\"uint32\"},{\"internalType\":\"string\",\"name\":\"droneType\",\"type\":\"string\"},{\"internalType\":\"string\",\"name\":\"maintenanceType\",\"type\":\"string\"},{\"internalType\":\"bool\",\"name\":\"sensorCalibrated\",\"type\":\"bool\"},{\"internalType\":\"string\",\"name\":\"firmwareVersion\",\"type\":\"string\"},{\"internalType\":\"address\",\"name\":\"technicianAddress\",\"type\":\"address\"}],\"internalType\":\"structDroneObjectFactory.DroneMaintenanceLog[]\",\"name\":\"\",\"type\":\"tuple[]\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"_droneId\",\"type\":\"address\"},{\"internalType\":\"enumDroneObjectFactory.DroneType\",\"name\":\"_droneType\",\"type\":\"uint8\"},{\"internalType\":\"string\",\"name\":\"_firmwareVersion\",\"type\":\"string\"},{\"internalType\":\"enumDroneObjectFactory.state\",\"name\":\"_droneState\",\"type\":\"uint8\"}],\"name\":\"registerDrone\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"_droneId\",\"type\":\"address\"},{\"internalType\":\"enumDroneObjectFactory.state\",\"name\":\"_newState\",\"type\":\"uint8\"}],\"name\":\"updateDroneState\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"_droneId\",\"type\":\"address\"},{\"internalType\":\"enumDroneObjectFactory.DroneType\",\"name\":\"_newDroneType\",\"type\":\"uint8\"}],\"name\":\"updateDroneType\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"_droneId\",\"type\":\"address\"},{\"internalType\":\"string\",\"name\":\"_newFirmwareVersion\",\"type\":\"string\"}],\"name\":\"updateFirmwareVersion\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"}]",
+	ABI: "[{\"inputs\":[{\"internalType\":\"address\",\"name\":\"_userContract\",\"type\":\"address\"}],\"stateMutability\":\"nonpayable\",\"type\":\"constructor\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"address\",\"name\":\"droneId\",\"type\":\"address\"},{\"indexed\":true,\"internalType\":\"enumDroneObjectFactory.DroneType\",\"name\":\"droneType\",\"type\":\"uint8\"},{\"indexed\":false,\"internalType\":\"uint32\",\"name\":\"timestamp\",\"type\":\"uint32\"}],\"name\":\"DroneRegistered\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"address\",\"name\":\"droneId\",\"type\":\"address\"},{\"indexed\":true,\"internalType\":\"enumDroneObjectFactory.DroneState\",\"name\":\"newState\",\"type\":\"uint8\"}],\"name\":\"DroneStateUpdated\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"address\",\"name\":\"droneId\",\"type\":\"address\"},{\"indexed\":false,\"internalType\":\"string\",\"name\":\"newVersion\",\"type\":\"string\"}],\"name\":\"FirmwareUpdated\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"address\",\"name\":\"droneId\",\"type\":\"address\"},{\"indexed\":true,\"internalType\":\"uint32\",\"name\":\"logId\",\"type\":\"uint32\"},{\"indexed\":false,\"internalType\":\"uint8\",\"name\":\"maintenanceType\",\"type\":\"uint8\"}],\"name\":\"MaintenanceLogAdded\",\"type\":\"event\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"_droneId\",\"type\":\"address\"},{\"internalType\":\"uint8\",\"name\":\"_maintenanceTypeCode\",\"type\":\"uint8\"},{\"internalType\":\"bool\",\"name\":\"_sensorCalibrated\",\"type\":\"bool\"},{\"internalType\":\"string\",\"name\":\"_firmwareVersion\",\"type\":\"string\"}],\"name\":\"addMaintenanceLog\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"_droneId\",\"type\":\"address\"}],\"name\":\"droneExists\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"}],\"name\":\"drones\",\"outputs\":[{\"internalType\":\"enumDroneObjectFactory.DroneType\",\"name\":\"droneType\",\"type\":\"uint8\"},{\"internalType\":\"string\",\"name\":\"firmwareVersion\",\"type\":\"string\"},{\"internalType\":\"enumDroneObjectFactory.DroneState\",\"name\":\"state\",\"type\":\"uint8\"},{\"internalType\":\"uint32\",\"name\":\"registeredTime\",\"type\":\"uint32\"},{\"internalType\":\"bool\",\"name\":\"exists\",\"type\":\"bool\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"_droneId\",\"type\":\"address\"}],\"name\":\"getDrone\",\"outputs\":[{\"components\":[{\"internalType\":\"enumDroneObjectFactory.DroneType\",\"name\":\"droneType\",\"type\":\"uint8\"},{\"internalType\":\"string\",\"name\":\"firmwareVersion\",\"type\":\"string\"},{\"internalType\":\"enumDroneObjectFactory.DroneState\",\"name\":\"state\",\"type\":\"uint8\"},{\"internalType\":\"uint32\",\"name\":\"registeredTime\",\"type\":\"uint32\"},{\"internalType\":\"bool\",\"name\":\"exists\",\"type\":\"bool\"}],\"internalType\":\"structDroneObjectFactory.Drone\",\"name\":\"\",\"type\":\"tuple\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"_droneId\",\"type\":\"address\"}],\"name\":\"getDroneType\",\"outputs\":[{\"internalType\":\"enumDroneObjectFactory.DroneType\",\"name\":\"\",\"type\":\"uint8\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"_droneId\",\"type\":\"address\"},{\"internalType\":\"uint32\",\"name\":\"_logId\",\"type\":\"uint32\"}],\"name\":\"getMaintenanceLog\",\"outputs\":[{\"components\":[{\"internalType\":\"uint32\",\"name\":\"timestamp\",\"type\":\"uint32\"},{\"internalType\":\"uint8\",\"name\":\"maintenanceTypeCode\",\"type\":\"uint8\"},{\"internalType\":\"bool\",\"name\":\"sensorCalibrated\",\"type\":\"bool\"},{\"internalType\":\"string\",\"name\":\"firmwareVersion\",\"type\":\"string\"},{\"internalType\":\"address\",\"name\":\"technician\",\"type\":\"address\"}],\"internalType\":\"structDroneObjectFactory.MaintenanceLog\",\"name\":\"\",\"type\":\"tuple\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"_droneId\",\"type\":\"address\"},{\"internalType\":\"uint32\",\"name\":\"_count\",\"type\":\"uint32\"}],\"name\":\"getRecentMaintenanceLogs\",\"outputs\":[{\"components\":[{\"internalType\":\"uint32\",\"name\":\"timestamp\",\"type\":\"uint32\"},{\"internalType\":\"uint8\",\"name\":\"maintenanceTypeCode\",\"type\":\"uint8\"},{\"internalType\":\"bool\",\"name\":\"sensorCalibrated\",\"type\":\"bool\"},{\"internalType\":\"string\",\"name\":\"firmwareVersion\",\"type\":\"string\"},{\"internalType\":\"address\",\"name\":\"technician\",\"type\":\"address\"}],\"internalType\":\"structDroneObjectFactory.MaintenanceLog[]\",\"name\":\"\",\"type\":\"tuple[]\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"}],\"name\":\"maintenanceLogCount\",\"outputs\":[{\"internalType\":\"uint32\",\"name\":\"\",\"type\":\"uint32\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"},{\"internalType\":\"uint32\",\"name\":\"\",\"type\":\"uint32\"}],\"name\":\"maintenanceLogs\",\"outputs\":[{\"internalType\":\"uint32\",\"name\":\"timestamp\",\"type\":\"uint32\"},{\"internalType\":\"uint8\",\"name\":\"maintenanceTypeCode\",\"type\":\"uint8\"},{\"internalType\":\"bool\",\"name\":\"sensorCalibrated\",\"type\":\"bool\"},{\"internalType\":\"string\",\"name\":\"firmwareVersion\",\"type\":\"string\"},{\"internalType\":\"address\",\"name\":\"technician\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"_droneId\",\"type\":\"address\"},{\"internalType\":\"enumDroneObjectFactory.DroneType\",\"name\":\"_droneType\",\"type\":\"uint8\"},{\"internalType\":\"string\",\"name\":\"_firmwareVersion\",\"type\":\"string\"},{\"internalType\":\"enumDroneObjectFactory.DroneState\",\"name\":\"_droneState\",\"type\":\"uint8\"}],\"name\":\"registerDrone\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"_droneId\",\"type\":\"address\"},{\"internalType\":\"enumDroneObjectFactory.DroneState\",\"name\":\"_newState\",\"type\":\"uint8\"}],\"name\":\"updateDroneState\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"_droneId\",\"type\":\"address\"},{\"internalType\":\"string\",\"name\":\"_newFirmwareVersion\",\"type\":\"string\"}],\"name\":\"updateFirmwareVersion\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"userContract\",\"outputs\":[{\"internalType\":\"contractUser\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"}]",
 }
 
 // DroneObjectFactoryABI is the input ABI used to generate the binding from.
@@ -200,107 +198,66 @@ func (_DroneObjectFactory *DroneObjectFactoryTransactorRaw) Transact(opts *bind.
 	return _DroneObjectFactory.Contract.contract.Transact(opts, method, params...)
 }
 
-// DroneMaintenanceLogs is a free data retrieval call binding the contract method 0xd1451ea3.
+// DroneExists is a free data retrieval call binding the contract method 0xe73fc130.
 //
-// Solidity: function droneMaintenanceLogs(address , uint256 ) view returns(uint32 logId, address droneId, uint32 timestamp, string droneType, string maintenanceType, bool sensorCalibrated, string firmwareVersion, address technicianAddress)
-func (_DroneObjectFactory *DroneObjectFactoryCaller) DroneMaintenanceLogs(opts *bind.CallOpts, arg0 common.Address, arg1 *big.Int) (struct {
-	LogId             uint32
-	DroneId           common.Address
-	Timestamp         uint32
-	DroneType         string
-	MaintenanceType   string
-	SensorCalibrated  bool
-	FirmwareVersion   string
-	TechnicianAddress common.Address
-}, error) {
+// Solidity: function droneExists(address _droneId) view returns(bool)
+func (_DroneObjectFactory *DroneObjectFactoryCaller) DroneExists(opts *bind.CallOpts, _droneId common.Address) (bool, error) {
 	var out []interface{}
-	err := _DroneObjectFactory.contract.Call(opts, &out, "droneMaintenanceLogs", arg0, arg1)
+	err := _DroneObjectFactory.contract.Call(opts, &out, "droneExists", _droneId)
 
-	outstruct := new(struct {
-		LogId             uint32
-		DroneId           common.Address
-		Timestamp         uint32
-		DroneType         string
-		MaintenanceType   string
-		SensorCalibrated  bool
-		FirmwareVersion   string
-		TechnicianAddress common.Address
-	})
 	if err != nil {
-		return *outstruct, err
+		return *new(bool), err
 	}
 
-	outstruct.LogId = *abi.ConvertType(out[0], new(uint32)).(*uint32)
-	outstruct.DroneId = *abi.ConvertType(out[1], new(common.Address)).(*common.Address)
-	outstruct.Timestamp = *abi.ConvertType(out[2], new(uint32)).(*uint32)
-	outstruct.DroneType = *abi.ConvertType(out[3], new(string)).(*string)
-	outstruct.MaintenanceType = *abi.ConvertType(out[4], new(string)).(*string)
-	outstruct.SensorCalibrated = *abi.ConvertType(out[5], new(bool)).(*bool)
-	outstruct.FirmwareVersion = *abi.ConvertType(out[6], new(string)).(*string)
-	outstruct.TechnicianAddress = *abi.ConvertType(out[7], new(common.Address)).(*common.Address)
+	out0 := *abi.ConvertType(out[0], new(bool)).(*bool)
 
-	return *outstruct, err
+	return out0, err
 
 }
 
-// DroneMaintenanceLogs is a free data retrieval call binding the contract method 0xd1451ea3.
+// DroneExists is a free data retrieval call binding the contract method 0xe73fc130.
 //
-// Solidity: function droneMaintenanceLogs(address , uint256 ) view returns(uint32 logId, address droneId, uint32 timestamp, string droneType, string maintenanceType, bool sensorCalibrated, string firmwareVersion, address technicianAddress)
-func (_DroneObjectFactory *DroneObjectFactorySession) DroneMaintenanceLogs(arg0 common.Address, arg1 *big.Int) (struct {
-	LogId             uint32
-	DroneId           common.Address
-	Timestamp         uint32
-	DroneType         string
-	MaintenanceType   string
-	SensorCalibrated  bool
-	FirmwareVersion   string
-	TechnicianAddress common.Address
-}, error) {
-	return _DroneObjectFactory.Contract.DroneMaintenanceLogs(&_DroneObjectFactory.CallOpts, arg0, arg1)
+// Solidity: function droneExists(address _droneId) view returns(bool)
+func (_DroneObjectFactory *DroneObjectFactorySession) DroneExists(_droneId common.Address) (bool, error) {
+	return _DroneObjectFactory.Contract.DroneExists(&_DroneObjectFactory.CallOpts, _droneId)
 }
 
-// DroneMaintenanceLogs is a free data retrieval call binding the contract method 0xd1451ea3.
+// DroneExists is a free data retrieval call binding the contract method 0xe73fc130.
 //
-// Solidity: function droneMaintenanceLogs(address , uint256 ) view returns(uint32 logId, address droneId, uint32 timestamp, string droneType, string maintenanceType, bool sensorCalibrated, string firmwareVersion, address technicianAddress)
-func (_DroneObjectFactory *DroneObjectFactoryCallerSession) DroneMaintenanceLogs(arg0 common.Address, arg1 *big.Int) (struct {
-	LogId             uint32
-	DroneId           common.Address
-	Timestamp         uint32
-	DroneType         string
-	MaintenanceType   string
-	SensorCalibrated  bool
-	FirmwareVersion   string
-	TechnicianAddress common.Address
-}, error) {
-	return _DroneObjectFactory.Contract.DroneMaintenanceLogs(&_DroneObjectFactory.CallOpts, arg0, arg1)
+// Solidity: function droneExists(address _droneId) view returns(bool)
+func (_DroneObjectFactory *DroneObjectFactoryCallerSession) DroneExists(_droneId common.Address) (bool, error) {
+	return _DroneObjectFactory.Contract.DroneExists(&_DroneObjectFactory.CallOpts, _droneId)
 }
 
 // Drones is a free data retrieval call binding the contract method 0x9d5d6696.
 //
-// Solidity: function drones(address ) view returns(address droneId, uint8 droneTypeValue, string firmwareVersion, uint8 droneState)
+// Solidity: function drones(address ) view returns(uint8 droneType, string firmwareVersion, uint8 state, uint32 registeredTime, bool exists)
 func (_DroneObjectFactory *DroneObjectFactoryCaller) Drones(opts *bind.CallOpts, arg0 common.Address) (struct {
-	DroneId         common.Address
-	DroneTypeValue  uint8
+	DroneType       uint8
 	FirmwareVersion string
-	DroneState      uint8
+	State           uint8
+	RegisteredTime  uint32
+	Exists          bool
 }, error) {
 	var out []interface{}
 	err := _DroneObjectFactory.contract.Call(opts, &out, "drones", arg0)
 
 	outstruct := new(struct {
-		DroneId         common.Address
-		DroneTypeValue  uint8
+		DroneType       uint8
 		FirmwareVersion string
-		DroneState      uint8
+		State           uint8
+		RegisteredTime  uint32
+		Exists          bool
 	})
 	if err != nil {
 		return *outstruct, err
 	}
 
-	outstruct.DroneId = *abi.ConvertType(out[0], new(common.Address)).(*common.Address)
-	outstruct.DroneTypeValue = *abi.ConvertType(out[1], new(uint8)).(*uint8)
-	outstruct.FirmwareVersion = *abi.ConvertType(out[2], new(string)).(*string)
-	outstruct.DroneState = *abi.ConvertType(out[3], new(uint8)).(*uint8)
+	outstruct.DroneType = *abi.ConvertType(out[0], new(uint8)).(*uint8)
+	outstruct.FirmwareVersion = *abi.ConvertType(out[1], new(string)).(*string)
+	outstruct.State = *abi.ConvertType(out[2], new(uint8)).(*uint8)
+	outstruct.RegisteredTime = *abi.ConvertType(out[3], new(uint32)).(*uint32)
+	outstruct.Exists = *abi.ConvertType(out[4], new(bool)).(*bool)
 
 	return *outstruct, err
 
@@ -308,93 +265,33 @@ func (_DroneObjectFactory *DroneObjectFactoryCaller) Drones(opts *bind.CallOpts,
 
 // Drones is a free data retrieval call binding the contract method 0x9d5d6696.
 //
-// Solidity: function drones(address ) view returns(address droneId, uint8 droneTypeValue, string firmwareVersion, uint8 droneState)
+// Solidity: function drones(address ) view returns(uint8 droneType, string firmwareVersion, uint8 state, uint32 registeredTime, bool exists)
 func (_DroneObjectFactory *DroneObjectFactorySession) Drones(arg0 common.Address) (struct {
-	DroneId         common.Address
-	DroneTypeValue  uint8
+	DroneType       uint8
 	FirmwareVersion string
-	DroneState      uint8
+	State           uint8
+	RegisteredTime  uint32
+	Exists          bool
 }, error) {
 	return _DroneObjectFactory.Contract.Drones(&_DroneObjectFactory.CallOpts, arg0)
 }
 
 // Drones is a free data retrieval call binding the contract method 0x9d5d6696.
 //
-// Solidity: function drones(address ) view returns(address droneId, uint8 droneTypeValue, string firmwareVersion, uint8 droneState)
+// Solidity: function drones(address ) view returns(uint8 droneType, string firmwareVersion, uint8 state, uint32 registeredTime, bool exists)
 func (_DroneObjectFactory *DroneObjectFactoryCallerSession) Drones(arg0 common.Address) (struct {
-	DroneId         common.Address
-	DroneTypeValue  uint8
+	DroneType       uint8
 	FirmwareVersion string
-	DroneState      uint8
+	State           uint8
+	RegisteredTime  uint32
+	Exists          bool
 }, error) {
 	return _DroneObjectFactory.Contract.Drones(&_DroneObjectFactory.CallOpts, arg0)
 }
 
-// GetDronMaintenanceLogById is a free data retrieval call binding the contract method 0xc6b89de6.
-//
-// Solidity: function getDronMaintenanceLogById(address _droneId, uint32 _logId) view returns((uint32,address,uint32,string,string,bool,string,address))
-func (_DroneObjectFactory *DroneObjectFactoryCaller) GetDronMaintenanceLogById(opts *bind.CallOpts, _droneId common.Address, _logId uint32) (DroneObjectFactoryDroneMaintenanceLog, error) {
-	var out []interface{}
-	err := _DroneObjectFactory.contract.Call(opts, &out, "getDronMaintenanceLogById", _droneId, _logId)
-
-	if err != nil {
-		return *new(DroneObjectFactoryDroneMaintenanceLog), err
-	}
-
-	out0 := *abi.ConvertType(out[0], new(DroneObjectFactoryDroneMaintenanceLog)).(*DroneObjectFactoryDroneMaintenanceLog)
-
-	return out0, err
-
-}
-
-// GetDronMaintenanceLogById is a free data retrieval call binding the contract method 0xc6b89de6.
-//
-// Solidity: function getDronMaintenanceLogById(address _droneId, uint32 _logId) view returns((uint32,address,uint32,string,string,bool,string,address))
-func (_DroneObjectFactory *DroneObjectFactorySession) GetDronMaintenanceLogById(_droneId common.Address, _logId uint32) (DroneObjectFactoryDroneMaintenanceLog, error) {
-	return _DroneObjectFactory.Contract.GetDronMaintenanceLogById(&_DroneObjectFactory.CallOpts, _droneId, _logId)
-}
-
-// GetDronMaintenanceLogById is a free data retrieval call binding the contract method 0xc6b89de6.
-//
-// Solidity: function getDronMaintenanceLogById(address _droneId, uint32 _logId) view returns((uint32,address,uint32,string,string,bool,string,address))
-func (_DroneObjectFactory *DroneObjectFactoryCallerSession) GetDronMaintenanceLogById(_droneId common.Address, _logId uint32) (DroneObjectFactoryDroneMaintenanceLog, error) {
-	return _DroneObjectFactory.Contract.GetDronMaintenanceLogById(&_DroneObjectFactory.CallOpts, _droneId, _logId)
-}
-
-// GetDronMaintenanceLogInPage is a free data retrieval call binding the contract method 0xd204e1dd.
-//
-// Solidity: function getDronMaintenanceLogInPage(address _droneId, uint256 page, uint256 pageSize) view returns((uint32,address,uint32,string,string,bool,string,address)[])
-func (_DroneObjectFactory *DroneObjectFactoryCaller) GetDronMaintenanceLogInPage(opts *bind.CallOpts, _droneId common.Address, page *big.Int, pageSize *big.Int) ([]DroneObjectFactoryDroneMaintenanceLog, error) {
-	var out []interface{}
-	err := _DroneObjectFactory.contract.Call(opts, &out, "getDronMaintenanceLogInPage", _droneId, page, pageSize)
-
-	if err != nil {
-		return *new([]DroneObjectFactoryDroneMaintenanceLog), err
-	}
-
-	out0 := *abi.ConvertType(out[0], new([]DroneObjectFactoryDroneMaintenanceLog)).(*[]DroneObjectFactoryDroneMaintenanceLog)
-
-	return out0, err
-
-}
-
-// GetDronMaintenanceLogInPage is a free data retrieval call binding the contract method 0xd204e1dd.
-//
-// Solidity: function getDronMaintenanceLogInPage(address _droneId, uint256 page, uint256 pageSize) view returns((uint32,address,uint32,string,string,bool,string,address)[])
-func (_DroneObjectFactory *DroneObjectFactorySession) GetDronMaintenanceLogInPage(_droneId common.Address, page *big.Int, pageSize *big.Int) ([]DroneObjectFactoryDroneMaintenanceLog, error) {
-	return _DroneObjectFactory.Contract.GetDronMaintenanceLogInPage(&_DroneObjectFactory.CallOpts, _droneId, page, pageSize)
-}
-
-// GetDronMaintenanceLogInPage is a free data retrieval call binding the contract method 0xd204e1dd.
-//
-// Solidity: function getDronMaintenanceLogInPage(address _droneId, uint256 page, uint256 pageSize) view returns((uint32,address,uint32,string,string,bool,string,address)[])
-func (_DroneObjectFactory *DroneObjectFactoryCallerSession) GetDronMaintenanceLogInPage(_droneId common.Address, page *big.Int, pageSize *big.Int) ([]DroneObjectFactoryDroneMaintenanceLog, error) {
-	return _DroneObjectFactory.Contract.GetDronMaintenanceLogInPage(&_DroneObjectFactory.CallOpts, _droneId, page, pageSize)
-}
-
 // GetDrone is a free data retrieval call binding the contract method 0x87c835db.
 //
-// Solidity: function getDrone(address _droneId) view returns((address,uint8,string,uint8))
+// Solidity: function getDrone(address _droneId) view returns((uint8,string,uint8,uint32,bool))
 func (_DroneObjectFactory *DroneObjectFactoryCaller) GetDrone(opts *bind.CallOpts, _droneId common.Address) (DroneObjectFactoryDrone, error) {
 	var out []interface{}
 	err := _DroneObjectFactory.contract.Call(opts, &out, "getDrone", _droneId)
@@ -411,130 +308,252 @@ func (_DroneObjectFactory *DroneObjectFactoryCaller) GetDrone(opts *bind.CallOpt
 
 // GetDrone is a free data retrieval call binding the contract method 0x87c835db.
 //
-// Solidity: function getDrone(address _droneId) view returns((address,uint8,string,uint8))
+// Solidity: function getDrone(address _droneId) view returns((uint8,string,uint8,uint32,bool))
 func (_DroneObjectFactory *DroneObjectFactorySession) GetDrone(_droneId common.Address) (DroneObjectFactoryDrone, error) {
 	return _DroneObjectFactory.Contract.GetDrone(&_DroneObjectFactory.CallOpts, _droneId)
 }
 
 // GetDrone is a free data retrieval call binding the contract method 0x87c835db.
 //
-// Solidity: function getDrone(address _droneId) view returns((address,uint8,string,uint8))
+// Solidity: function getDrone(address _droneId) view returns((uint8,string,uint8,uint32,bool))
 func (_DroneObjectFactory *DroneObjectFactoryCallerSession) GetDrone(_droneId common.Address) (DroneObjectFactoryDrone, error) {
 	return _DroneObjectFactory.Contract.GetDrone(&_DroneObjectFactory.CallOpts, _droneId)
 }
 
-// GetDroneMaintenanceLogByIndex is a free data retrieval call binding the contract method 0x6e5c405e.
+// GetDroneType is a free data retrieval call binding the contract method 0xa8399a4c.
 //
-// Solidity: function getDroneMaintenanceLogByIndex(address _droneId, uint256 index) view returns((uint32,address,uint32,string,string,bool,string,address))
-func (_DroneObjectFactory *DroneObjectFactoryCaller) GetDroneMaintenanceLogByIndex(opts *bind.CallOpts, _droneId common.Address, index *big.Int) (DroneObjectFactoryDroneMaintenanceLog, error) {
+// Solidity: function getDroneType(address _droneId) view returns(uint8)
+func (_DroneObjectFactory *DroneObjectFactoryCaller) GetDroneType(opts *bind.CallOpts, _droneId common.Address) (uint8, error) {
 	var out []interface{}
-	err := _DroneObjectFactory.contract.Call(opts, &out, "getDroneMaintenanceLogByIndex", _droneId, index)
+	err := _DroneObjectFactory.contract.Call(opts, &out, "getDroneType", _droneId)
 
 	if err != nil {
-		return *new(DroneObjectFactoryDroneMaintenanceLog), err
+		return *new(uint8), err
 	}
 
-	out0 := *abi.ConvertType(out[0], new(DroneObjectFactoryDroneMaintenanceLog)).(*DroneObjectFactoryDroneMaintenanceLog)
+	out0 := *abi.ConvertType(out[0], new(uint8)).(*uint8)
 
 	return out0, err
 
 }
 
-// GetDroneMaintenanceLogByIndex is a free data retrieval call binding the contract method 0x6e5c405e.
+// GetDroneType is a free data retrieval call binding the contract method 0xa8399a4c.
 //
-// Solidity: function getDroneMaintenanceLogByIndex(address _droneId, uint256 index) view returns((uint32,address,uint32,string,string,bool,string,address))
-func (_DroneObjectFactory *DroneObjectFactorySession) GetDroneMaintenanceLogByIndex(_droneId common.Address, index *big.Int) (DroneObjectFactoryDroneMaintenanceLog, error) {
-	return _DroneObjectFactory.Contract.GetDroneMaintenanceLogByIndex(&_DroneObjectFactory.CallOpts, _droneId, index)
+// Solidity: function getDroneType(address _droneId) view returns(uint8)
+func (_DroneObjectFactory *DroneObjectFactorySession) GetDroneType(_droneId common.Address) (uint8, error) {
+	return _DroneObjectFactory.Contract.GetDroneType(&_DroneObjectFactory.CallOpts, _droneId)
 }
 
-// GetDroneMaintenanceLogByIndex is a free data retrieval call binding the contract method 0x6e5c405e.
+// GetDroneType is a free data retrieval call binding the contract method 0xa8399a4c.
 //
-// Solidity: function getDroneMaintenanceLogByIndex(address _droneId, uint256 index) view returns((uint32,address,uint32,string,string,bool,string,address))
-func (_DroneObjectFactory *DroneObjectFactoryCallerSession) GetDroneMaintenanceLogByIndex(_droneId common.Address, index *big.Int) (DroneObjectFactoryDroneMaintenanceLog, error) {
-	return _DroneObjectFactory.Contract.GetDroneMaintenanceLogByIndex(&_DroneObjectFactory.CallOpts, _droneId, index)
+// Solidity: function getDroneType(address _droneId) view returns(uint8)
+func (_DroneObjectFactory *DroneObjectFactoryCallerSession) GetDroneType(_droneId common.Address) (uint8, error) {
+	return _DroneObjectFactory.Contract.GetDroneType(&_DroneObjectFactory.CallOpts, _droneId)
 }
 
-// GetDroneMaintenanceLogCount is a free data retrieval call binding the contract method 0xdf98662d.
+// GetMaintenanceLog is a free data retrieval call binding the contract method 0x65412d24.
 //
-// Solidity: function getDroneMaintenanceLogCount(address _droneId) view returns(uint256)
-func (_DroneObjectFactory *DroneObjectFactoryCaller) GetDroneMaintenanceLogCount(opts *bind.CallOpts, _droneId common.Address) (*big.Int, error) {
+// Solidity: function getMaintenanceLog(address _droneId, uint32 _logId) view returns((uint32,uint8,bool,string,address))
+func (_DroneObjectFactory *DroneObjectFactoryCaller) GetMaintenanceLog(opts *bind.CallOpts, _droneId common.Address, _logId uint32) (DroneObjectFactoryMaintenanceLog, error) {
 	var out []interface{}
-	err := _DroneObjectFactory.contract.Call(opts, &out, "getDroneMaintenanceLogCount", _droneId)
+	err := _DroneObjectFactory.contract.Call(opts, &out, "getMaintenanceLog", _droneId, _logId)
 
 	if err != nil {
-		return *new(*big.Int), err
+		return *new(DroneObjectFactoryMaintenanceLog), err
 	}
 
-	out0 := *abi.ConvertType(out[0], new(*big.Int)).(**big.Int)
+	out0 := *abi.ConvertType(out[0], new(DroneObjectFactoryMaintenanceLog)).(*DroneObjectFactoryMaintenanceLog)
 
 	return out0, err
 
 }
 
-// GetDroneMaintenanceLogCount is a free data retrieval call binding the contract method 0xdf98662d.
+// GetMaintenanceLog is a free data retrieval call binding the contract method 0x65412d24.
 //
-// Solidity: function getDroneMaintenanceLogCount(address _droneId) view returns(uint256)
-func (_DroneObjectFactory *DroneObjectFactorySession) GetDroneMaintenanceLogCount(_droneId common.Address) (*big.Int, error) {
-	return _DroneObjectFactory.Contract.GetDroneMaintenanceLogCount(&_DroneObjectFactory.CallOpts, _droneId)
+// Solidity: function getMaintenanceLog(address _droneId, uint32 _logId) view returns((uint32,uint8,bool,string,address))
+func (_DroneObjectFactory *DroneObjectFactorySession) GetMaintenanceLog(_droneId common.Address, _logId uint32) (DroneObjectFactoryMaintenanceLog, error) {
+	return _DroneObjectFactory.Contract.GetMaintenanceLog(&_DroneObjectFactory.CallOpts, _droneId, _logId)
 }
 
-// GetDroneMaintenanceLogCount is a free data retrieval call binding the contract method 0xdf98662d.
+// GetMaintenanceLog is a free data retrieval call binding the contract method 0x65412d24.
 //
-// Solidity: function getDroneMaintenanceLogCount(address _droneId) view returns(uint256)
-func (_DroneObjectFactory *DroneObjectFactoryCallerSession) GetDroneMaintenanceLogCount(_droneId common.Address) (*big.Int, error) {
-	return _DroneObjectFactory.Contract.GetDroneMaintenanceLogCount(&_DroneObjectFactory.CallOpts, _droneId)
+// Solidity: function getMaintenanceLog(address _droneId, uint32 _logId) view returns((uint32,uint8,bool,string,address))
+func (_DroneObjectFactory *DroneObjectFactoryCallerSession) GetMaintenanceLog(_droneId common.Address, _logId uint32) (DroneObjectFactoryMaintenanceLog, error) {
+	return _DroneObjectFactory.Contract.GetMaintenanceLog(&_DroneObjectFactory.CallOpts, _droneId, _logId)
 }
 
-// GetDroneMaintenanceLogs is a free data retrieval call binding the contract method 0xfc85828c.
+// GetRecentMaintenanceLogs is a free data retrieval call binding the contract method 0xae737fd9.
 //
-// Solidity: function getDroneMaintenanceLogs(address _droneId) view returns((uint32,address,uint32,string,string,bool,string,address)[])
-func (_DroneObjectFactory *DroneObjectFactoryCaller) GetDroneMaintenanceLogs(opts *bind.CallOpts, _droneId common.Address) ([]DroneObjectFactoryDroneMaintenanceLog, error) {
+// Solidity: function getRecentMaintenanceLogs(address _droneId, uint32 _count) view returns((uint32,uint8,bool,string,address)[])
+func (_DroneObjectFactory *DroneObjectFactoryCaller) GetRecentMaintenanceLogs(opts *bind.CallOpts, _droneId common.Address, _count uint32) ([]DroneObjectFactoryMaintenanceLog, error) {
 	var out []interface{}
-	err := _DroneObjectFactory.contract.Call(opts, &out, "getDroneMaintenanceLogs", _droneId)
+	err := _DroneObjectFactory.contract.Call(opts, &out, "getRecentMaintenanceLogs", _droneId, _count)
 
 	if err != nil {
-		return *new([]DroneObjectFactoryDroneMaintenanceLog), err
+		return *new([]DroneObjectFactoryMaintenanceLog), err
 	}
 
-	out0 := *abi.ConvertType(out[0], new([]DroneObjectFactoryDroneMaintenanceLog)).(*[]DroneObjectFactoryDroneMaintenanceLog)
+	out0 := *abi.ConvertType(out[0], new([]DroneObjectFactoryMaintenanceLog)).(*[]DroneObjectFactoryMaintenanceLog)
 
 	return out0, err
 
 }
 
-// GetDroneMaintenanceLogs is a free data retrieval call binding the contract method 0xfc85828c.
+// GetRecentMaintenanceLogs is a free data retrieval call binding the contract method 0xae737fd9.
 //
-// Solidity: function getDroneMaintenanceLogs(address _droneId) view returns((uint32,address,uint32,string,string,bool,string,address)[])
-func (_DroneObjectFactory *DroneObjectFactorySession) GetDroneMaintenanceLogs(_droneId common.Address) ([]DroneObjectFactoryDroneMaintenanceLog, error) {
-	return _DroneObjectFactory.Contract.GetDroneMaintenanceLogs(&_DroneObjectFactory.CallOpts, _droneId)
+// Solidity: function getRecentMaintenanceLogs(address _droneId, uint32 _count) view returns((uint32,uint8,bool,string,address)[])
+func (_DroneObjectFactory *DroneObjectFactorySession) GetRecentMaintenanceLogs(_droneId common.Address, _count uint32) ([]DroneObjectFactoryMaintenanceLog, error) {
+	return _DroneObjectFactory.Contract.GetRecentMaintenanceLogs(&_DroneObjectFactory.CallOpts, _droneId, _count)
 }
 
-// GetDroneMaintenanceLogs is a free data retrieval call binding the contract method 0xfc85828c.
+// GetRecentMaintenanceLogs is a free data retrieval call binding the contract method 0xae737fd9.
 //
-// Solidity: function getDroneMaintenanceLogs(address _droneId) view returns((uint32,address,uint32,string,string,bool,string,address)[])
-func (_DroneObjectFactory *DroneObjectFactoryCallerSession) GetDroneMaintenanceLogs(_droneId common.Address) ([]DroneObjectFactoryDroneMaintenanceLog, error) {
-	return _DroneObjectFactory.Contract.GetDroneMaintenanceLogs(&_DroneObjectFactory.CallOpts, _droneId)
+// Solidity: function getRecentMaintenanceLogs(address _droneId, uint32 _count) view returns((uint32,uint8,bool,string,address)[])
+func (_DroneObjectFactory *DroneObjectFactoryCallerSession) GetRecentMaintenanceLogs(_droneId common.Address, _count uint32) ([]DroneObjectFactoryMaintenanceLog, error) {
+	return _DroneObjectFactory.Contract.GetRecentMaintenanceLogs(&_DroneObjectFactory.CallOpts, _droneId, _count)
 }
 
-// AddDroneMaintenanceLog is a paid mutator transaction binding the contract method 0x868946c1.
+// MaintenanceLogCount is a free data retrieval call binding the contract method 0xccea9068.
 //
-// Solidity: function addDroneMaintenanceLog(address _droneId, uint32 _logId, uint32 _timestamp, string _droneType, string _maintenanceType, bool _sensorCalibrated, string _firmwareVersion, address _technicianAddress) returns()
-func (_DroneObjectFactory *DroneObjectFactoryTransactor) AddDroneMaintenanceLog(opts *bind.TransactOpts, _droneId common.Address, _logId uint32, _timestamp uint32, _droneType string, _maintenanceType string, _sensorCalibrated bool, _firmwareVersion string, _technicianAddress common.Address) (*types.Transaction, error) {
-	return _DroneObjectFactory.contract.Transact(opts, "addDroneMaintenanceLog", _droneId, _logId, _timestamp, _droneType, _maintenanceType, _sensorCalibrated, _firmwareVersion, _technicianAddress)
+// Solidity: function maintenanceLogCount(address ) view returns(uint32)
+func (_DroneObjectFactory *DroneObjectFactoryCaller) MaintenanceLogCount(opts *bind.CallOpts, arg0 common.Address) (uint32, error) {
+	var out []interface{}
+	err := _DroneObjectFactory.contract.Call(opts, &out, "maintenanceLogCount", arg0)
+
+	if err != nil {
+		return *new(uint32), err
+	}
+
+	out0 := *abi.ConvertType(out[0], new(uint32)).(*uint32)
+
+	return out0, err
+
 }
 
-// AddDroneMaintenanceLog is a paid mutator transaction binding the contract method 0x868946c1.
+// MaintenanceLogCount is a free data retrieval call binding the contract method 0xccea9068.
 //
-// Solidity: function addDroneMaintenanceLog(address _droneId, uint32 _logId, uint32 _timestamp, string _droneType, string _maintenanceType, bool _sensorCalibrated, string _firmwareVersion, address _technicianAddress) returns()
-func (_DroneObjectFactory *DroneObjectFactorySession) AddDroneMaintenanceLog(_droneId common.Address, _logId uint32, _timestamp uint32, _droneType string, _maintenanceType string, _sensorCalibrated bool, _firmwareVersion string, _technicianAddress common.Address) (*types.Transaction, error) {
-	return _DroneObjectFactory.Contract.AddDroneMaintenanceLog(&_DroneObjectFactory.TransactOpts, _droneId, _logId, _timestamp, _droneType, _maintenanceType, _sensorCalibrated, _firmwareVersion, _technicianAddress)
+// Solidity: function maintenanceLogCount(address ) view returns(uint32)
+func (_DroneObjectFactory *DroneObjectFactorySession) MaintenanceLogCount(arg0 common.Address) (uint32, error) {
+	return _DroneObjectFactory.Contract.MaintenanceLogCount(&_DroneObjectFactory.CallOpts, arg0)
 }
 
-// AddDroneMaintenanceLog is a paid mutator transaction binding the contract method 0x868946c1.
+// MaintenanceLogCount is a free data retrieval call binding the contract method 0xccea9068.
 //
-// Solidity: function addDroneMaintenanceLog(address _droneId, uint32 _logId, uint32 _timestamp, string _droneType, string _maintenanceType, bool _sensorCalibrated, string _firmwareVersion, address _technicianAddress) returns()
-func (_DroneObjectFactory *DroneObjectFactoryTransactorSession) AddDroneMaintenanceLog(_droneId common.Address, _logId uint32, _timestamp uint32, _droneType string, _maintenanceType string, _sensorCalibrated bool, _firmwareVersion string, _technicianAddress common.Address) (*types.Transaction, error) {
-	return _DroneObjectFactory.Contract.AddDroneMaintenanceLog(&_DroneObjectFactory.TransactOpts, _droneId, _logId, _timestamp, _droneType, _maintenanceType, _sensorCalibrated, _firmwareVersion, _technicianAddress)
+// Solidity: function maintenanceLogCount(address ) view returns(uint32)
+func (_DroneObjectFactory *DroneObjectFactoryCallerSession) MaintenanceLogCount(arg0 common.Address) (uint32, error) {
+	return _DroneObjectFactory.Contract.MaintenanceLogCount(&_DroneObjectFactory.CallOpts, arg0)
+}
+
+// MaintenanceLogs is a free data retrieval call binding the contract method 0xfae6fe6c.
+//
+// Solidity: function maintenanceLogs(address , uint32 ) view returns(uint32 timestamp, uint8 maintenanceTypeCode, bool sensorCalibrated, string firmwareVersion, address technician)
+func (_DroneObjectFactory *DroneObjectFactoryCaller) MaintenanceLogs(opts *bind.CallOpts, arg0 common.Address, arg1 uint32) (struct {
+	Timestamp           uint32
+	MaintenanceTypeCode uint8
+	SensorCalibrated    bool
+	FirmwareVersion     string
+	Technician          common.Address
+}, error) {
+	var out []interface{}
+	err := _DroneObjectFactory.contract.Call(opts, &out, "maintenanceLogs", arg0, arg1)
+
+	outstruct := new(struct {
+		Timestamp           uint32
+		MaintenanceTypeCode uint8
+		SensorCalibrated    bool
+		FirmwareVersion     string
+		Technician          common.Address
+	})
+	if err != nil {
+		return *outstruct, err
+	}
+
+	outstruct.Timestamp = *abi.ConvertType(out[0], new(uint32)).(*uint32)
+	outstruct.MaintenanceTypeCode = *abi.ConvertType(out[1], new(uint8)).(*uint8)
+	outstruct.SensorCalibrated = *abi.ConvertType(out[2], new(bool)).(*bool)
+	outstruct.FirmwareVersion = *abi.ConvertType(out[3], new(string)).(*string)
+	outstruct.Technician = *abi.ConvertType(out[4], new(common.Address)).(*common.Address)
+
+	return *outstruct, err
+
+}
+
+// MaintenanceLogs is a free data retrieval call binding the contract method 0xfae6fe6c.
+//
+// Solidity: function maintenanceLogs(address , uint32 ) view returns(uint32 timestamp, uint8 maintenanceTypeCode, bool sensorCalibrated, string firmwareVersion, address technician)
+func (_DroneObjectFactory *DroneObjectFactorySession) MaintenanceLogs(arg0 common.Address, arg1 uint32) (struct {
+	Timestamp           uint32
+	MaintenanceTypeCode uint8
+	SensorCalibrated    bool
+	FirmwareVersion     string
+	Technician          common.Address
+}, error) {
+	return _DroneObjectFactory.Contract.MaintenanceLogs(&_DroneObjectFactory.CallOpts, arg0, arg1)
+}
+
+// MaintenanceLogs is a free data retrieval call binding the contract method 0xfae6fe6c.
+//
+// Solidity: function maintenanceLogs(address , uint32 ) view returns(uint32 timestamp, uint8 maintenanceTypeCode, bool sensorCalibrated, string firmwareVersion, address technician)
+func (_DroneObjectFactory *DroneObjectFactoryCallerSession) MaintenanceLogs(arg0 common.Address, arg1 uint32) (struct {
+	Timestamp           uint32
+	MaintenanceTypeCode uint8
+	SensorCalibrated    bool
+	FirmwareVersion     string
+	Technician          common.Address
+}, error) {
+	return _DroneObjectFactory.Contract.MaintenanceLogs(&_DroneObjectFactory.CallOpts, arg0, arg1)
+}
+
+// UserContract is a free data retrieval call binding the contract method 0x5000596b.
+//
+// Solidity: function userContract() view returns(address)
+func (_DroneObjectFactory *DroneObjectFactoryCaller) UserContract(opts *bind.CallOpts) (common.Address, error) {
+	var out []interface{}
+	err := _DroneObjectFactory.contract.Call(opts, &out, "userContract")
+
+	if err != nil {
+		return *new(common.Address), err
+	}
+
+	out0 := *abi.ConvertType(out[0], new(common.Address)).(*common.Address)
+
+	return out0, err
+
+}
+
+// UserContract is a free data retrieval call binding the contract method 0x5000596b.
+//
+// Solidity: function userContract() view returns(address)
+func (_DroneObjectFactory *DroneObjectFactorySession) UserContract() (common.Address, error) {
+	return _DroneObjectFactory.Contract.UserContract(&_DroneObjectFactory.CallOpts)
+}
+
+// UserContract is a free data retrieval call binding the contract method 0x5000596b.
+//
+// Solidity: function userContract() view returns(address)
+func (_DroneObjectFactory *DroneObjectFactoryCallerSession) UserContract() (common.Address, error) {
+	return _DroneObjectFactory.Contract.UserContract(&_DroneObjectFactory.CallOpts)
+}
+
+// AddMaintenanceLog is a paid mutator transaction binding the contract method 0x07cd1e37.
+//
+// Solidity: function addMaintenanceLog(address _droneId, uint8 _maintenanceTypeCode, bool _sensorCalibrated, string _firmwareVersion) returns()
+func (_DroneObjectFactory *DroneObjectFactoryTransactor) AddMaintenanceLog(opts *bind.TransactOpts, _droneId common.Address, _maintenanceTypeCode uint8, _sensorCalibrated bool, _firmwareVersion string) (*types.Transaction, error) {
+	return _DroneObjectFactory.contract.Transact(opts, "addMaintenanceLog", _droneId, _maintenanceTypeCode, _sensorCalibrated, _firmwareVersion)
+}
+
+// AddMaintenanceLog is a paid mutator transaction binding the contract method 0x07cd1e37.
+//
+// Solidity: function addMaintenanceLog(address _droneId, uint8 _maintenanceTypeCode, bool _sensorCalibrated, string _firmwareVersion) returns()
+func (_DroneObjectFactory *DroneObjectFactorySession) AddMaintenanceLog(_droneId common.Address, _maintenanceTypeCode uint8, _sensorCalibrated bool, _firmwareVersion string) (*types.Transaction, error) {
+	return _DroneObjectFactory.Contract.AddMaintenanceLog(&_DroneObjectFactory.TransactOpts, _droneId, _maintenanceTypeCode, _sensorCalibrated, _firmwareVersion)
+}
+
+// AddMaintenanceLog is a paid mutator transaction binding the contract method 0x07cd1e37.
+//
+// Solidity: function addMaintenanceLog(address _droneId, uint8 _maintenanceTypeCode, bool _sensorCalibrated, string _firmwareVersion) returns()
+func (_DroneObjectFactory *DroneObjectFactoryTransactorSession) AddMaintenanceLog(_droneId common.Address, _maintenanceTypeCode uint8, _sensorCalibrated bool, _firmwareVersion string) (*types.Transaction, error) {
+	return _DroneObjectFactory.Contract.AddMaintenanceLog(&_DroneObjectFactory.TransactOpts, _droneId, _maintenanceTypeCode, _sensorCalibrated, _firmwareVersion)
 }
 
 // RegisterDrone is a paid mutator transaction binding the contract method 0x749cb8f2.
@@ -579,27 +598,6 @@ func (_DroneObjectFactory *DroneObjectFactoryTransactorSession) UpdateDroneState
 	return _DroneObjectFactory.Contract.UpdateDroneState(&_DroneObjectFactory.TransactOpts, _droneId, _newState)
 }
 
-// UpdateDroneType is a paid mutator transaction binding the contract method 0x6763d8e7.
-//
-// Solidity: function updateDroneType(address _droneId, uint8 _newDroneType) returns()
-func (_DroneObjectFactory *DroneObjectFactoryTransactor) UpdateDroneType(opts *bind.TransactOpts, _droneId common.Address, _newDroneType uint8) (*types.Transaction, error) {
-	return _DroneObjectFactory.contract.Transact(opts, "updateDroneType", _droneId, _newDroneType)
-}
-
-// UpdateDroneType is a paid mutator transaction binding the contract method 0x6763d8e7.
-//
-// Solidity: function updateDroneType(address _droneId, uint8 _newDroneType) returns()
-func (_DroneObjectFactory *DroneObjectFactorySession) UpdateDroneType(_droneId common.Address, _newDroneType uint8) (*types.Transaction, error) {
-	return _DroneObjectFactory.Contract.UpdateDroneType(&_DroneObjectFactory.TransactOpts, _droneId, _newDroneType)
-}
-
-// UpdateDroneType is a paid mutator transaction binding the contract method 0x6763d8e7.
-//
-// Solidity: function updateDroneType(address _droneId, uint8 _newDroneType) returns()
-func (_DroneObjectFactory *DroneObjectFactoryTransactorSession) UpdateDroneType(_droneId common.Address, _newDroneType uint8) (*types.Transaction, error) {
-	return _DroneObjectFactory.Contract.UpdateDroneType(&_DroneObjectFactory.TransactOpts, _droneId, _newDroneType)
-}
-
 // UpdateFirmwareVersion is a paid mutator transaction binding the contract method 0xe8ad3423.
 //
 // Solidity: function updateFirmwareVersion(address _droneId, string _newFirmwareVersion) returns()
@@ -619,4 +617,610 @@ func (_DroneObjectFactory *DroneObjectFactorySession) UpdateFirmwareVersion(_dro
 // Solidity: function updateFirmwareVersion(address _droneId, string _newFirmwareVersion) returns()
 func (_DroneObjectFactory *DroneObjectFactoryTransactorSession) UpdateFirmwareVersion(_droneId common.Address, _newFirmwareVersion string) (*types.Transaction, error) {
 	return _DroneObjectFactory.Contract.UpdateFirmwareVersion(&_DroneObjectFactory.TransactOpts, _droneId, _newFirmwareVersion)
+}
+
+// DroneObjectFactoryDroneRegisteredIterator is returned from FilterDroneRegistered and is used to iterate over the raw logs and unpacked data for DroneRegistered events raised by the DroneObjectFactory contract.
+type DroneObjectFactoryDroneRegisteredIterator struct {
+	Event *DroneObjectFactoryDroneRegistered // Event containing the contract specifics and raw log
+
+	contract *bind.BoundContract // Generic contract to use for unpacking event data
+	event    string              // Event name to use for unpacking event data
+
+	logs chan types.Log        // Log channel receiving the found contract events
+	sub  ethereum.Subscription // Subscription for errors, completion and termination
+	done bool                  // Whether the subscription completed delivering logs
+	fail error                 // Occurred error to stop iteration
+}
+
+// Next advances the iterator to the subsequent event, returning whether there
+// are any more events found. In case of a retrieval or parsing error, false is
+// returned and Error() can be queried for the exact failure.
+func (it *DroneObjectFactoryDroneRegisteredIterator) Next() bool {
+	// If the iterator failed, stop iterating
+	if it.fail != nil {
+		return false
+	}
+	// If the iterator completed, deliver directly whatever's available
+	if it.done {
+		select {
+		case log := <-it.logs:
+			it.Event = new(DroneObjectFactoryDroneRegistered)
+			if err := it.contract.UnpackLog(it.Event, it.event, log); err != nil {
+				it.fail = err
+				return false
+			}
+			it.Event.Raw = log
+			return true
+
+		default:
+			return false
+		}
+	}
+	// Iterator still in progress, wait for either a data or an error event
+	select {
+	case log := <-it.logs:
+		it.Event = new(DroneObjectFactoryDroneRegistered)
+		if err := it.contract.UnpackLog(it.Event, it.event, log); err != nil {
+			it.fail = err
+			return false
+		}
+		it.Event.Raw = log
+		return true
+
+	case err := <-it.sub.Err():
+		it.done = true
+		it.fail = err
+		return it.Next()
+	}
+}
+
+// Error returns any retrieval or parsing error occurred during filtering.
+func (it *DroneObjectFactoryDroneRegisteredIterator) Error() error {
+	return it.fail
+}
+
+// Close terminates the iteration process, releasing any pending underlying
+// resources.
+func (it *DroneObjectFactoryDroneRegisteredIterator) Close() error {
+	it.sub.Unsubscribe()
+	return nil
+}
+
+// DroneObjectFactoryDroneRegistered represents a DroneRegistered event raised by the DroneObjectFactory contract.
+type DroneObjectFactoryDroneRegistered struct {
+	DroneId   common.Address
+	DroneType uint8
+	Timestamp uint32
+	Raw       types.Log // Blockchain specific contextual infos
+}
+
+// FilterDroneRegistered is a free log retrieval operation binding the contract event 0xb21fb076b25ed1855520f881a12cb2f43fe537c16db2b65eb67f1c28943ed0da.
+//
+// Solidity: event DroneRegistered(address indexed droneId, uint8 indexed droneType, uint32 timestamp)
+func (_DroneObjectFactory *DroneObjectFactoryFilterer) FilterDroneRegistered(opts *bind.FilterOpts, droneId []common.Address, droneType []uint8) (*DroneObjectFactoryDroneRegisteredIterator, error) {
+
+	var droneIdRule []interface{}
+	for _, droneIdItem := range droneId {
+		droneIdRule = append(droneIdRule, droneIdItem)
+	}
+	var droneTypeRule []interface{}
+	for _, droneTypeItem := range droneType {
+		droneTypeRule = append(droneTypeRule, droneTypeItem)
+	}
+
+	logs, sub, err := _DroneObjectFactory.contract.FilterLogs(opts, "DroneRegistered", droneIdRule, droneTypeRule)
+	if err != nil {
+		return nil, err
+	}
+	return &DroneObjectFactoryDroneRegisteredIterator{contract: _DroneObjectFactory.contract, event: "DroneRegistered", logs: logs, sub: sub}, nil
+}
+
+// WatchDroneRegistered is a free log subscription operation binding the contract event 0xb21fb076b25ed1855520f881a12cb2f43fe537c16db2b65eb67f1c28943ed0da.
+//
+// Solidity: event DroneRegistered(address indexed droneId, uint8 indexed droneType, uint32 timestamp)
+func (_DroneObjectFactory *DroneObjectFactoryFilterer) WatchDroneRegistered(opts *bind.WatchOpts, sink chan<- *DroneObjectFactoryDroneRegistered, droneId []common.Address, droneType []uint8) (event.Subscription, error) {
+
+	var droneIdRule []interface{}
+	for _, droneIdItem := range droneId {
+		droneIdRule = append(droneIdRule, droneIdItem)
+	}
+	var droneTypeRule []interface{}
+	for _, droneTypeItem := range droneType {
+		droneTypeRule = append(droneTypeRule, droneTypeItem)
+	}
+
+	logs, sub, err := _DroneObjectFactory.contract.WatchLogs(opts, "DroneRegistered", droneIdRule, droneTypeRule)
+	if err != nil {
+		return nil, err
+	}
+	return event.NewSubscription(func(quit <-chan struct{}) error {
+		defer sub.Unsubscribe()
+		for {
+			select {
+			case log := <-logs:
+				// New log arrived, parse the event and forward to the user
+				event := new(DroneObjectFactoryDroneRegistered)
+				if err := _DroneObjectFactory.contract.UnpackLog(event, "DroneRegistered", log); err != nil {
+					return err
+				}
+				event.Raw = log
+
+				select {
+				case sink <- event:
+				case err := <-sub.Err():
+					return err
+				case <-quit:
+					return nil
+				}
+			case err := <-sub.Err():
+				return err
+			case <-quit:
+				return nil
+			}
+		}
+	}), nil
+}
+
+// ParseDroneRegistered is a log parse operation binding the contract event 0xb21fb076b25ed1855520f881a12cb2f43fe537c16db2b65eb67f1c28943ed0da.
+//
+// Solidity: event DroneRegistered(address indexed droneId, uint8 indexed droneType, uint32 timestamp)
+func (_DroneObjectFactory *DroneObjectFactoryFilterer) ParseDroneRegistered(log types.Log) (*DroneObjectFactoryDroneRegistered, error) {
+	event := new(DroneObjectFactoryDroneRegistered)
+	if err := _DroneObjectFactory.contract.UnpackLog(event, "DroneRegistered", log); err != nil {
+		return nil, err
+	}
+	event.Raw = log
+	return event, nil
+}
+
+// DroneObjectFactoryDroneStateUpdatedIterator is returned from FilterDroneStateUpdated and is used to iterate over the raw logs and unpacked data for DroneStateUpdated events raised by the DroneObjectFactory contract.
+type DroneObjectFactoryDroneStateUpdatedIterator struct {
+	Event *DroneObjectFactoryDroneStateUpdated // Event containing the contract specifics and raw log
+
+	contract *bind.BoundContract // Generic contract to use for unpacking event data
+	event    string              // Event name to use for unpacking event data
+
+	logs chan types.Log        // Log channel receiving the found contract events
+	sub  ethereum.Subscription // Subscription for errors, completion and termination
+	done bool                  // Whether the subscription completed delivering logs
+	fail error                 // Occurred error to stop iteration
+}
+
+// Next advances the iterator to the subsequent event, returning whether there
+// are any more events found. In case of a retrieval or parsing error, false is
+// returned and Error() can be queried for the exact failure.
+func (it *DroneObjectFactoryDroneStateUpdatedIterator) Next() bool {
+	// If the iterator failed, stop iterating
+	if it.fail != nil {
+		return false
+	}
+	// If the iterator completed, deliver directly whatever's available
+	if it.done {
+		select {
+		case log := <-it.logs:
+			it.Event = new(DroneObjectFactoryDroneStateUpdated)
+			if err := it.contract.UnpackLog(it.Event, it.event, log); err != nil {
+				it.fail = err
+				return false
+			}
+			it.Event.Raw = log
+			return true
+
+		default:
+			return false
+		}
+	}
+	// Iterator still in progress, wait for either a data or an error event
+	select {
+	case log := <-it.logs:
+		it.Event = new(DroneObjectFactoryDroneStateUpdated)
+		if err := it.contract.UnpackLog(it.Event, it.event, log); err != nil {
+			it.fail = err
+			return false
+		}
+		it.Event.Raw = log
+		return true
+
+	case err := <-it.sub.Err():
+		it.done = true
+		it.fail = err
+		return it.Next()
+	}
+}
+
+// Error returns any retrieval or parsing error occurred during filtering.
+func (it *DroneObjectFactoryDroneStateUpdatedIterator) Error() error {
+	return it.fail
+}
+
+// Close terminates the iteration process, releasing any pending underlying
+// resources.
+func (it *DroneObjectFactoryDroneStateUpdatedIterator) Close() error {
+	it.sub.Unsubscribe()
+	return nil
+}
+
+// DroneObjectFactoryDroneStateUpdated represents a DroneStateUpdated event raised by the DroneObjectFactory contract.
+type DroneObjectFactoryDroneStateUpdated struct {
+	DroneId  common.Address
+	NewState uint8
+	Raw      types.Log // Blockchain specific contextual infos
+}
+
+// FilterDroneStateUpdated is a free log retrieval operation binding the contract event 0xad440e673a8dbd5082542a599644d4b8c7e40964a7a32a22a53631958bbf5320.
+//
+// Solidity: event DroneStateUpdated(address indexed droneId, uint8 indexed newState)
+func (_DroneObjectFactory *DroneObjectFactoryFilterer) FilterDroneStateUpdated(opts *bind.FilterOpts, droneId []common.Address, newState []uint8) (*DroneObjectFactoryDroneStateUpdatedIterator, error) {
+
+	var droneIdRule []interface{}
+	for _, droneIdItem := range droneId {
+		droneIdRule = append(droneIdRule, droneIdItem)
+	}
+	var newStateRule []interface{}
+	for _, newStateItem := range newState {
+		newStateRule = append(newStateRule, newStateItem)
+	}
+
+	logs, sub, err := _DroneObjectFactory.contract.FilterLogs(opts, "DroneStateUpdated", droneIdRule, newStateRule)
+	if err != nil {
+		return nil, err
+	}
+	return &DroneObjectFactoryDroneStateUpdatedIterator{contract: _DroneObjectFactory.contract, event: "DroneStateUpdated", logs: logs, sub: sub}, nil
+}
+
+// WatchDroneStateUpdated is a free log subscription operation binding the contract event 0xad440e673a8dbd5082542a599644d4b8c7e40964a7a32a22a53631958bbf5320.
+//
+// Solidity: event DroneStateUpdated(address indexed droneId, uint8 indexed newState)
+func (_DroneObjectFactory *DroneObjectFactoryFilterer) WatchDroneStateUpdated(opts *bind.WatchOpts, sink chan<- *DroneObjectFactoryDroneStateUpdated, droneId []common.Address, newState []uint8) (event.Subscription, error) {
+
+	var droneIdRule []interface{}
+	for _, droneIdItem := range droneId {
+		droneIdRule = append(droneIdRule, droneIdItem)
+	}
+	var newStateRule []interface{}
+	for _, newStateItem := range newState {
+		newStateRule = append(newStateRule, newStateItem)
+	}
+
+	logs, sub, err := _DroneObjectFactory.contract.WatchLogs(opts, "DroneStateUpdated", droneIdRule, newStateRule)
+	if err != nil {
+		return nil, err
+	}
+	return event.NewSubscription(func(quit <-chan struct{}) error {
+		defer sub.Unsubscribe()
+		for {
+			select {
+			case log := <-logs:
+				// New log arrived, parse the event and forward to the user
+				event := new(DroneObjectFactoryDroneStateUpdated)
+				if err := _DroneObjectFactory.contract.UnpackLog(event, "DroneStateUpdated", log); err != nil {
+					return err
+				}
+				event.Raw = log
+
+				select {
+				case sink <- event:
+				case err := <-sub.Err():
+					return err
+				case <-quit:
+					return nil
+				}
+			case err := <-sub.Err():
+				return err
+			case <-quit:
+				return nil
+			}
+		}
+	}), nil
+}
+
+// ParseDroneStateUpdated is a log parse operation binding the contract event 0xad440e673a8dbd5082542a599644d4b8c7e40964a7a32a22a53631958bbf5320.
+//
+// Solidity: event DroneStateUpdated(address indexed droneId, uint8 indexed newState)
+func (_DroneObjectFactory *DroneObjectFactoryFilterer) ParseDroneStateUpdated(log types.Log) (*DroneObjectFactoryDroneStateUpdated, error) {
+	event := new(DroneObjectFactoryDroneStateUpdated)
+	if err := _DroneObjectFactory.contract.UnpackLog(event, "DroneStateUpdated", log); err != nil {
+		return nil, err
+	}
+	event.Raw = log
+	return event, nil
+}
+
+// DroneObjectFactoryFirmwareUpdatedIterator is returned from FilterFirmwareUpdated and is used to iterate over the raw logs and unpacked data for FirmwareUpdated events raised by the DroneObjectFactory contract.
+type DroneObjectFactoryFirmwareUpdatedIterator struct {
+	Event *DroneObjectFactoryFirmwareUpdated // Event containing the contract specifics and raw log
+
+	contract *bind.BoundContract // Generic contract to use for unpacking event data
+	event    string              // Event name to use for unpacking event data
+
+	logs chan types.Log        // Log channel receiving the found contract events
+	sub  ethereum.Subscription // Subscription for errors, completion and termination
+	done bool                  // Whether the subscription completed delivering logs
+	fail error                 // Occurred error to stop iteration
+}
+
+// Next advances the iterator to the subsequent event, returning whether there
+// are any more events found. In case of a retrieval or parsing error, false is
+// returned and Error() can be queried for the exact failure.
+func (it *DroneObjectFactoryFirmwareUpdatedIterator) Next() bool {
+	// If the iterator failed, stop iterating
+	if it.fail != nil {
+		return false
+	}
+	// If the iterator completed, deliver directly whatever's available
+	if it.done {
+		select {
+		case log := <-it.logs:
+			it.Event = new(DroneObjectFactoryFirmwareUpdated)
+			if err := it.contract.UnpackLog(it.Event, it.event, log); err != nil {
+				it.fail = err
+				return false
+			}
+			it.Event.Raw = log
+			return true
+
+		default:
+			return false
+		}
+	}
+	// Iterator still in progress, wait for either a data or an error event
+	select {
+	case log := <-it.logs:
+		it.Event = new(DroneObjectFactoryFirmwareUpdated)
+		if err := it.contract.UnpackLog(it.Event, it.event, log); err != nil {
+			it.fail = err
+			return false
+		}
+		it.Event.Raw = log
+		return true
+
+	case err := <-it.sub.Err():
+		it.done = true
+		it.fail = err
+		return it.Next()
+	}
+}
+
+// Error returns any retrieval or parsing error occurred during filtering.
+func (it *DroneObjectFactoryFirmwareUpdatedIterator) Error() error {
+	return it.fail
+}
+
+// Close terminates the iteration process, releasing any pending underlying
+// resources.
+func (it *DroneObjectFactoryFirmwareUpdatedIterator) Close() error {
+	it.sub.Unsubscribe()
+	return nil
+}
+
+// DroneObjectFactoryFirmwareUpdated represents a FirmwareUpdated event raised by the DroneObjectFactory contract.
+type DroneObjectFactoryFirmwareUpdated struct {
+	DroneId    common.Address
+	NewVersion string
+	Raw        types.Log // Blockchain specific contextual infos
+}
+
+// FilterFirmwareUpdated is a free log retrieval operation binding the contract event 0x77035d4457088e0a3b8a1779932e3091c2f6385591643c8978f6f3c67fc5d8e1.
+//
+// Solidity: event FirmwareUpdated(address indexed droneId, string newVersion)
+func (_DroneObjectFactory *DroneObjectFactoryFilterer) FilterFirmwareUpdated(opts *bind.FilterOpts, droneId []common.Address) (*DroneObjectFactoryFirmwareUpdatedIterator, error) {
+
+	var droneIdRule []interface{}
+	for _, droneIdItem := range droneId {
+		droneIdRule = append(droneIdRule, droneIdItem)
+	}
+
+	logs, sub, err := _DroneObjectFactory.contract.FilterLogs(opts, "FirmwareUpdated", droneIdRule)
+	if err != nil {
+		return nil, err
+	}
+	return &DroneObjectFactoryFirmwareUpdatedIterator{contract: _DroneObjectFactory.contract, event: "FirmwareUpdated", logs: logs, sub: sub}, nil
+}
+
+// WatchFirmwareUpdated is a free log subscription operation binding the contract event 0x77035d4457088e0a3b8a1779932e3091c2f6385591643c8978f6f3c67fc5d8e1.
+//
+// Solidity: event FirmwareUpdated(address indexed droneId, string newVersion)
+func (_DroneObjectFactory *DroneObjectFactoryFilterer) WatchFirmwareUpdated(opts *bind.WatchOpts, sink chan<- *DroneObjectFactoryFirmwareUpdated, droneId []common.Address) (event.Subscription, error) {
+
+	var droneIdRule []interface{}
+	for _, droneIdItem := range droneId {
+		droneIdRule = append(droneIdRule, droneIdItem)
+	}
+
+	logs, sub, err := _DroneObjectFactory.contract.WatchLogs(opts, "FirmwareUpdated", droneIdRule)
+	if err != nil {
+		return nil, err
+	}
+	return event.NewSubscription(func(quit <-chan struct{}) error {
+		defer sub.Unsubscribe()
+		for {
+			select {
+			case log := <-logs:
+				// New log arrived, parse the event and forward to the user
+				event := new(DroneObjectFactoryFirmwareUpdated)
+				if err := _DroneObjectFactory.contract.UnpackLog(event, "FirmwareUpdated", log); err != nil {
+					return err
+				}
+				event.Raw = log
+
+				select {
+				case sink <- event:
+				case err := <-sub.Err():
+					return err
+				case <-quit:
+					return nil
+				}
+			case err := <-sub.Err():
+				return err
+			case <-quit:
+				return nil
+			}
+		}
+	}), nil
+}
+
+// ParseFirmwareUpdated is a log parse operation binding the contract event 0x77035d4457088e0a3b8a1779932e3091c2f6385591643c8978f6f3c67fc5d8e1.
+//
+// Solidity: event FirmwareUpdated(address indexed droneId, string newVersion)
+func (_DroneObjectFactory *DroneObjectFactoryFilterer) ParseFirmwareUpdated(log types.Log) (*DroneObjectFactoryFirmwareUpdated, error) {
+	event := new(DroneObjectFactoryFirmwareUpdated)
+	if err := _DroneObjectFactory.contract.UnpackLog(event, "FirmwareUpdated", log); err != nil {
+		return nil, err
+	}
+	event.Raw = log
+	return event, nil
+}
+
+// DroneObjectFactoryMaintenanceLogAddedIterator is returned from FilterMaintenanceLogAdded and is used to iterate over the raw logs and unpacked data for MaintenanceLogAdded events raised by the DroneObjectFactory contract.
+type DroneObjectFactoryMaintenanceLogAddedIterator struct {
+	Event *DroneObjectFactoryMaintenanceLogAdded // Event containing the contract specifics and raw log
+
+	contract *bind.BoundContract // Generic contract to use for unpacking event data
+	event    string              // Event name to use for unpacking event data
+
+	logs chan types.Log        // Log channel receiving the found contract events
+	sub  ethereum.Subscription // Subscription for errors, completion and termination
+	done bool                  // Whether the subscription completed delivering logs
+	fail error                 // Occurred error to stop iteration
+}
+
+// Next advances the iterator to the subsequent event, returning whether there
+// are any more events found. In case of a retrieval or parsing error, false is
+// returned and Error() can be queried for the exact failure.
+func (it *DroneObjectFactoryMaintenanceLogAddedIterator) Next() bool {
+	// If the iterator failed, stop iterating
+	if it.fail != nil {
+		return false
+	}
+	// If the iterator completed, deliver directly whatever's available
+	if it.done {
+		select {
+		case log := <-it.logs:
+			it.Event = new(DroneObjectFactoryMaintenanceLogAdded)
+			if err := it.contract.UnpackLog(it.Event, it.event, log); err != nil {
+				it.fail = err
+				return false
+			}
+			it.Event.Raw = log
+			return true
+
+		default:
+			return false
+		}
+	}
+	// Iterator still in progress, wait for either a data or an error event
+	select {
+	case log := <-it.logs:
+		it.Event = new(DroneObjectFactoryMaintenanceLogAdded)
+		if err := it.contract.UnpackLog(it.Event, it.event, log); err != nil {
+			it.fail = err
+			return false
+		}
+		it.Event.Raw = log
+		return true
+
+	case err := <-it.sub.Err():
+		it.done = true
+		it.fail = err
+		return it.Next()
+	}
+}
+
+// Error returns any retrieval or parsing error occurred during filtering.
+func (it *DroneObjectFactoryMaintenanceLogAddedIterator) Error() error {
+	return it.fail
+}
+
+// Close terminates the iteration process, releasing any pending underlying
+// resources.
+func (it *DroneObjectFactoryMaintenanceLogAddedIterator) Close() error {
+	it.sub.Unsubscribe()
+	return nil
+}
+
+// DroneObjectFactoryMaintenanceLogAdded represents a MaintenanceLogAdded event raised by the DroneObjectFactory contract.
+type DroneObjectFactoryMaintenanceLogAdded struct {
+	DroneId         common.Address
+	LogId           uint32
+	MaintenanceType uint8
+	Raw             types.Log // Blockchain specific contextual infos
+}
+
+// FilterMaintenanceLogAdded is a free log retrieval operation binding the contract event 0x4a2b3e3e097f8d105c4c8f27d112da4f6ef371edc6efeac4d375c78f2e047d1b.
+//
+// Solidity: event MaintenanceLogAdded(address indexed droneId, uint32 indexed logId, uint8 maintenanceType)
+func (_DroneObjectFactory *DroneObjectFactoryFilterer) FilterMaintenanceLogAdded(opts *bind.FilterOpts, droneId []common.Address, logId []uint32) (*DroneObjectFactoryMaintenanceLogAddedIterator, error) {
+
+	var droneIdRule []interface{}
+	for _, droneIdItem := range droneId {
+		droneIdRule = append(droneIdRule, droneIdItem)
+	}
+	var logIdRule []interface{}
+	for _, logIdItem := range logId {
+		logIdRule = append(logIdRule, logIdItem)
+	}
+
+	logs, sub, err := _DroneObjectFactory.contract.FilterLogs(opts, "MaintenanceLogAdded", droneIdRule, logIdRule)
+	if err != nil {
+		return nil, err
+	}
+	return &DroneObjectFactoryMaintenanceLogAddedIterator{contract: _DroneObjectFactory.contract, event: "MaintenanceLogAdded", logs: logs, sub: sub}, nil
+}
+
+// WatchMaintenanceLogAdded is a free log subscription operation binding the contract event 0x4a2b3e3e097f8d105c4c8f27d112da4f6ef371edc6efeac4d375c78f2e047d1b.
+//
+// Solidity: event MaintenanceLogAdded(address indexed droneId, uint32 indexed logId, uint8 maintenanceType)
+func (_DroneObjectFactory *DroneObjectFactoryFilterer) WatchMaintenanceLogAdded(opts *bind.WatchOpts, sink chan<- *DroneObjectFactoryMaintenanceLogAdded, droneId []common.Address, logId []uint32) (event.Subscription, error) {
+
+	var droneIdRule []interface{}
+	for _, droneIdItem := range droneId {
+		droneIdRule = append(droneIdRule, droneIdItem)
+	}
+	var logIdRule []interface{}
+	for _, logIdItem := range logId {
+		logIdRule = append(logIdRule, logIdItem)
+	}
+
+	logs, sub, err := _DroneObjectFactory.contract.WatchLogs(opts, "MaintenanceLogAdded", droneIdRule, logIdRule)
+	if err != nil {
+		return nil, err
+	}
+	return event.NewSubscription(func(quit <-chan struct{}) error {
+		defer sub.Unsubscribe()
+		for {
+			select {
+			case log := <-logs:
+				// New log arrived, parse the event and forward to the user
+				event := new(DroneObjectFactoryMaintenanceLogAdded)
+				if err := _DroneObjectFactory.contract.UnpackLog(event, "MaintenanceLogAdded", log); err != nil {
+					return err
+				}
+				event.Raw = log
+
+				select {
+				case sink <- event:
+				case err := <-sub.Err():
+					return err
+				case <-quit:
+					return nil
+				}
+			case err := <-sub.Err():
+				return err
+			case <-quit:
+				return nil
+			}
+		}
+	}), nil
+}
+
+// ParseMaintenanceLogAdded is a log parse operation binding the contract event 0x4a2b3e3e097f8d105c4c8f27d112da4f6ef371edc6efeac4d375c78f2e047d1b.
+//
+// Solidity: event MaintenanceLogAdded(address indexed droneId, uint32 indexed logId, uint8 maintenanceType)
+func (_DroneObjectFactory *DroneObjectFactoryFilterer) ParseMaintenanceLogAdded(log types.Log) (*DroneObjectFactoryMaintenanceLogAdded, error) {
+	event := new(DroneObjectFactoryMaintenanceLogAdded)
+	if err := _DroneObjectFactory.contract.UnpackLog(event, "MaintenanceLogAdded", log); err != nil {
+		return nil, err
+	}
+	event.Raw = log
+	return event, nil
 }

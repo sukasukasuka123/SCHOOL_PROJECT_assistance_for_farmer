@@ -1,0 +1,115 @@
+[
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "farmId",
+        "type": "address"
+      }
+    ],
+    "name": "farmExists",
+    "outputs": [
+      {
+        "internalType": "bool",
+        "name": "",
+        "type": "bool"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "farmId",
+        "type": "address"
+      },
+      {
+        "internalType": "string",
+        "name": "gridCode",
+        "type": "string"
+      }
+    ],
+    "name": "gridExistsInFarm",
+    "outputs": [
+      {
+        "internalType": "bool",
+        "name": "",
+        "type": "bool"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "farmId",
+        "type": "address"
+      },
+      {
+        "internalType": "address",
+        "name": "account",
+        "type": "address"
+      }
+    ],
+    "name": "isFarmOwner",
+    "outputs": [
+      {
+        "internalType": "bool",
+        "name": "",
+        "type": "bool"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "farmId",
+        "type": "address"
+      },
+      {
+        "internalType": "string",
+        "name": "gridCode",
+        "type": "string"
+      },
+      {
+        "internalType": "enum GridObjectFactory.CitrusDiseaseType",
+        "name": "newType",
+        "type": "uint8"
+      }
+    ],
+    "name": "updateGridDiseaseTypeFromRecord",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "farmId",
+        "type": "address"
+      },
+      {
+        "internalType": "string",
+        "name": "gridCode",
+        "type": "string"
+      },
+      {
+        "internalType": "enum GridObjectFactory.GridStatus",
+        "name": "newStatus",
+        "type": "uint8"
+      }
+    ],
+    "name": "updateGridStatusFromRecord",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  }
+]
