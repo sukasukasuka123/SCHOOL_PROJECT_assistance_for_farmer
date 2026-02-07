@@ -1,4 +1,4 @@
-@startuml Contract_Relationship_Diagram_Simplified
+@startuml Contract_Relationship_Diagram_Updated
 ' ====================
 ' 基础设置
 ' ====================
@@ -6,9 +6,9 @@ allowmixing
 
 skinparam BackgroundColor #F5F5F5
 skinparam shadowing true
-skinparam dpi 400
-skinparam ArrowThickness 6
-skinparam defaultFontSize 24
+skinparam dpi 500
+skinparam ArrowThickness 5
+skinparam defaultFontSize 26
 skinparam classFontSize 28
 skinparam actorFontSize 28
 
@@ -16,11 +16,13 @@ skinparam actorFontSize 28
 !define CORE_COLOR     #ed98ebff
 !define FACTORY_COLOR  #9af39dff
 !define BUSINESS_COLOR #eda386ff
+!define RECORD_COLOR   #a3d8f4ff
 
 skinparam class {
     BackgroundColor<<Core>>     CORE_COLOR
     BackgroundColor<<Factory>>  FACTORY_COLOR
     BackgroundColor<<Business>> BUSINESS_COLOR
+    BackgroundColor<<Record>>   RECORD_COLOR
     BorderColor #455A64
     ArrowColor #1976D2
     FontSize 40
@@ -67,68 +69,75 @@ end note
 ' ====================
 package "对象工厂层" {
     class DroneObjectFactory <<Factory>> {
-        + DroneType          ' enum: Scout, Marker
-        + DroneState         ' enum
-        + drones             ' mapping (id => Drone)
-        + userContract       ' User contract 地址
+        + DroneType          ' enum: Scout, Marker, Other
+        + DroneState         ' enum: Used, Free, Maintenance
+        + drones             ' mapping (address => Drone)
+        + userContract
         --
         + registerDrone()
         + updateDroneState()
+        + updateFirmwareVersion()
+        + addMaintenanceLog()
         + getDroneType()
         + droneExists()
     }
 
     class GridObjectFactory <<Factory>> {
-        + GridStatus         ' enum
-        + CitrusDiseaseType  ' enum
-        + grids              ' mapping (id => Grid)
+        + GridStatus
+        + CitrusDiseaseType
+        + grids              ' mapping (address => GridInfo)
         + authorizedCallers  ' mapping (address => bool)
-        + userContract       ' User contract
-        + droneFactory       ' DroneObjectFactory 地址
+        + userContract
+        + droneFactory
         --
         + authorizeCaller()
         + registerGrid()
         + updateGridStatus()
         + updateDiseaseType()
+        + addMaintenanceRecord()
     }
 }
 
 ' ====================
-' 业务层
+' 业务编排层
 ' ====================
-package "业务编排层" {
+package "业务编排 & 记录层" {
     class FarmFactory <<Business>> {
         + farms
         + farmGridCodeToId
+        + farmGridList
+        + gridFactory
+        + userContract
+        + droneFactory
+        + recordManager      ' FarmRecordManager 地址
+        --
+        + createFarm()
+        + addGridToFarm()
+        + updateGridStatus()
+        + updateGridDiseaseType()
+        + setRecordManager() ' 仅管理员可调用一次
+        + updateGridStatusFromRecord()    ' 回调接口
+        + updateGridDiseaseTypeFromRecord() ' 回调接口
+    }
+
+    class FarmRecordManager <<Record>> {
         + riskDetections
         + markingOperations
         + removals
         + replantings
-        + gridFactory       ' GridObjectFactory 地址
-        + userContract      ' User 地址
-        + droneFactory      ' DroneObjectFactory 地址
+        + farmFactory        ' IFarmFactory 接口
+        + userContract
+        + droneFactory
         --
-        ' 农场管理
-        + createFarm()
-        + addGridToFarm()
-        ' 业务流程
-        + addRiskDetection()
-        + addMarkingOperation()
-        + addTreeRemoval()
-        + addReplanting()
-        ' 查询接口
+        + addRiskDetection()        ' Scout Drone
+        + addMarkingOperation()     ' Marker Drone
+        + addTreeRemoval()          ' Farmer
+        + addReplanting()           ' Farmer
         + getRecentRiskDetections()
         + getRecentMarkingOperations()
         + getRecordCounts()
     }
 }
-
-note right of FarmFactory
-关键授权步骤:
-部署后必须执行:
-gridFactory.authorizeCaller(farmFactoryAddress)
-否则 FarmFactory 无法调用 GridObjectFactory 的写方法
-end note
 
 ' ====================
 ' 依赖关系（实线）
@@ -136,9 +145,15 @@ end note
 DroneObjectFactory --> User : 依赖
 GridObjectFactory --> User : 依赖
 GridObjectFactory --> DroneObjectFactory : 依赖
+
 FarmFactory --> User : 依赖
 FarmFactory --> DroneObjectFactory : 依赖
 FarmFactory --> GridObjectFactory : 委托调用
+FarmFactory --> FarmRecordManager : 持有地址 + 回调
+
+FarmRecordManager --> FarmFactory : 回调更新状态
+FarmRecordManager --> User : 权限检查
+FarmRecordManager --> DroneObjectFactory : 验证无人机类型
 
 ' ====================
 ' 角色与交互（虚线）
@@ -149,47 +164,47 @@ actor "Farmer" as Farmer
 actor "Scout Drone" as ScoutDrone
 actor "Marker Drone" as MarkerDrone
 
-Admin       ..> User               : 管理用户
-Technician  ..> DroneObjectFactory : 注册无人机
-Farmer      ..> FarmFactory        : 创建农场、管理网格
-ScoutDrone  ..> FarmFactory        : 检测风险
-MarkerDrone ..> FarmFactory        : 标记操作
+Admin       ..> User               : 管理用户 & 授权
+Technician  ..> DroneObjectFactory : 注册/维护无人机
+Farmer      ..> FarmFactory        : 创建农场、添加网格
+Farmer      ..> FarmRecordManager  : 病树移除、补种
+ScoutDrone  ..> FarmRecordManager  : 风险检测上报
+MarkerDrone ..> FarmRecordManager  : 标记操作上报
 
 ' ====================
-' 部署流程
+' 部署与授权流程
 ' ====================
 note right of User
-部署顺序（重要！）:
-1. 部署 User
-2. 部署 DroneObjectFactory (传入 User 地址)
-3. 部署 GridObjectFactory (传入 User + DroneFactory 地址)
-4. 部署 FarmFactory (传入 GridFactory + User + DroneFactory 地址)
-5. 必须执行授权:
-   gridFactory.authorizeCaller(farmFactoryAddress)
-第5步漏掉 → 权限错误！
+部署顺序（严格推荐）:
+1. User
+2. DroneObjectFactory (传入 User)
+3. GridObjectFactory (传入 User + DroneFactory)
+4. FarmFactory (传入 GridFactory + User + DroneFactory)
+5. FarmRecordManager (传入 FarmFactory + User + DroneFactory)
+6. FarmFactory.setRecordManager(RecordManager地址)   ← 必须执行
+7. GridFactory.authorizeCaller(FarmFactory地址)      ← 必须执行
 end note
 
 ' ====================
 ' 核心业务数据流
 ' ====================
-note left of FarmFactory
-核心业务数据流:
-1. 风险检测: ScoutDrone → FarmFactory.addRiskDetection() → GridFactory.updateGridStatus()
-2. 标记操作: MarkerDrone → FarmFactory.addMarkingOperation() → GridFactory.updateGridStatus()
-3. 病株移除: Farmer → FarmFactory.addTreeRemoval() → GridFactory.updateDiseaseType() & updateGridStatus()
-4. 补种: Farmer → FarmFactory.addReplanting() → GridFactory.updateGridStatus()
+note left of FarmRecordManager
+核心业务流（当前版本）:
+1. ScoutDrone → addRiskDetection() → 回调 FarmFactory → Grid.updateStatus()
+2. MarkerDrone → addMarkingOperation() → 回调 FarmFactory → Grid.updateStatus()
+3. Farmer → addTreeRemoval() → 回调 FarmFactory → Grid.updateStatus() & updateDiseaseType()
+4. Farmer → addReplanting() → 回调 FarmFactory → Grid.updateStatus()
 end note
 
 ' ====================
 ' 核心优化亮点
 ' ====================
-note right of GridObjectFactory
-核心优化点:
-• 授权调用者模式（白名单）解决跨合约权限
-• mapping[id] 取代 array，Gas 节省 60–97%
-• uint8 取代 string，存储节省 70–95%
-• IPFS 哈希用 bytes32，固定大小
-• 事件使用 indexed 参数，方便过滤查询
+note right of FarmRecordManager
+当前设计亮点:
+• 业务记录与状态更新分离，更清晰
+• 记录合约只写不读状态，降低耦合
+• 回调机制确保原子性
+• 无人机权限通过类型 + 存在性校验
 end note
 
 @enduml
